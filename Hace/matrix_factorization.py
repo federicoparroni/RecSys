@@ -5,6 +5,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
 from scipy.sparse import load_npz
 from scipy.sparse import lil_matrix
+from helpers.export import Export
 import datetime
 
 import numpy as np
@@ -30,8 +31,8 @@ save_npz('saved_matrices/sp_icm', sp_icm)
 
 """
 
-sp_urm = load_npz('saved_matrices/sp_urm.npz')
-sp_icm = load_npz('saved_matrices/sp_icm.npz')
+sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
+sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 
 sp_icm_t = sp_icm.transpose()
 
@@ -63,4 +64,6 @@ for i in arr_tgt_playlists:
     n_res[0, 0] = i
     n_res_matrix = np.concatenate((n_res_matrix, n_res))
 n_res_matrix = n_res_matrix[1:, :]
+
+Export.export(n_res_matrix, path='submissions/')
 

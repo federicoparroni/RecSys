@@ -17,11 +17,11 @@ class Export:
 
     @staticmethod
     def export(np_matrix, path='../', name=time.strftime("%Y-%m-%Y %H:%M:%S.csv"), fieldnames=['playlist_id', 'track_ids']):
-        with open('{}{}'.format(path, name), "wb") as csv_file:
+        with open('{}{}'.format(path, name), "w") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(fieldnames)
 
-            result = np.apply_along_axis(get_playlist_id_and_track_ids, axis=1, arr=np_matrix)
+            result = np.apply_along_axis(get_playlist_id_and_track_ids, axis=1, arr=np_matrix.astype(int))
 
             for l in result:
                 writer.writerow(l)
