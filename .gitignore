@@ -2,5 +2,8 @@ pistoloni/bin
 pistoloni/lib
 pistoloni/include
 pip-selfcheck.json
+.idea
 pistoloni/.idea
 .Python
+pistoloni/submissions
+*.pyc
