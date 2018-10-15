@@ -32,23 +32,35 @@ save_npz('saved_matrices/sp_icm', sp_icm)
 
 sp_urm = load_npz('saved_matrices/sp_urm.npz')
 sp_icm = load_npz('saved_matrices/sp_icm.npz')
+
 sp_icm_t = sp_icm.transpose()
+
 sp_sim_matrix = sp_icm * sp_icm_t
+
 lil_sim_matrix = sp_sim_matrix.tolil()
 #set the diag of lil matrix to 0
 lil_sim_matrix.setdiag(0)
+
 sp_sim_matrix = lil_sim_matrix.tocsr()
 
 sp_extimation_m = sp_urm*sp_sim_matrix
-d_extimation_m = sp_extimation_m.todense()
+
 
 arr_tgt_playlists = d.target_playlists_df.values
+
+
+n_res_matrix = np.zeros((1, 11))
+
+res = np.ndarray(shape=(1, 11))
+n_res = np.array(res)
+
 for i in arr_tgt_playlists:
     r = sp_extimation_m.getrow(i+1)
-    res = np.ndarray(shape=(1, 10))
-    #res_matrix =
-    for j in range(10):
+    for j in range(1, 11):
         c = r.argmax()
-        res[0, j] = c
+        n_res[0, j] = c
         r[0, c] = 0
+    n_res[0, 0] = i
+    n_res_matrix = np.concatenate((n_res_matrix, n_res))
+n_res_matrix = n_res_matrix[1:, :]
 

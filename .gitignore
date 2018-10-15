@@ -4,3 +4,5 @@ pistoloni/include
 pip-selfcheck.json
 pistoloni/.idea
 .Python
+
+Hace/__pycache__/
