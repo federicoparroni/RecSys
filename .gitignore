@@ -2,7 +2,10 @@ pistoloni/bin
 pistoloni/lib
 pistoloni/include
 pip-selfcheck.json
+.idea
 pistoloni/.idea
 .Python
-
 Hace/__pycache__/
+pistoloni/submissions
+*.pyc
+
