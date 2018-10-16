@@ -76,8 +76,8 @@ class M:
     '''
     def create_Sknn(self, s_matrix, k=50):
         sknn_matrix = scipy.sparse.csr_matrix((self.N_TRACKS, self.N_TRACKS), dtype=np.float64)
-        for i in range(0, self.N_PLAYLISTS):
-            r = sknn_matrix.getrow(i)
+        for i in range(0, self.N_TRACKS):
+            r = s_matrix.getrow(i)
             nonzeros = r.nonzero()
             nonzeros_count = len(nonzeros[1])
 
@@ -85,9 +85,9 @@ class M:
             for n in range(0, min(nonzeros_count, k)):
                 index = r.argmax()
                 sknn_matrix[i, index] = s_matrix[i, index]
-                s_matrix[i, index] = 0
+                r[0, index] = 0
 
-            return sknn_matrix
+        return sknn_matrix
 
 # test
 '''
