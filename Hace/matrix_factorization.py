@@ -56,7 +56,7 @@ res = np.ndarray(shape=(1, 11))
 n_res = np.array(res)
 
 for i in arr_tgt_playlists:
-    r = sp_extimation_m.getrow(i+1)
+    r = sp_extimation_m.getrow(i)
     for j in range(1, 11):
         c = r.argmax()
         n_res[0, j] = c
