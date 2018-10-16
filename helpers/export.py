@@ -16,7 +16,7 @@ class Export:
     '''
 
     @staticmethod
-    def export(np_matrix, path='../', name=time.strftime("%Y-%m-%Y %H:%M:%S.csv"), fieldnames=['playlist_id', 'track_ids']):
+    def export(np_matrix, path='../', name=time.strftime("%D-%m-%Y %H:%M:%S.csv"), fieldnames=['playlist_id', 'track_ids']):
         with open('{}{}'.format(path, name), "w") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(fieldnames)
