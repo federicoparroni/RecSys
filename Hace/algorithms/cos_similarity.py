@@ -1,17 +1,7 @@
-from main import Data
-from main import M
-import pandas as pd
-from scipy.sparse import csr_matrix
-from scipy.sparse import save_npz
-from scipy.sparse import load_npz
-from scipy.sparse import lil_matrix
-from helpers.export import Export
-import datetime
 import numpy as np
+from matrix import M
 
-from main import M
-
-#===============================================
+# ===============================================
 
 
 class CosineSimilarity:
