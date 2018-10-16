@@ -1,6 +1,6 @@
 from main import Data
 from main import M
-import cos_similarity
+from cos_similarity import CosineSimilarity
 from scipy.sparse import load_npz
 from helpers.export import Export
 import numpy as np
@@ -13,7 +13,7 @@ m = M()
 sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 
-sp_pred_mat = cos_similarity(sp_icm, sp_urm)
+sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=50)
 
 arr_tgt_playlists = d.target_playlists_df.values
 

@@ -64,8 +64,18 @@ class M:
             icm[df.iloc[i, 0], df.iloc[i, 2]] = 1
         return icm
 
+    ''' create the S_knn matrix from original S
+
+                param_name  | type         | description
+
+        in:     s_matrix    | (csr_matrix) | sparse item similarity matrix in CSR format
+        in:     k           | int          | first K nearest neighbour
+        -----------------------------------------------------
+        out:    sknn_matrix | (csr_matrix) | Sknn matrix
+
+    '''
     def create_Sknn(self, s_matrix, k=50):
-        sknn_matrix = scipy.sparse.csr_matrix((self.N_PLAYLISTS, self.N_PLAYLISTS), dtype=np.float64)
+        sknn_matrix = scipy.sparse.csr_matrix((self.N_TRACKS, self.N_TRACKS), dtype=np.float64)
         for i in range(0, self.N_PLAYLISTS):
             r = sknn_matrix.getrow(i)
             nonzeros = r.nonzero()
