@@ -42,3 +42,28 @@ def cos_similarity(sp_icm, sp_rat_m, knn):
     return sp_pred_m
 
 
+def sp_matrix_l2_norm_rows(sp_matrix):
+
+    ''' create a column vector, whithin each cell there is the l2-norm of the corresponding row of the input matrix
+
+            param_name | type              | description
+
+    in:     sp_matrix  | (csr_matrix)[N*M] | sparse matrix of dimension N*M
+    -----------------------------------------------------
+    out:    l2_vector  | (np_array)[N*1]   | l2-norm vector of dimension N*1
+
+    '''
+
+    l2_vector = np.empty(shape=(sp_matrix.shape[0], 1))
+    for i in range(sp_matrix.shape[0]):
+        r = sp_matrix.getrow(i)
+        _, col_ind = r.nonzero()
+        temp = np.empty(shape=(1, col_ind.size))
+        for j in col_ind:
+            count = 0
+            temp[0, count] = r[0, j]
+            count += 1
+        l2_vector[i] = np.linalg.norm(temp)
+    return l2_vector
+
+
