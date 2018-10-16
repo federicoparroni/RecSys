@@ -1,5 +1,10 @@
 import pandas as pd
 import numpy as np
+import scipy
+from scipy.sparse import csr_matrix
+
+# test
+# from scipy.sparse import load_npz
 
 #===============================================
 
@@ -14,7 +19,7 @@ playlists_path = '../dataset/train.csv'
 target_playlists_path = '../dataset/target_playlists.csv'
 
 
-class Data():
+class Data:
 
     def __init__(self):
 
@@ -35,8 +40,7 @@ class Data():
         return self.playlists_df.groupby('playlist_id').agg(''.join)
 
 
-
-class M():
+class M:
 
     def __init__(self):
         #Define the constants
@@ -60,18 +64,45 @@ class M():
             icm[df.iloc[i, 0], df.iloc[i, 2]] = 1
         return icm
 
+    ''' create the S_knn matrix from original S
 
+                param_name  | type         | description
 
+        in:     s_matrix    | (csr_matrix) | sparse item similarity matrix in CSR format
+        in:     k           | int          | first K nearest neighbour
+        -----------------------------------------------------
+        out:    sknn_matrix | (csr_matrix) | Sknn matrix
 
+    '''
+    def create_Sknn(self, s_matrix, k=50):
+        sknn_matrix = scipy.sparse.csr_matrix((self.N_TRACKS, self.N_TRACKS), dtype=np.float64)
+        for i in range(0, self.N_TRACKS):
+            r = s_matrix.getrow(i)
+            nonzeros = r.nonzero()
+            nonzeros_count = len(nonzeros[1])
 
+            # get the max of each row k times and set that to 0
+            for n in range(0, min(nonzeros_count, k)):
+                index = r.argmax()
+                sknn_matrix[i, index] = s_matrix[i, index]
+                r[0, index] = 0
 
+        return sknn_matrix
 
+# test
+'''
+sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
+sp_sim_matrix = sp_icm * sp_icm.transpose()
 
+m = M()
+sknn = m.create_Sknn(sp_icm, k=5)
 
+for i in range(0, 20634+1):
+    r = sknn.getrow(i)
+    nonzeros = r.nonzero()
+    nonzeros_count = len(nonzeros[1])
+    if nonzeros_count > 1:
+        print('error! number of nonzeros: {}'.format(nonzeros_count))
 
-
-
-
-
-
-
+print("success")
+'''
