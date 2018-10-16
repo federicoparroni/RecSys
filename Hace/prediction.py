@@ -13,7 +13,7 @@ m = M()
 sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 
-sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=50)
+sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=30)
 
 arr_tgt_playlists = d.target_playlists_df.values
 

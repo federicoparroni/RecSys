@@ -37,7 +37,8 @@ class CosineSimilarity:
         # set the diag of lil matrix to 0
         lil_sim_matrix.setdiag(0)
         sp_sim_matrix = lil_sim_matrix.tocsr()
-        l2_norm_vector = CosineSimilarity.sp_matrix_l2_norm_rows(sp_sim_matrix)
+        CosineSimilarity.normalize_sp_sim_matrix(sp_sim_matrix)
+
         m = M()
         sp_sim_matrix_knn = m.create_Sknn(sp_sim_matrix, k=knn)
 
