@@ -11,14 +11,14 @@ from helpers.export import Export
 d = Data()
 m = M()
 
-# sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
+sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 
 m.create_Sknn(sp_icm)
 
-#sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=50)
+sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=50)
+b = best_n_from_rating_matrix(d, sp_urm, sp_pred_mat)
+n_res_matrix = b.get_best_n_ratings(10)
 
-#b = best_n_from_rating_matrix(d, sp_pred_mat)
-#n_res_matrix = b.get_best_n_ratings(10)
 
-#Export.export(n_res_matrix, path='submissions/')
+Export.export(n_res_matrix, path='submissions/')

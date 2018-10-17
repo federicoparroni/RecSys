@@ -6,15 +6,16 @@ from matrix import M
 class CosineSimilarityCB:
 
     @staticmethod
-    def predict(sp_icm, sp_rat_m, knn=-1):
+    def predict(sp_icm, sp_rat_m, knn, shrink_term=0):
 
         ''' create the prediction matrix using cos_similarity
 
-                param_name | type         | description
+                param_name  | type         | description
 
-        in:     sp_icm     | (csr_matrix) | sparse item-content matrix in CSR format
-        in:     sp_rat_m   | (csr_matrix) | sparse rating matrix (in our case URM)
-        in:     knn        | (int)        | knn to use for calculate the new similarity matrix
+        in:     sp_icm       | (csr_matrix) | sparse item-content matrix in CSR format
+        in:     sp_rat_m     | (csr_matrix) | sparse rating matrix (in our case URM)
+        in:     knn          | (int)        | knn to use for calculate the new similarity matrix
+        in:     shrink_term  | (int)        | integer used for normalization
         -----------------------------------------------------
         out:    sp_pred_m  | (csr_matrix) | prediction matrix
         '''
@@ -25,7 +26,7 @@ class CosineSimilarityCB:
         # set the diag of lil matrix to 0
         lil_sim_matrix.setdiag(0)
         sp_sim_matrix = lil_sim_matrix.tocsr()
-        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix)
+        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
 
         m = M()
         sp_sim_matrix_knn = m.create_Sknn(sp_sim_matrix, k=knn)
@@ -62,15 +63,16 @@ class CosineSimilarityCB:
 
 
     @staticmethod
-    def normalize_sp_sim_matrix(sp_sim_matrix):
+    def normalize_sp_sim_matrix(sp_sim_matrix, shrink_term=0):
 
-        ''' normalize the element of the similarity matrix with the l2-norm
+        ''' normalize the element of the similarity matrix with the l2-norm and optionally with a shrink term
 
-                param_name    | type              | description
+                          param_name    | type              | description
 
-        in:     sp_sim_matrix | (csr_matrix)[N*M] | sparse matrix of dimension N*M (have senso only for the sim matrix)
+                  in:     sp_sim_matrix | (csr_matrix)[N*M] | sparse matrix of dimension N*M (have senso only for the sim matrix)
+        (optional)in:     shrink_term   | (INT)             | constant at denominator for normalization purpose
         -----------------------------------------------------
-        out:    _             | _                 | the matrix passed as parameter will be normalized by l2_norm
+                 out:    _             | _                 | the matrix passed as parameter will be normalized by l2_norm
 
         '''
 
@@ -79,7 +81,7 @@ class CosineSimilarityCB:
         for i in range(len(r_i)):
             k = r_i[i]
             l = c_i[i]
-            sp_sim_matrix[k, l] = (sp_sim_matrix[k, l]/(l2_vect[k]*l2_vect[l]))
+            sp_sim_matrix[k, l] = (sp_sim_matrix[k, l]/(l2_vect[k]*l2_vect[l]+shrink_term))
 
 
 """
@@ -91,3 +93,5 @@ sp_sim_matrix = sp_icm * sp_icm_t
 CosineSimilarity.normalize_sp_sim_matrix(sp_sim_matrix)
 a= 5
 """
+
+
