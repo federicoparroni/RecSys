@@ -3,11 +3,10 @@ from matrix import M
 
 # ===============================================
 
-
-class CosineSimilarity:
+class CosineSimilarityCB:
 
     @staticmethod
-    def predict(sp_icm, sp_rat_m, knn):
+    def predict(sp_icm, sp_rat_m, knn=-1):
 
         ''' create the prediction matrix using cos_similarity
 
@@ -20,14 +19,13 @@ class CosineSimilarity:
         out:    sp_pred_m  | (csr_matrix) | prediction matrix
         '''
 
-        sp_icm_t = sp_icm.transpose()
-        sp_sim_matrix = sp_icm * sp_icm_t
+        sp_sim_matrix = sp_icm * sp_icm.transpose()
 
         lil_sim_matrix = sp_sim_matrix.tolil()
         # set the diag of lil matrix to 0
         lil_sim_matrix.setdiag(0)
         sp_sim_matrix = lil_sim_matrix.tocsr()
-        CosineSimilarity.normalize_sp_sim_matrix(sp_sim_matrix)
+        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix)
 
         m = M()
         sp_sim_matrix_knn = m.create_Sknn(sp_sim_matrix, k=knn)
@@ -76,7 +74,7 @@ class CosineSimilarity:
 
         '''
 
-        l2_vect = CosineSimilarity.sp_matrix_l2_norm_rows(sp_sim_matrix)
+        l2_vect = CosineSimilarityCB.sp_matrix_l2_norm_rows(sp_sim_matrix)
         r_i, c_i = sp_sim_matrix.nonzero()
         for i in range(len(r_i)):
             k = r_i[i]
