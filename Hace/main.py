@@ -16,7 +16,7 @@ sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 
 sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=50)
 
-b = best_n_from_rating_matrix(d, sp_pred_mat)
+b = best_n_from_rating_matrix(d, sp_urm, sp_pred_mat)
 n_res_matrix = b.get_best_n_ratings(10)
 
 Export.export(n_res_matrix, path='submissions/')
