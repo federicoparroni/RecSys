@@ -8,7 +8,7 @@ class BestNFromRatingMatrix:
         self.sp_urm_mat = sp_urm_mat
 
 
-    def get_best_n_ratings(self, n):
+    def get_best_n_ratings(self, n=10):
 
         ''' find the best n ratings for a prediction matrix in a numpy matrix
 
@@ -21,8 +21,8 @@ class BestNFromRatingMatrix:
 
         '''
 
-        n_res_matrix = np.zeros((1, 11))
-        res = np.ndarray(shape=(1, 11))
+        n_res_matrix = np.zeros((1, n+1))
+        res = np.ndarray(shape=(1, n+1))
         n_res = np.array(res)
 
         for i in self.arr_tgt_playlists:
@@ -34,7 +34,7 @@ class BestNFromRatingMatrix:
             for k in c_urm_mat_i:
                 r_pred_mat[0, k] = 0
 
-            for j in range(1, 11):
+            for j in range(1, n+1):
                 c = r_pred_mat.argmax()
                 n_res[0, j] = c
                 r_pred_mat[0, c] = 0
