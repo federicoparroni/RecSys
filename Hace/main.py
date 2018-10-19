@@ -16,8 +16,13 @@ sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 print('loaded matrices')
 
-sp_pred_mat = CosineSimilarity.predict(sp_icm, sp_urm, knn=50)
+sp_pred_mat1 = CosineSimilarity.predict(sp_icm, sp_urm, knn=100, shrink_term=10)
 print('computed prediction matrices')
+
+#todo
+# sp_pred_mat2 =
+
+sp_pred_mat = sp_pred_mat1 + sp_pred_mat2
 
 bestn = BestNFromRatingMatrix(d, sp_pred_mat, sp_urm)
 
