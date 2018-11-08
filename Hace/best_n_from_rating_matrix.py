@@ -2,11 +2,25 @@ import numpy as np
 
 class BestNFromRatingMatrix:
 
-    def __init__(self, d, sp_pred_mat, sp_urm_mat):
-        self.arr_tgt_playlists = d.target_playlists_df.values
+    def __init__(self, sp_pred_mat, sp_urm_mat, df_tgt_playlists):
+
+        ''' constructor
+
+                param_name         | type           | description
+
+        in:     sp_pred_mat        | csr_matrix     | predicted score for tracks in playlists
+        in:     sp_urm_mat         | csr_matrix     | urm used for training
+        in:     df_tgt_playlists   | pd's dataframe | urm used for training
+        -----------------------------------------------------
+        out:    n_res_matrix | (numpy matrix) | matrix [tgt_playlist.lenght, n+1] for each playlist to predict it gives
+                                                    n tracks first column is the id of the playlist the remaining the
+                                                    id of the track
+
+        '''
+
+        self.arr_tgt_playlists = df_tgt_playlists
         self.sp_pred_mat = sp_pred_mat
         self.sp_urm_mat = sp_urm_mat
-
 
     def get_best_n_ratings(self, n=10):
 
@@ -30,7 +44,7 @@ class BestNFromRatingMatrix:
             r_pred_mat = self.sp_pred_mat.getrow(i)
             _, c_urm_mat_i = r_urm_mat.nonzero()
 
-            #set to 0 on the prediction matrix the tracks that the playlist just have
+            # set to 0 on the prediction matrix the tracks that the playlist just have
             for k in c_urm_mat_i:
                 r_pred_mat[0, k] = 0
 
