@@ -24,15 +24,9 @@ class CosineSimilarityCB:
 
         print('sim matrix computed')
 
-        lil_sim_matrix = sp_sim_matrix.tolil()
-        # set the diag of lil matrix to 0
-        lil_sim_matrix.setdiag(0)
+        sp_sim_matrix.setdiag(0)
 
         print('set diag 0')
-
-        sp_sim_matrix = lil_sim_matrix.tocsr()
-
-        print('reported to csr')
 
         CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
 
