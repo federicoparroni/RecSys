@@ -33,3 +33,5 @@ class Data:
         self.tg_pl_df_m = pd.merge(self.target_playlists_df, self.unified_df)
 
         self.our_train_df = pd.read_csv(our_train_path)
+        self.playlists_df.columns = ['playlist_id', 'track_id']
+
