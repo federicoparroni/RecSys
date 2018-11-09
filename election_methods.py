@@ -60,7 +60,7 @@ class ElectionMethods:
 
 
     @staticmethod
-    def borda_count(res_matrix_array, n):
+    def borda_count(recommendations_array):
         ''' given an array of result matrices, compute only one result matrix using the borda count voting methodology
 
                         param_name          | type                   | description
@@ -74,6 +74,10 @@ class ElectionMethods:
                                                                         the remaining the id of the tracks
 
         '''
+        for i in recommendations_array: #cycle between every recommedations array
+
+
+
         
 
 

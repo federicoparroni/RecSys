@@ -1,5 +1,5 @@
-from Hace.data import Data
-from Hace.matrix import M
+from data import Data
+from matrix import M
 from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
 from scipy.sparse import load_npz
