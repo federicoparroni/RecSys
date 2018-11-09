@@ -8,3 +8,4 @@ pistoloni/.idea
 Hace/__pycache__/
 pistoloni/submissions
 *.pyc
+.vscode
