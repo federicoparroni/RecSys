@@ -10,7 +10,7 @@ d = Data()
 targetUsersIds = d.target_playlists_df['playlist_id'].values
 
 # get item_user matrix by transposing the URM matrix and convert it to COO
-URM = load_npz('/dataset/saved_matrices/sp_urm.npz')
+URM = load_npz('dataset/saved_matrices/sp_urm.npz')
 item_user_data = URM.transpose().tocoo()
 print('> data loaded')
 
