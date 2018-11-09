@@ -15,7 +15,7 @@ item_user_data = URM.transpose().tocoo()
 print('> data loaded')
 
 # initialize a model
-model = implicit.bpr.BayesianPersonalizedRanking(factors=100, iterations=600, learning_rate=0.01)
+model = implicit.bpr.BayesianPersonalizedRanking(factors=300, iterations=1000, learning_rate=0.01)
 
 # train the model on a sparse matrix of item/user/confidence weights
 model.fit(item_users=item_user_data)
@@ -24,5 +24,5 @@ model.fit(item_users=item_user_data)
 recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
 
 # export
-Export.export(np.array(recommendations), path='submissions/')
+Export.export(np.array(recommendations), path='../submissions/')
 print("> exported")
