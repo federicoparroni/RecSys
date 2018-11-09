@@ -9,6 +9,9 @@ class Data:
         # || playlist_id || track_id ||
         playlists_path = '../dataset/train.csv'
 
+        # || playlist_id || track_id ||
+        our_train_path = '../dataset/our_train.csv'
+
         # || playlist_id ||
         target_playlists_path = '../dataset/target_playlists.csv'
 
@@ -24,3 +27,5 @@ class Data:
         self.unified_df = self.playlists_df.merge(self.tracks_df, on='track_id')
 
         self.tg_pl_df_m = pd.merge(self.target_playlists_df, self.unified_df)
+
+        self.our_train_df = pd.read_csv(our_train_path)

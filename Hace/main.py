@@ -1,7 +1,7 @@
 from data import Data
 from matrix import M
-from algorithms.cos_similarity import CosineSimilarityCB
-from algorithms.collaborative_filtering import CosineSimilarityCF
+from algorithms.cosine_similarity_CB import CosineSimilarityCB
+from algorithms.cosine_similarity_CF import CosineSimilarityCF
 from scipy.sparse import load_npz
 
 
