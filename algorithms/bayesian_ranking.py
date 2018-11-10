@@ -4,7 +4,6 @@ from scipy.sparse import load_npz
 from data import Data
 from helpers import model_bridge as M
 from helpers.export import Export
-from map_evaluation import evaluate_map
 
 # load data
 d = Data()
@@ -23,10 +22,6 @@ model.fit(item_users=item_user_data)
 
 # build recommendations array
 recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
-
-test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
-map = evaluate_map(recommendations, test_urm)
-print('estimated map:',  map)
 
 # export
 Export.export(np.array(recommendations), path='../Hace/submissions/')

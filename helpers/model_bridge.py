@@ -19,7 +19,7 @@ def array_of_recommendations(model, target_user_ids, urm, verbose=True):
     recommendations.append([userId] + [j for j in r])   # create a row: userId | rec1, rec2, rec3, ...
 
     if verbose:
-      printProgressBar(k, L, prefix = 'Exporting:', length = 40)
+      printProgressBar(k, L, prefix = 'Building recommendations:', length = 40)
     k+=1
   
   return recommendations
