@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.sparse import csr_matrix
 
 class ElectionMethods:
 
@@ -82,23 +83,23 @@ class ElectionMethods:
         res = np.ndarray(shape=(1, N+1))
         n_res = np.array(res)
 
-        for i in recommendations_array[0].size()[0]: #cycle between rows
+        for i in range(len(recommendations_array[0])): #cycle between rows
             N_TRACKS = 20634 + 1
-            temp = np.zeros(1, N_TRACKS)
+            temp = np.zeros(N_TRACKS)
             for j in range(len(recommendations_array)): #cycle between matrices
                 weight = weights_array[j]
                 for k in recommendations_array[j][i, 1:]: #cycle between columns
-                    h = j[i].size()[1]
-                    temp[0, k] += h * weight
+                    h = N
+                    temp[k] += h * weight
                     h -= 1
-            sp_temp = temp.tocsr()
+            sp_temp = csr_matrix(temp)
 
             n_res[0, 0] = recommendations_array[0][0, 0] # set playlist_id
 
             for l in range(N):
-                _, c = sp_temp.argmax()
-                n_res[0, l+1] = sp_temp[0, c]
-            n_res_matrix = np.concatenate(n_res_matrix, n_res)
+                c = sp_temp.argmax()
+                n_res[0, l+1] = c
+            n_res_matrix = np.concatenate((n_res_matrix, n_res))
 
         n_res_matrix = n_res_matrix[1:, :]
 
