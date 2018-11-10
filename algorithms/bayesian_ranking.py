@@ -8,6 +8,8 @@ from election_methods import ElectionMethods
 from map_evaluation import evaluate_map
 
 
+
+
 # load data
 d = Data()
 targetUsersIds = d.target_playlists_df['playlist_id'].values
@@ -30,6 +32,7 @@ recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersI
 
 
 
+
 #test borda====
 recommendations = np.asarray(recommendations)
 
@@ -45,6 +48,7 @@ r = ElectionMethods.borda_count(arr_rec, weights)
 test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
 map = evaluate_map(recommendations, test_urm)
 print('estimated map:',  map)
+
 
 # export
 Export.export(np.array(recommendations), path='../submissions/')
