@@ -18,10 +18,10 @@ def evaluate_als(epochs=[5, 10, 15, 20, 25, 30, 50, 70, 100, 150, 200, 250, 300,
     targetUsersIds = d.target_playlists_df['playlist_id'].values
 
     # load URM test MAP matrix
-    test_urm = load_npz('dataset/saved_matrices/sp_urm_test_MAP.npz')
+    test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
 
     # get item_user matrix by transposing the URM matrix
-    URM = load_npz('dataset/saved_matrices/sp_urm.npz')
+    URM = load_npz('../dataset/saved_matrices/sp_urm.npz')
     item_user_data = URM.transpose()
 
     evaluations=[]

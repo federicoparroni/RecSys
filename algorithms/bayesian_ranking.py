@@ -5,7 +5,7 @@ from data import Data
 from helpers import model_bridge as M
 from helpers.export import Export
 from election_methods import ElectionMethods
-from map_evaluation import evaluate_map
+from evaluation import map_evaluation
 
 
 
@@ -22,15 +22,13 @@ item_user_data = URM.transpose().tocoo()
 print('> data loaded')
 
 # initialize a model
-model = implicit.bpr.BayesianPersonalizedRanking(factors=1, iterations=1, learning_rate=0.01)
+model = implicit.bpr.BayesianPersonalizedRanking(factors=500, iterations=100, learning_rate=0.01)
 
 # train the model on a sparse matrix of item/user/confidence weights
 model.fit(item_users=item_user_data)
 
 # build recommendations array
 recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
-
-
 
 
 #test borda====
@@ -46,7 +44,7 @@ r = ElectionMethods.borda_count(arr_rec, weights)
 
 
 test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
-map = evaluate_map(recommendations, test_urm)
+map = map_evaluation.evaluate_map(recommendations, test_urm)
 print('estimated map:',  map)
 
 
