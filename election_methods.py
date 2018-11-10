@@ -60,7 +60,8 @@ class ElectionMethods:
 
 
     @staticmethod
-    def borda_count(recommendations_array):
+    def borda_count(recommendations_array, weights_array):
+
         ''' given an array of result matrices, compute only one result matrix using the borda count voting methodology
 
                         param_name          | type                   | description
@@ -74,7 +75,37 @@ class ElectionMethods:
                                                                         the remaining the id of the tracks
 
         '''
-        for i in recommendations_array: #cycle between every recommedations array
+
+        N = 10
+        n_res_matrix = np.zeros((1, N + 1))
+
+        res = np.ndarray(shape=(1, N+1))
+        n_res = np.array(res)
+
+        for i in recommendations_array[0].size()[0]: #cycle between rows
+            N_TRACKS = 20634 + 1
+            temp = np.zeros(1, N_TRACKS)
+            for j in range(len(recommendations_array)): #cycle between matrices
+                weight = weights_array[j]
+                for k in recommendations_array[j][i, 1:]: #cycle between columns
+                    h = j[i].size()[1]
+                    temp[0, k] += h * weight
+                    h -= 1
+            sp_temp = temp.tocsr()
+
+            n_res[0, 0] = recommendations_array[0][0, 0] # set playlist_id
+
+            for l in range(N):
+                _, c = sp_temp.argmax()
+                n_res[0, l+1] = sp_temp[0, c]
+            n_res_matrix = np.concatenate(n_res_matrix, n_res)
+
+        n_res_matrix = n_res_matrix[1:, :]
+
+        return n_res_matrix
+
+
+
 
 
 
