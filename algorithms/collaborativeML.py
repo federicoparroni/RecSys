@@ -11,12 +11,12 @@ d = Data()
 targetUsersIds = d.target_playlists_df['playlist_id'].values
 
 # get item_user matrix by transposing the URM matrix
-URM = load_npz('../dataset/saved_matrices/sp_urm.npz')
+URM = load_npz('dataset/saved_matrices/sp_urm.npz')
 item_user_data = URM.transpose()
 print('> data loaded')
 
 # initialize a model
-model = implicit.als.AlternatingLeastSquares(factors=100, iterations=100)
+model = implicit.als.AlternatingLeastSquares(factors=100, iterations=600)
 
 # train the model on a sparse matrix of item/user/confidence weights
 model.fit(item_user_data)

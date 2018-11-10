@@ -6,6 +6,11 @@ pip-selfcheck.json
 pistoloni/.idea
 .Python
 Hace/__pycache__/
+Hace/submissions
 pistoloni/submissions
+submissions
 *.pyc
 .vscode
+bin
+lib
+include
