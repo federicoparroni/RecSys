@@ -3,7 +3,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import load_npz
 import implicit
 from data import Data
-from helpers import model_bridge as M
+from helpers import model_bridge as bridge
 from helpers.export import Export
 
 # load data
@@ -22,8 +22,8 @@ model = implicit.als.AlternatingLeastSquares(factors=100, iterations=600)
 model.fit(item_user_data)
 
 # build recommendations array
-recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
+recommendations = bridge.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
 
 # export
-Export.export(np.array(recommendations), path='submissions/')
+Export.export(np.array(recommendations), path='submissions/', name='als')
 print("> exported")
