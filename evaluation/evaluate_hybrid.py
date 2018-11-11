@@ -11,7 +11,7 @@ import numpy as np
 als_res = Import.importCsv('../submissions/als.csv')
 bm25_res= Import.importCsv('../submissions/bm25.csv')
 
-res = ElectionMethods.borda_count([als_res, bm25_res], [0.7, 0.3])
+res = ElectionMethods.borda_count([als_res, bm25_res], [0.5, 0.5])
 
 # load URM test MAP matrix
 test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
@@ -22,5 +22,5 @@ map10 = evaluate_map(res, test_urm)
 print('Estimated map --> {}'.format(map10))
 
 # export
-Export.export(np.array(res), path='../submissions/', name='borda')
-print('file exported')
+Export.export(np.array(res), path='../submissions/', name='hybrid_borda')
+print('> file exported')

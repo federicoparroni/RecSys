@@ -61,7 +61,7 @@ class ElectionMethods:
 
 
     @staticmethod
-    def borda_count(recommendations_array, weights_array):
+    def borda_count(recommendations_array, weights_array, N=10):
 
         ''' given an array of result matrices, compute only one result matrix using the borda count voting methodology
 
@@ -77,7 +77,6 @@ class ElectionMethods:
 
         '''
 
-        N = 10
         n_res_matrix = np.zeros((1, N + 1))
 
         res = np.ndarray(shape=(1, N+1))
@@ -88,8 +87,8 @@ class ElectionMethods:
             temp = np.zeros(N_TRACKS)
             for j in range(len(recommendations_array)): #cycle between matrices
                 weight = weights_array[j]
+                h = N
                 for k in recommendations_array[j][i, 1:]: #cycle between columns
-                    h = N
                     temp[k] += h * weight
                     h -= 1
             sp_temp = csr_matrix(temp)
