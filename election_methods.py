@@ -94,11 +94,12 @@ class ElectionMethods:
                     h -= 1
             sp_temp = csr_matrix(temp)
 
-            n_res[0, 0] = recommendations_array[0][0, 0] # set playlist_id
+            n_res[0, 0] = recommendations_array[0][i, 0] # set playlist_id
 
             for l in range(N):
                 c = sp_temp.argmax()
                 n_res[0, l+1] = c
+                sp_temp[0, c] = 0
             n_res_matrix = np.concatenate((n_res_matrix, n_res))
 
         n_res_matrix = n_res_matrix[1:, :]
