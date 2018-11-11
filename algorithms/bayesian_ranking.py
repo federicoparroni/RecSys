@@ -2,7 +2,7 @@ import numpy as np
 import implicit
 from scipy.sparse import load_npz
 from data import Data
-from helpers import model_bridge as M
+from helpers import model_bridge as bridge
 from helpers.export import Export
 
 # load data
@@ -21,8 +21,8 @@ model = implicit.bpr.BayesianPersonalizedRanking(factors=300, iterations=100, le
 model.fit(item_users=item_user_data)
 
 # build recommendations array
-recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
+recommendations = bridge.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
 
 # export
-Export.export(np.array(recommendations), path='../Hace/submissions/')
+Export.export(np.array(recommendations), path='../Hace/submissions/', name='bayesian_ranking')
 print("> exported")
