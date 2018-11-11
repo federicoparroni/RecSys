@@ -23,7 +23,6 @@ class Import:
                 if len(fieldnames)>0 and j != 0:
                     r = np.array([[row[0]] + row[1].split(' ')])
                     r = r.astype(np.int32)
-                    print(result.shape)
 
                     if len(result) == 0:
                         result = r
