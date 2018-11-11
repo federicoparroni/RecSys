@@ -8,7 +8,7 @@ def evaluate_map(recc, test_urm, at=10):
     """
     aps = []
     for i in recc:
-        row = test_urm.getrow(i[0]).indices
+        row = test_urm.getrow(i[0]+1).indices
         m = min(at, len(row))
 
         ap = 0
