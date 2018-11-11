@@ -12,7 +12,7 @@ epochs: (array) epochs at which perform the evaluation
 OUTPUT
 output: array with MAP10 evaluations (epoch, MAP10)
 """
-def evaluate_als(epochs=[5, 10, 15, 20, 25, 30, 50, 70, 100, 150, 200, 250, 300, 350, 400, 500, 600, 700], verbose=True):
+def evaluate_als(epochs=[5, 10, 15, 20, 25, 30, 50, 70, 100, 150, 200, 250, 300, 350, 400, 500], verbose=True):
     # load data
     d = Data()
     targetUsersIds = d.target_playlists_df['playlist_id'].values
@@ -31,12 +31,12 @@ def evaluate_als(epochs=[5, 10, 15, 20, 25, 30, 50, 70, 100, 150, 200, 250, 300,
         if verbose:
             print('Epoch {}'.format(e))
 
-        model = implicit.als.AlternatingLeastSquares(factors=100, iterations=e)
+        model = implicit.als.AlternatingLeastSquares(factors=150, iterations=e)
         model.fit(item_user_data)
         recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
     
         map10 = evaluate_map(recommendations, test_urm)
-        evaluations.append((e,map10))
+        evaluations.append((e, map10))
 
         if verbose:
             print('Estimated map after {} epochs: {}'.format(e, map10))
