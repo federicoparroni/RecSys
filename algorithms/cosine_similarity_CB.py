@@ -3,8 +3,9 @@ import math
 from data import Data
 from matrix import M
 from scipy.sparse import load_npz
-from election_methods import ElectionMethods
+from helpers.model_bridge import get_best_n_ratings
 from helpers.export import Export
+from scipy import sparse
 
 # ===============================================
 
@@ -99,17 +100,15 @@ class CosineSimilarityCB:
 d = Data()
 m = M()
 
-sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
+sp_urm = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 print('loaded matrices')
 
-
 sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, shrink_term=30)
+print('computed estimated ratings')
 
-bestn = ElectionMethods.get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
+bestn = get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
+print('got the best n ratings for the target playlists')
 
-print('res_matrix create')
-
-print('starting export')
-
-Export.export(bestn, path='../Hace/submissions/', name='content_based')
+Export.export(np.array(bestn), path='../Hace/submissions/', name='content_based')
+print('exported')
