@@ -1,5 +1,10 @@
 import numpy as np
+import math
+from data import Data
 from matrix import M
+from scipy.sparse import load_npz
+from election_methods import ElectionMethods
+from helpers.export import Export
 
 # ===============================================
 
@@ -60,13 +65,9 @@ class CosineSimilarityCB:
         l2_vector = np.empty(shape=(sp_matrix.shape[0], 1))
         for i in range(sp_matrix.shape[0]):
             r = sp_matrix.getrow(i)
-            _, col_ind = r.nonzero()
-            temp = np.empty(shape=(1, col_ind.size))
-            for j in col_ind:
-                count = 0
-                temp[0, count] = r[0, j]
-                count += 1
-            l2_vector[i] = np.linalg.norm(temp)
+            r_t = r.transpose()
+            temp = r*r_t
+            l2_vector[i] = math.sqrt(temp[0, 0])
         return l2_vector
 
 
@@ -95,14 +96,20 @@ class CosineSimilarityCB:
             sp_sim_matrix[k, l] = (sp_sim_matrix[k, l]/(l2_vect[k]*l2_vect[l]+shrink_term))
 
 
-"""
-#test normalize_sp_sim_matrix
+d = Data()
+m = M()
+
+sp_urm = load_npz('../dataset/saved_matrices/sp_urm.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
-
-sp_icm_t = sp_icm.transpose()
-sp_sim_matrix = sp_icm * sp_icm_t
-CosineSimilarity.normalize_sp_sim_matrix(sp_sim_matrix)
-a= 5
-"""
+print('loaded matrices')
 
 
+sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, shrink_term=30)
+
+bestn = ElectionMethods.get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
+
+print('res_matrix create')
+
+print('starting export')
+
+Export.export(bestn, path='../Hace/submissions/', name='content_based')

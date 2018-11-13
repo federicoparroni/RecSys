@@ -168,15 +168,15 @@ class CosineSimilarityCF:
 
 
 #test normalize_sp_sim_matrix
-sp_urm = load_npz('../../dataset/saved_matrices/sp_urm.npz')
-print('loaded matrix')
-
-sp_urm_t = sp_urm.transpose()
-print('matrix transposed')
-
-sp_sim_matrix = sp_urm * sp_urm_t
-print('sim matrix computed')
-
-CosineSimilarityCF.normalize_sp_sim_matrix(sp_sim_matrix, 10)
-a = 5
+# sp_urm = load_npz('../../dataset/saved_matrices/sp_urm.npz')
+# print('loaded matrix')
+#
+# sp_urm_t = sp_urm.transpose()
+# print('matrix transposed')
+#
+# sp_sim_matrix = sp_urm * sp_urm_t
+# print('sim matrix computed')
+#
+# CosineSimilarityCF.normalize_sp_sim_matrix(sp_sim_matrix, 10)
+# a = 5
 

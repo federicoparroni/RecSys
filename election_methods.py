@@ -3,46 +3,27 @@ from scipy.sparse import csr_matrix
 
 class ElectionMethods:
 
-    def __init__(self, sp_pred_mat, sp_urm_mat, df_tgt_playlists):
-
-        ''' constructor
-
-                param_name         | type           | description
-
-        in:     sp_pred_mat        | csr_matrix     | predicted score for tracks in playlists
-        in:     sp_urm_mat         | csr_matrix     | urm used for training
-        in:     df_tgt_playlists   | pd's dataframe | urm used for training
-        -----------------------------------------------------
-        out:    n_res_matrix | (numpy matrix) | matrix [tgt_playlist.lenght, n+1] for each playlist to predict it gives
-                                                    n tracks first column is the id of the playlist the remaining the
-                                                    id of the track
-
-        '''
-
-        self.arr_tgt_playlists = df_tgt_playlists
-        self.sp_pred_mat = sp_pred_mat
-        self.sp_urm_mat = sp_urm_mat
-
-
-
     ''' find the best n ratings for a prediction matrix in a numpy matrix
 
             param_name   | type           | description
 
     in:     n            | (int)          | number of elements to predict for each playlist
+    in:     sp_pred_mat        | csr_matrix     | predicted score for tracks in playlists
+    in:     sp_urm_mat         | csr_matrix     | urm used for training
+    in:     df_tgt_playlists   | pd's dataframe | target playlists
     -----------------------------------------------------
     out:    n_res_matrix | (numpy matrix) | matrix [tgt_playlist.lenght, n+1] for each playlist to predict it gives n tracks
                                                 first column is the id of the playlist the remaining the id of the track
-
     '''
-    def get_best_n_ratings(self, sp_pred_mat, n=10):
-
+    @staticmethod
+    def get_best_n_ratings(sp_pred_mat, arr_tgt_playlists, sp_urm_mat, n=10):
         n_res_matrix = np.zeros((1, n+1))
         res = np.ndarray(shape=(1, n+1))
         n_res = np.array(res)
+        tp = arr_tgt_playlists['playlist_id'].values
 
-        for i in self.arr_tgt_playlists:
-            r_urm_mat = self.sp_urm_mat.getrow(i)
+        for i in tp:
+            r_urm_mat = sp_urm_mat.getrow(i)
             r_pred_mat = sp_pred_mat.getrow(i)
             _, c_urm_mat_i = r_urm_mat.nonzero()
 
@@ -62,9 +43,7 @@ class ElectionMethods:
 
     @staticmethod
     def borda_count(recommendations_array, weights_array, N=10):
-
         ''' given an array of result matrices, compute only one result matrix using the borda count voting methodology
-
                         param_name          | type                   | description
 
                 in:     res_matrices_array  | array of matrices      | array of result matrices from various methodology
@@ -74,9 +53,7 @@ class ElectionMethods:
                 out:    res_matrix          | (numpy matrix)         | matrix [tgt_playlist.lenght, n+1] for each playlist to predict it
                                                                         gives n tracks first column is the id of the playlist
                                                                         the remaining the id of the tracks
-
         '''
-
         n_res_matrix = np.zeros((1, N + 1))
 
         res = np.ndarray(shape=(1, N+1))
