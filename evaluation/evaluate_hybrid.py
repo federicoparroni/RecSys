@@ -5,10 +5,17 @@ from election_methods import ElectionMethods
 from helpers.manage_dataset.export import Export
 import numpy as np
 
-als_res = Import.importCsv('../submissions/als.csv')
-bm25_res= Import.importCsv('../submissions/bm25.csv')
 
-res = ElectionMethods.borda_count([als_res, bm25_res], [0.5, 0.5])
+bm25_res_1 = Import.importCsv('../submissions/1.csv')
+bm25_res_2 = Import.importCsv('../submissions/2.csv')
+bm25_res_3 = Import.importCsv('../submissions/3.csv')
+#bm25_res_4 = Import.importCsv('../submissions/4.csv')
+#bm25_res_5 = Import.importCsv('../submissions/5.csv')
+
+
+
+res = ElectionMethods.borda_count([bm25_res_1, bm25_res_2, bm25_res_3],
+                                  [0.3, 0.3, 0.3])
 
 # load URM test MAP matrix
 test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')

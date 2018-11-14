@@ -11,19 +11,22 @@ urm:              CSR matrix
 @Output
 reccomendations:  list of reccomendation for target playlists (user ids)
 """
-def array_of_recommendations(model, target_user_ids, urm, verbose=True):
+def array_of_recommendations(model, target_user_ids, urm, include_scores=False, verbose=True):
     # build recommendations array
     recommendations = []
     k=1
     L=len(target_user_ids)
     for userId in target_user_ids:
-      rec = model.recommend(userid=userId, user_items=urm, N=10)
-      r,scores = zip(*rec)    # zip recommendations and scores
-      recommendations.append([userId] + [j for j in r])   # create a row: userId | rec1, rec2, rec3, ...
+        rec = model.recommend(userid=userId, user_items=urm, N=10)
+        if include_scores:
+            recommendations.append([userId, rec])
+        else:
+            r,scores = zip(*rec)    # zip recommendations and scores
+            recommendations.append([userId] + [j for j in r] + [-1 for add_missing in range(10-len(r))])   # create a row: userId | rec1, rec2, rec3, ...
 
-      if verbose:
-        printProgressBar(k, L, prefix = 'Building recommendations:', length = 40)
-      k+=1
+        if verbose:
+            printProgressBar(k, L, prefix = 'Building recommendations:', length = 40)
+        k+=1
 
     return recommendations
 

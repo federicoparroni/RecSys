@@ -17,7 +17,7 @@ print('> data loaded')
 
 # initialize a model (BM25 metric)
 
-model = implicit.nearest_neighbours.BM25Recommender(K=100, K1=0.8, B=0.3)
+model = implicit.nearest_neighbours.BM25Recommender(K=400, K1=1.5, B=0.3)
 
 # train the model on a sparse matrix of item/user/confidence weights
 model.fit(item_user_data)
