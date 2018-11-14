@@ -4,19 +4,21 @@ import time
 
 
 class Export:
-
-    ''' Save a np matrix into a csv file ready for submission
-
-    in:     np-matrix (#playlist x 10)
-    in:     path: where to save the csv
-    in:     name: of the csv
-
-    out:    -
-
-    '''
+    """
+    Exposes methods to save recommendations array to a csv file
+    """
 
     @staticmethod
-    def export(np_matrix, path, name, fieldnames=['playlist_id', 'track_ids']):
+    def export(recs, path, name, fieldnames=['playlist_id', 'track_ids']):
+        ''' Save a np matrix of recommendations into a csv file ready for submission
+        in:     recs: np-matrix (#playlist x 10) or list of:(playlist, list of:(track_id, score))
+        in:     path: where to save the csv
+        in:     name: of the csv
+
+        out:    -
+        '''
+
+        np_matrix = np.array(recs)
         name = '{}{}'.format(name, time.strftime('%d-%m-%Y %H_%M_%S.csv'))
         filepath = '{}{}'.format(path, name) 
         with open(filepath, "w") as csv_file:
@@ -27,6 +29,31 @@ class Export:
 
             for l in result:
                 writer.writerow(l)
+        print('> Submission file created: {}'.format(filepath))
+
+
+    @staticmethod
+    def export_with_scores(recs, path, name, fieldnames=['playlist_id', 'track_ids']):
+        ''' Save a list of recommendations and scores into a csv file
+        in:     recs: list of:(playlist, list of:(track_id, score))
+        in:     path: where to save the csv
+        in:     name: of the csv
+
+        out:    -
+        '''
+        name = '{}_scores_{}'.format(name, time.strftime('%d-%m-%Y %H_%M_%S.csv'))
+        filepath = '{}{}'.format(path, name) 
+        with open(filepath, "w") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(fieldnames)
+
+            for row in recs:
+                track_id = row[0]
+                tracks_ids_scores = ['{}:{}'.format(r,s) for r,s in row[1]]
+                line = ' '.join(tracks_ids_scores)
+                
+                writer.writerow([track_id, line])
+        
         print('> Submission file created: {}'.format(filepath))
 
 
