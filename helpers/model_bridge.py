@@ -18,9 +18,8 @@ def array_of_recommendations(model, target_user_ids, urm, verbose=True):
     L=len(target_user_ids)
     for userId in target_user_ids:
       rec = model.recommend(userid=userId, user_items=urm, N=10)
-      r,scores = zip(*rec)    # zip recommendations and scores
-      recommendations.append([userId] + [j for j in r])   # create a row: userId | rec1, rec2, rec3, ...
-
+      r, scores = zip(*rec)    # zip recommendations and scores
+      recommendations.append([userId] + [j for j in r] + [-1 for a in range(10-len(r))])   # create a row: userId | rec1, rec2, rec3, ...
       if verbose:
         printProgressBar(k, L, prefix = 'Building recommendations:', length = 40)
       k+=1
