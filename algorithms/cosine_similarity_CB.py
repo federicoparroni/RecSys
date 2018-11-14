@@ -5,8 +5,7 @@ from matrix import M
 from scipy.sparse import load_npz
 from helpers.model_bridge import get_best_n_ratings
 from helpers.export import Export
-from scipy import sparse
-
+from helpers.matrix_knn import getKnn
 # ===============================================
 
 class CosineSimilarityCB:
@@ -34,12 +33,11 @@ class CosineSimilarityCB:
 
         print('set diag 0')
 
-        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
+        # CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
 
         print('matrix normalized')
 
-        m = M()
-        sp_sim_matrix_knn = m.create_Sknn(sp_sim_matrix, k=knn)
+        sp_sim_matrix_knn = getKnn(sp_sim_matrix, k=knn)
 
         print('knn done')
 
@@ -104,7 +102,7 @@ sp_urm = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
 print('loaded matrices')
 
-sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, shrink_term=30)
+sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, knn=1, shrink_term=30)
 print('computed estimated ratings')
 
 bestn = get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
