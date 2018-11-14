@@ -22,7 +22,7 @@ def array_of_recommendations(model, target_user_ids, urm, include_scores=False, 
             recommendations.append([userId, rec])
         else:
             r,scores = zip(*rec)    # zip recommendations and scores
-            recommendations.append([userId] + [j for j in r])   # create a row: userId | rec1, rec2, rec3, ...
+            recommendations.append([userId] + [j for j in r] + [-1 for add_missing in range(10-len(r))])   # create a row: userId | rec1, rec2, rec3, ...
 
         if verbose:
             printProgressBar(k, L, prefix = 'Building recommendations:', length = 40)
