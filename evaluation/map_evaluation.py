@@ -17,7 +17,8 @@ def evaluate_map(recc, test_urm, at=10):
             if i[j] in row:
                 n_elems_found += 1
                 ap += n_elems_found/j
-        ap /= m
-        aps.append(ap)
+        if m:
+            ap /= m
+            aps.append(ap)
 
     return sum(aps)/len(recc)
