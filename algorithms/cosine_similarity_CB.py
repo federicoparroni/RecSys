@@ -1,10 +1,5 @@
 import numpy as np
 import math
-from data import Data
-from matrix import M
-from scipy.sparse import load_npz
-from helpers.model_bridge import get_best_n_ratings
-from helpers.export import Export
 from helpers.matrix_knn import getKnn
 # ===============================================
 
@@ -27,23 +22,13 @@ class CosineSimilarityCB:
 
         sp_sim_matrix = sp_icm * sp_icm.transpose()
 
-        print('sim matrix computed')
-
         sp_sim_matrix.setdiag(0)
 
-        print('set diag 0')
-
-        # CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
-
-        print('matrix normalized')
+        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
 
         sp_sim_matrix_knn = getKnn(sp_sim_matrix, k=knn)
 
-        print('knn done')
-
         sp_pred_m = sp_rat_m * sp_sim_matrix_knn
-
-        print('pred mat done')
 
         return sp_pred_m
 
@@ -86,8 +71,6 @@ class CosineSimilarityCB:
 
         l2_vect = CosineSimilarityCB.sp_matrix_l2_norm_rows(sp_sim_matrix)
 
-        print('calcualted normalization terms')
-
         r_i, c_i = sp_sim_matrix.nonzero()
         for i in range(len(r_i)):
             k = r_i[i]
@@ -95,18 +78,18 @@ class CosineSimilarityCB:
             sp_sim_matrix[k, l] = (sp_sim_matrix[k, l]/(l2_vect[k]*l2_vect[l]+shrink_term))
 
 
-d = Data()
-m = M()
-
-sp_urm = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
-sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
-print('loaded matrices')
-
-sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, knn=1, shrink_term=30)
-print('computed estimated ratings')
-
-bestn = get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
-print('got the best n ratings for the target playlists')
-
-Export.export(np.array(bestn), path='../Hace/submissions/', name='content_based')
-print('exported')
+# d = Data()
+# m = M()
+#
+# sp_urm = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
+# sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
+# print('loaded matrices')
+#
+# sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, knn=10, shrink_term=30)
+# print('computed estimated ratings')
+#
+# bestn = get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
+# print('got the best n ratings for the target playlists')
+#
+# Export.export(np.array(bestn), path='../Hace/submissions/', name='content_based')
+# print('exported')

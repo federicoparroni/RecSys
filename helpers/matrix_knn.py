@@ -1,7 +1,6 @@
 import numpy as np
 
 def getKnn(A, k = 10):
-
     """
     given a sparse csr matrix A, gets back the same matrix but keeping for each row just the k greatest values and
     setting the rest to 0
