@@ -1,0 +1,3 @@
+[submodule "implicit"]
+	path = implicit
+	url = https://github.com/benfred/implicit.git
