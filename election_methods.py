@@ -88,8 +88,8 @@ class ElectionMethods:
             temp = np.zeros(N_TRACKS)
             for j in range(len(recommendations_array)): #cycle between matrices
                 weight = weights_array[j]
+                h = N
                 for k in recommendations_array[j][i, 1:]: #cycle between columns
-                    h = N
                     temp[k] += h * weight
                     h -= 1
             sp_temp = csr_matrix(temp)
