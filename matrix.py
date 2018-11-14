@@ -25,31 +25,3 @@ class M:
             icm[df.iloc[i, 0], df.iloc[i, 1]] = 1
             icm[df.iloc[i, 0], df.iloc[i, 2]] = 1
         return icm
-
-    ''' create the S_knn matrix from original S
-
-                param_name  | type         | description
-
-        in:     s_matrix    | (csr_matrix) | sparse item similarity matrix in CSR format
-        in:     k           | int          | first K nearest neighbour
-        -----------------------------------------------------
-        out:    sknn_matrix | (csr_matrix) | Sknn matrix
-
-    '''
-    def create_Sknn(self, s_matrix, k=-1):
-        if k == -1:
-            return s_matrix
-        else:
-            sknn_matrix = scipy.sparse.csr_matrix((s_matrix.shape[0], s_matrix.shape[1]), dtype=np.float64)
-            for i in range(0, s_matrix.shape[0]):
-                r = s_matrix.getrow(i)
-                nonzeros = r.nonzero()
-                nonzeros_count = len(nonzeros[1])
-
-                # get the max of each row k times and set that to 0
-                for n in range(0, min(nonzeros_count, k)):
-                    index = r.argmax()
-                    sknn_matrix[i, index] = s_matrix[i, index]
-                    r[0, index] = 0
-
-            return sknn_matrix
