@@ -33,7 +33,7 @@ class Export:
 
 
     @staticmethod
-    def export_with_scores(recs, path, name, fieldnames=['playlist_id', 'track_ids']):
+    def export_with_scores(recs, path, name, fieldnames=['playlist_id', 'track_ids_and_scores']):
         ''' Save a list of recommendations and scores into a csv file
         in:     recs: list of:(playlist, list of:(track_id, score))
         in:     path: where to save the csv
