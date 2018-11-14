@@ -8,8 +8,8 @@ class Export:
     ''' Save a np matrix into a csv file ready for submission
 
     in:     np-matrix (#playlist x 10)
-    in:     (optional) path: where to save the csv
-    in:     (optional) name: of the csv
+    in:     path: where to save the csv
+    in:     name: of the csv
 
     out:    -
 

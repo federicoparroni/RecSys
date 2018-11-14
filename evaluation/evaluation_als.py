@@ -1,7 +1,7 @@
 from scipy.sparse import load_npz
 from data import Data
 import implicit
-from helpers import model_bridge as M
+from helpers import model_bridge as bridge
 from evaluation.map_evaluation import evaluate_map
 
 """
@@ -33,7 +33,7 @@ def evaluate_als(epochs=[5, 10, 15, 20, 25, 30, 50, 70, 100, 150, 200, 250, 300,
 
         model = implicit.als.AlternatingLeastSquares(factors=150, iterations=e)
         model.fit(item_user_data)
-        recommendations = M.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
+        recommendations = bridge.array_of_recommendations(model, target_user_ids=targetUsersIds, urm=URM)
     
         map10 = evaluate_map(recommendations, test_urm)
         evaluations.append((e, map10))

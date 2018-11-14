@@ -1,7 +1,6 @@
 import numpy as np
 import csv
 
-
 class Import:
 
     ''' Import a csv file as np array
@@ -13,14 +12,14 @@ class Import:
     '''
 
     @staticmethod
-    def importCsv(filename, fieldnames=['playlist_id', 'track_ids']):
+    def importCsv(filename, skip_first_row=True):
         with open(filename, 'r') as csv_file:
             writer = csv.reader(csv_file)
             result = np.array([])
 
             j = 0
             for row in writer:
-                if len(fieldnames)>0 and j != 0:
+                if skip_first_row and j != 0:
                     r = np.array([[row[0]] + row[1].split(' ')])
                     r = r.astype(np.int32)
 

@@ -1,6 +1,11 @@
 import numpy as np
+import math
+from data import Data
 from matrix import M
-
+from scipy.sparse import load_npz
+from helpers.model_bridge import get_best_n_ratings
+from helpers.export import Export
+from helpers.matrix_knn import getKnn
 # ===============================================
 
 class CosineSimilarityCB:
@@ -28,12 +33,11 @@ class CosineSimilarityCB:
 
         print('set diag 0')
 
-        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
+        # CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
 
         print('matrix normalized')
 
-        m = M()
-        sp_sim_matrix_knn = m.create_Sknn(sp_sim_matrix, k=knn)
+        sp_sim_matrix_knn = getKnn(sp_sim_matrix, k=knn)
 
         print('knn done')
 
@@ -60,13 +64,9 @@ class CosineSimilarityCB:
         l2_vector = np.empty(shape=(sp_matrix.shape[0], 1))
         for i in range(sp_matrix.shape[0]):
             r = sp_matrix.getrow(i)
-            _, col_ind = r.nonzero()
-            temp = np.empty(shape=(1, col_ind.size))
-            for j in col_ind:
-                count = 0
-                temp[0, count] = r[0, j]
-                count += 1
-            l2_vector[i] = np.linalg.norm(temp)
+            r_t = r.transpose()
+            temp = r*r_t
+            l2_vector[i] = math.sqrt(temp[0, 0])
         return l2_vector
 
 
@@ -95,14 +95,18 @@ class CosineSimilarityCB:
             sp_sim_matrix[k, l] = (sp_sim_matrix[k, l]/(l2_vect[k]*l2_vect[l]+shrink_term))
 
 
-"""
-#test normalize_sp_sim_matrix
+d = Data()
+m = M()
+
+sp_urm = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
 sp_icm = load_npz('../dataset/saved_matrices/sp_icm.npz')
+print('loaded matrices')
 
-sp_icm_t = sp_icm.transpose()
-sp_sim_matrix = sp_icm * sp_icm_t
-CosineSimilarity.normalize_sp_sim_matrix(sp_sim_matrix)
-a= 5
-"""
+sp_pred_mat1 = CosineSimilarityCB.predict(sp_icm, sp_urm, knn=1, shrink_term=30)
+print('computed estimated ratings')
 
+bestn = get_best_n_ratings(sp_pred_mat1, d.target_playlists_df, sp_urm)
+print('got the best n ratings for the target playlists')
 
+Export.export(np.array(bestn), path='../Hace/submissions/', name='content_based')
+print('exported')
