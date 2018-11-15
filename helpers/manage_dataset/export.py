@@ -25,10 +25,15 @@ class Export:
             writer = csv.writer(csv_file)
             writer.writerow(fieldnames)
 
-            result = np.apply_along_axis(get_playlist_id_and_track_ids, axis=1, arr=np_matrix.astype(int))
+            # result = np.apply_along_axis(get_playlist_id_and_track_ids, axis=1, arr=np_matrix.astype(int))
+            for l in np_matrix.astype(int):
+                line = get_playlist_id_and_track_ids(l)
+                writer.writerow(line)
 
-            for l in result:
-                writer.writerow(l)
+            # for l in result:
+            #     if l[0]=='77':
+            #         a=1
+            #     writer.writerow(l)
         print('> Submission file created: {}'.format(filepath))
 
 
@@ -58,6 +63,10 @@ class Export:
 
 
 def get_playlist_id_and_track_ids(row):
+    if row[0] == 77:
+        print('a')
     playlist_id = row[0]
+    if len(row) != 11:
+        print('aaa')
     track_ids = ' '.join(map(str, row[1:]))
     return [playlist_id, track_ids]
