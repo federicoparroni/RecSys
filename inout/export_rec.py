@@ -108,8 +108,8 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
 
 
 ## test
-r=importcsv('submissions/collaborative_BM25_scores_14-11-2018 11_48_06.csv', with_scores=True, check_len=8)
-print('ok')
-
-exportcsv(r, 'testsub', 'test', with_scores=True, check_len=10)
-print('ok')
+# r=importcsv('submissions/collaborative_BM25_scores_14-11-2018 11_48_06.csv', with_scores=True, check_len=8)
+# print('ok')
+#
+# exportcsv(r, 'testsub', 'test', with_scores=True, check_len=10)
+# print('ok')

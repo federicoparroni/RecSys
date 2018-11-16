@@ -2,7 +2,7 @@ from scipy.sparse import load_npz
 from data import Data
 import numpy as np
 import implicit # The Cython library
-from io.export_rec import Export
+from inout.export_rec import Export
 
 
 """ Implementation of Alternating Least Squares with implicit data. We iteratively

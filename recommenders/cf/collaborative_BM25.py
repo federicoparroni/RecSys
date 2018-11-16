@@ -4,7 +4,7 @@ import implicit
 from implicit.evaluation import mean_average_precision_at_k
 from evaluation.map_evaluation import evaluate_map
 from recommenders import model_bridge as bridge
-from io.export_rec import Export
+from inout.export_rec import Export
 import pandas as pd
 
 

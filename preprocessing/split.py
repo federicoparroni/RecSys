@@ -1,5 +1,3 @@
-import numpy as np
-
 class Split:
     """
         split the data frame coming from the process_interactions phase and splits it
@@ -36,8 +34,4 @@ class SplitRandom(Split):
         @Output
         df:             the dataframe from which we have removed the picked songs
         """
-        self.df = df
-        for row in self.df.values:
-            if np.random.binomial(size=3, n=1, p=self.perc)[0]:
-                self.df = self.df.drop(row)
-        return self.df
+        return df.drop(df.sample(frac=self.perc).index)
