@@ -43,12 +43,15 @@ in:     df_tgt_playlists   | pd's dataframe | target playlists
 out:    n_res_matrix | (numpy matrix) | matrix [tgt_playlist.lenght, n+1] for each playlist to predict it gives n tracks
                                             first column is the id of the playlist the remaining the id of the track
 """
-def get_best_n_ratings(sp_pred_mat, arr_tgt_playlists, sp_urm_mat, n=10):
+def get_best_n_ratings(sp_pred_mat, arr_tgt_playlists, sp_urm_mat, n=10, verbose=True):
+    sp_pred_mat = sp_pred_mat.tocsr()
     n_res_matrix = np.zeros((1, n+1))
     res = np.ndarray(shape=(1, n+1))
     n_res = np.array(res)
     tp = arr_tgt_playlists['playlist_id'].values
 
+    L=len(tp)
+    k=1
     for i in tp:
         r_urm_mat = sp_urm_mat.getrow(i)
         r_pred_mat = sp_pred_mat.getrow(i).todense()
@@ -64,5 +67,9 @@ def get_best_n_ratings(sp_pred_mat, arr_tgt_playlists, sp_urm_mat, n=10):
             r_pred_mat[0, c] = 0
         n_res[0, 0] = i
         n_res_matrix = np.concatenate((n_res_matrix, n_res))
+
+        if verbose:
+            printProgressBar(k, L, prefix = 'Building recommendations:', length=24)
+        k+=1
     n_res_matrix = n_res_matrix[1:, :]
     return n_res_matrix.tolist()
