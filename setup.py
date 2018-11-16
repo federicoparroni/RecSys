@@ -18,6 +18,8 @@ setuptools.setup(
         'numpy',
         'pandas',
         'scipy',
-        'similaripy'
+        'similaripy',
+        'humanfriendly',
+        'coloredlogs'
     ]
 )
