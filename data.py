@@ -34,4 +34,3 @@ class Data:
 
         self.our_train_df = pd.read_csv(our_train_path)
         self.playlists_df.columns = ['playlist_id', 'track_id']
-
