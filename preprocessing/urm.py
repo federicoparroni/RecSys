@@ -42,14 +42,14 @@ def create_urms(proc_int, split):
 def _save(df, df_train, folder_path):
     urm = _create_urm(df)
     sp_urm = csr_matrix(urm)
-    save_npz(folder_path + 'urm', sp_urm)
+    save_npz(folder_path + '/urm', sp_urm)
 
     urm_train = _create_urm(df_train)
     sp_urm_train = csr_matrix(urm_train)
-    save_npz(folder_path + 'urm_train', sp_urm)
+    save_npz(folder_path + '/urm_train', sp_urm)
 
     sp_urm_MAP = sp_urm - sp_urm_train
-    save_npz(folder_path + 'urm_test', sp_urm_MAP)
+    save_npz(folder_path + '/urm_test', sp_urm_MAP)
 
 
 def _create_urm(df):
