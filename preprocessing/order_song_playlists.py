@@ -1,7 +1,10 @@
 import csv
 
-# takes an the original_csv training set and order the playlists according with the
-# the ordered playlists contained in new_ordered_train
+"""
+    from the new order of songs given just for the target playlists, creates a 
+    new csv with the order of songs which is respected for the target playlists
+    (specified in the new_ordered_train.csv file)
+"""
 
 with open('./../raw_data/train.csv') as f:
     with open('./../raw_data/train_sequential.csv') as csv_file:

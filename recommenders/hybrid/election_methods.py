@@ -8,7 +8,7 @@ class ElectionMethods:
         ''' given an array of result matrices, compute only one result matrix using the borda count voting methodology
                         param_name          | type                   | description
 
-                in:     res_matrices_array  | array of matrices      | array of result matrices from various methodology
+                :param recommendations_array  | array of matrices      | array of result matrices from various methodology
                         n                   | int                    | number of tracks to which gives points (length of recommendation list)
 
                 ----------------------------------------------------------
