@@ -24,7 +24,7 @@ class CosineSimilarityCB:
 
         sp_sim_matrix.setdiag(0)
 
-        # CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
+        CosineSimilarityCB.normalize_sp_sim_matrix(sp_sim_matrix, shrink_term)
 
         sp_sim_matrix_knn = getKnn(sp_sim_matrix, k=knn)
 

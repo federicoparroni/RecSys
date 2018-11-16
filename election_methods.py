@@ -82,7 +82,4 @@ class ElectionMethods:
             
             n_res_matrix.append(n_res)
 
-        # remove first row
-        n_res_matrix.pop(0)
-
         return n_res_matrix

@@ -20,6 +20,6 @@ def evaluate_CB(shrink = [0, 1, 2, 3, 4, 5], knn = [10, 20, 30, 40, 50, 60, 70, 
             map = evaluate_map(bestn, sp_test_urm)
             print('map with shrink={}, knn={}: {}'.format(s, k, map))
 
-    Export.export(bestn, path='../Hace/submissions/', name='CB_0034')
+    Export.export(bestn, path='../submissions/', name='CB_0034')
 
 evaluate_CB(shrink = [56], knn=[110])
