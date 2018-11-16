@@ -1,8 +1,8 @@
 from scipy.sparse import load_npz
 from evaluation.map_evaluation import evaluate_map
-from io.import_rec import Import
+from inout.import_rec import Import
 from recommenders.hybrid.election_methods import ElectionMethods
-from io.export_rec import Export
+from inout.export_rec import Export
 import numpy as np
 
 
