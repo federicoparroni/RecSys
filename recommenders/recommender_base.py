@@ -4,16 +4,7 @@ class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
 
     @abstractmethod
-    def fit(self, matrix):
-        """
-        Trains the model on a sparse matrix
-
-        Parameters
-        ----------
-        :param matrix : csr_matrix
-            A matrix on which train the model.
-            It could be, for example, a URM or ICM, depending on the type of algorithm.
-        """
+    def fit(self):
         pass
 
     @abstractmethod
