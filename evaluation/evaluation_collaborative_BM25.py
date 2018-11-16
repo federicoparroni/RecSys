@@ -1,10 +1,9 @@
 from scipy.sparse import load_npz
 from data import Data
 import implicit
-from helpers import model_bridge as M
+from recommenders import model_bridge as M
 from evaluation.map_evaluation import evaluate_map
 import numpy as np
-from helpers.export import Export
 
 K = [30, 70, 150, 250, 300, 400]
 K1 = np.arange(0.1, 1.1, 0.1)
@@ -20,11 +19,11 @@ def evaluate_collaborative_BM25(K, K1, B, verbose=True):
     all_id = d.all_playlists['playlist_id'].values
 
     # get item_user matrix by transposing the URM matrix
-    URM = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
+    URM = load_npz('../raw_data/matrices/sp_urm_train_MAP.npz')
     item_user_data = URM.transpose()
 
     # load URM test MAP matrix
-    test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
+    test_urm = load_npz('../raw_data/matrices/sp_urm_test_MAP.npz')
     print('> data loaded')
 
     for k in K:
@@ -59,11 +58,11 @@ def evaluate_collaborative_cosine_recommender(verbose=True):
     all_playlists = d.all_playlists['playlist_id'].values
 
     # get item_user matrix by transposing the URM matrix
-    URM = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
+    URM = load_npz('../raw_data/matrices/sp_urm_train_MAP.npz')
     item_user_data = URM.transpose()
 
     # load URM test MAP matrix
-    test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
+    test_urm = load_npz('../raw_data/matrices/sp_urm_test_MAP.npz')
     print('> data loaded')
 
 

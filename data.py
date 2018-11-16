@@ -4,19 +4,19 @@ class Data:
 
     def __init__(self):
         # || track_id || album_id || artist_id || duration_sec
-        tracks_path = '../dataset/tracks.csv'
+        tracks_path = '../raw_data/tracks.csv'
 
         # || playlist_id || track_id ||
-        playlists_path = '../dataset/train.csv'
+        playlists_path = '../raw_data/train.csv'
 
         # || playlist_id || track_id ||
-        our_train_path = '../dataset/our_train.csv'
+        our_train_path = '../raw_data/our_train.csv'
 
         # || playlist_id ||
-        target_playlists_path = '../dataset/target_playlists.csv'
+        target_playlists_path = '../raw_data/target_playlists.csv'
 
         # || all playlist_id ||
-        all_playlists_path = '../dataset/all_playlist.csv'
+        all_playlists_path = '../raw_data/all_playlist.csv'
 
         #creating dataframe with pandas
         self.tracks_df = pd.read_csv(tracks_path)

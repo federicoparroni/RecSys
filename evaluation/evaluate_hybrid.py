@@ -1,8 +1,8 @@
 from scipy.sparse import load_npz
 from evaluation.map_evaluation import evaluate_map
-from helpers.manage_dataset.import_csv import Import
-from election_methods import ElectionMethods
-from helpers.manage_dataset.export import Export
+from io.import_rec import Import
+from recommenders.hybrid.election_methods import ElectionMethods
+from io.export_rec import Export
 import numpy as np
 
 
@@ -14,7 +14,7 @@ res = ElectionMethods.borda_count([res_2],
                                   [0.5])
 
 # load URM test MAP matrix
-test_urm = load_npz('../dataset/saved_matrices/sp_urm_MAP_test.npz')
+test_urm = load_npz('../raw_data/matrices/urm_test.npz')
 print('> data loaded')
 
 map10 = evaluate_map(res, test_urm)

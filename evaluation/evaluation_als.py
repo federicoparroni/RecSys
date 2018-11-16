@@ -1,7 +1,7 @@
 from scipy.sparse import load_npz
 from data import Data
 import implicit
-from helpers import model_bridge as bridge
+from recommenders import model_bridge as bridge
 from evaluation.map_evaluation import evaluate_map
 
 """
@@ -19,10 +19,10 @@ def evaluate_als(epochs, factors, verbose=True):
     targetUsersIds = d.target_playlists_df['playlist_id'].values
 
     # load URM test MAP matrix
-    test_urm = load_npz('../dataset/saved_matrices/sp_urm_test_MAP.npz')
+    test_urm = load_npz('../raw_data/matrices/sp_urm_test_MAP.npz')
 
     # get item_user matrix by transposing the URM matrix
-    URM = load_npz('../dataset/saved_matrices/sp_urm_train_MAP.npz')
+    URM = load_npz('../raw_data/matrices/sp_urm_train_MAP.npz')
     item_user_data = URM.transpose()
 
     evaluations=[]
