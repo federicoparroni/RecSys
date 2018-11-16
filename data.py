@@ -1,3 +1,7 @@
+"""
+Provides a quick access to the dataset and saved matrices
+"""
+
 import pandas as pd
 from scipy.sparse import load_npz
 
@@ -28,7 +32,7 @@ _urm_train = None
 _urm_test = None
 _icm = None
 
-#pandas rame
+#pandas frame
 _tracks_df = None
 _playlists_df = None
 
@@ -94,7 +98,5 @@ def get_target_playlists():
 def get_all_playlists():
     global _all_playlists
     if _all_playlists is None:
-        _all_playlists = []
-        for i in range(N_PLAYLISTS):
-            _all_playlists.append(i)
+        _all_playlists = [p for p in range(N_PLAYLISTS)]
     return _all_playlists
