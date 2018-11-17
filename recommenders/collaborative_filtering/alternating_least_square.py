@@ -2,7 +2,6 @@ from scipy.sparse import load_npz
 import data
 import numpy as np
 import implicit # The Cython library
-from inout import export_rec
 from recommenders.recommender_base import RecommenderBase
 
 class AlternatingLeastSquare(RecommenderBase):
@@ -43,7 +42,7 @@ class AlternatingLeastSquare(RecommenderBase):
         sparse_item_user = self.urm.T
 
         # Initialize the als model and fit it using the sparse item-user matrix
-        self.model = implicit.als.AlternatingLeastSquares(factors=factors,
+        self._model = implicit.als.AlternatingLeastSquares(factors=factors,
                                                           regularization=regularization,
                                                           iterations=iterations)
 
@@ -51,11 +50,11 @@ class AlternatingLeastSquare(RecommenderBase):
         data_conf = (sparse_item_user*alpha_val).astype('double')
 
         # Fit the model
-        self.model.fit(data_conf)
+        self._model.fit(data_conf)
 
         # set the user and item vectors for our model R = user_vecs * item_vecs.T
-        self.user_vecs = self.model.user_factors
-        self.item_vecs = self.model.item_factors
+        self.user_vecs = self._model.user_factors
+        self.item_vecs = self._model.item_factors
 
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[]):

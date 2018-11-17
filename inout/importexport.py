@@ -35,7 +35,7 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
 
         for row in recs:
             playlist_id = row[0]
-            tracks_array = row[1]
+            tracks_array = row[1:]
             # check correct number of recommendations
             _check_len(len(tracks_array), check_len)
             
@@ -98,12 +98,11 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
                     for id_score in tracks_array:
                         curr_id_score_pair = id_score.split(':')
                         r.append( (int(curr_id_score_pair[0]),float(curr_id_score_pair[1])) )
-                    result.append( (playlist_id, r) )
+                    result.append( [playlist_id] + r )
                 else:
-                    r = ( playlist_id, list(map(int,tracks_array)) ) # cast from str to int 
+                    r = [playlist_id] + list(map(int,tracks_array)) ) # cast from str to int 
                     result.append(r)
             else:
                 j+=1
     return result
-
 
