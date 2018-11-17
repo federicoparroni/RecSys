@@ -78,4 +78,38 @@ class AlternatingLeastSquare(RecommenderBase):
 
         return ranking
 
+    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[],
+                        verbose=False):
+        """
+        look for comment on superclass method
+        """
+        # compute the scores using the dot product
+        user_profile_batch = self.urm[userids]
+
+        scores_array = np.dot(self.user_vecs[userids], self.item_vecs.T)
+
+        # To exclude seen items perform a boolean indexing and replace their score with -inf
+        # Seen items will be at the bottom of the list but there is no guarantee they'll NOT be
+        # recommended
+        if filter_already_liked:
+            scores_array[user_profile_batch.nonzero()] = -np.inf
+
+        ranking = np.zeros((scores_array.shape[0], N), dtype=np.int)
+
+        for row_index in range(scores_array.shape[0]):
+            scores = scores_array[row_index]
+
+            relevant_items_partition = (-scores).argpartition(N)[0:N]
+            relevant_items_partition_sorting = np.argsort(-scores[relevant_items_partition])
+            ranking[row_index] = relevant_items_partition[relevant_items_partition_sorting]
+        """
+        add target id in a way that recommendations is a list as follows
+        [ [playlist1_id, id1, id2, ....., id10], ...., [playlist_id2, id1, id2, ...] ]
+        """
+        np_target_id = np.array(userids)
+        target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
+        recommendations = np.concatenate((target_id_t, ranking), axis=1)
+
+        return recommendations
+
 
