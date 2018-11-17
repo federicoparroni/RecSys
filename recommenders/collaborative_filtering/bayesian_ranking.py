@@ -3,7 +3,7 @@ import implicit
 from scipy.sparse import load_npz
 from data import Data
 from recommenders import model_bridge as bridge
-from io.export_rec import Export
+from inout.export_rec import Export
 from evaluation import map_evaluation
 
 # load data

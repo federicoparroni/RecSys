@@ -2,7 +2,7 @@ from scipy.sparse import load_npz
 from recommenders.model_bridge import get_best_n_ratings
 from recommenders.cosine_similarity_CB import CosineSimilarityCB
 from evaluation.map_evaluation import evaluate_map
-from io.export_rec import Export
+from inout.export_rec import Export
 import pandas as pd
 
 def evaluate_CB(shrink = [0, 1, 2, 3, 4, 5], knn = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]):
