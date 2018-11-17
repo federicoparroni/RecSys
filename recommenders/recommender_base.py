@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import utils.log as log
+import numpy as np
 
 class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
@@ -115,3 +116,13 @@ class RecommenderBase(ABC):
                 aps += ap
 
         return aps/len(recommendations)
+
+
+    def _insert_userids_as_first_col(self, userids, recommendations):
+        """
+        Add target id in a way that recommendations is a list as follows
+        [ [playlist1_id, id1, id2, ....., id10], ...., [playlist_id2, id1, id2, ...] ]
+        """
+        np_target_id = np.array(userids)
+        target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
+        return np.concatenate((target_id_t, recommendations), axis=1)
