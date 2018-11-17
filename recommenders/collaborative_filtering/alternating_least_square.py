@@ -1,8 +1,7 @@
-from scipy.sparse import load_npz
-import data
 import numpy as np
 import implicit # The Cython library
 from recommenders.recommender_base import RecommenderBase
+
 
 class AlternatingLeastSquare(RecommenderBase):
 

@@ -3,7 +3,7 @@ import data as d
 import time
 import os
 
-def evaluate_als(factors_array, regularization_array, iterations_array, alpha_val_array, userids,
+def validate_als(factors_array, regularization_array, iterations_array, alpha_val_array, userids,
                  urm_train, urm_test, filter_already_liked=True, items_to_exclude=[], N=10,
                  verbose=True, write_on_file=True):
     """
@@ -28,7 +28,7 @@ def evaluate_als(factors_array, regularization_array, iterations_array, alpha_va
     #create the initial model
     recommender = AlternatingLeastSquare(urm_train)
 
-    path = 'validation/'
+    path = 'validation_results/'
     name = 'als'
     folder = time.strftime('%d-%m-%Y')
     filename = '{}/{}/{}{}.csv'.format(path, folder, name, time.strftime('_%H-%M-%S'))
@@ -56,7 +56,7 @@ def evaluate_als(factors_array, regularization_array, iterations_array, alpha_va
                         if verbose:
                             print('map@10: {}'.format(map10))
 
-                        #write on external files on folder validation
+                        #write on external files on folder models_validation
                         if write_on_file:
                             out.write('\n\nFactors: {}\n Regulatization: {}\n Iterations: {}\n '
                                       'Alpha_val: {}\n evaluation map@10: {}'.format(f, r, i, a, map10))
