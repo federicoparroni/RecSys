@@ -49,7 +49,7 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
 
             else:               # export without the scores
                 # TO-DO: check if row[1:] are tuples with 2 elements or not
-                track_ids_str = ' '.join(map(str, row[1][1:]))
+                track_ids_str = ' '.join(map(str, row[1:]))
                 writer.writerow([playlist_id, track_ids_str])
             
     print('> Submission file created: {}'.format(filename))
@@ -100,7 +100,7 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
                         r.append( (int(curr_id_score_pair[0]),float(curr_id_score_pair[1])) )
                     result.append( [playlist_id] + r )
                 else:
-                    r = [playlist_id] + list(map(int,tracks_array)) ) # cast from str to int 
+                    r = [playlist_id] + list(map(int,tracks_array)) # cast from str to int
                     result.append(r)
             else:
                 j+=1

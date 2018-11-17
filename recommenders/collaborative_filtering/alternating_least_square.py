@@ -88,9 +88,11 @@ class AlternatingLeastSquare(RecommenderBase):
 
         scores_array = np.dot(self.user_vecs[userids], self.item_vecs.T)
 
-        # To exclude seen items perform a boolean indexing and replace their score with -inf
-        # Seen items will be at the bottom of the list but there is no guarantee they'll NOT be
-        # recommended
+        """
+        To exclude already_liked items perform a boolean indexing and replace their score with -inf
+        Seen items will be at the bottom of the list but there is no guarantee they'll NOT be
+        recommended
+        """
         if filter_already_liked:
             scores_array[user_profile_batch.nonzero()] = -np.inf
 

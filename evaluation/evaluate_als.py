@@ -1,8 +1,8 @@
 from scipy.sparse import load_npz
-from data import Data
+import data as d
 import implicit
 from recommenders import model_bridge as bridge
-from evaluation.map_evaluation import evaluate_map
+
 
 """
 Return the MAP10 evaluation for the specified epochs
@@ -47,4 +47,4 @@ def evaluate_als(epochs, factors, verbose=True):
     return evaluations
 
 
-evaluate_als([], [600])
+a = d.get_all_playlists()
