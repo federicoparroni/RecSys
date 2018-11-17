@@ -15,13 +15,13 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
 
     Parameters
     ----------
-    recs:               list of recommendations
-    path:               str, folder to save csv in
-    name:               str, name of the file
-    with_scores:        bool, whether to export scores or not in the csv
-    check_len:          check if all rows contains the specified number of recommendations, set to -1 if skip the check
-    add_time_suffix:    bool, whether to add or not the time stamp at the end of the file name
-    fieldnames:         list of str, name of the fields to insert as first row in the csv
+    :param recs:               list of recommendations
+    :param path:               str, folder to save csv in
+    :param name:               str, name of the file
+    :param with_scores:        bool, whether to export scores or not in the csv
+    :param check_len:          check if all rows contains the specified number of recommendations, set to -1 if skip the check
+    :param add_time_suffix:    bool, whether to add or not the time stamp at the end of the file name
+    :param fieldnames:         list of str, name of the fields to insert as first row in the csv
     """
     folder = time.strftime('%d-%m-%Y')
     filename = '{}/{}/{}{}{}.csv'.format(path, folder, name, '_scores' if with_scores else '',
@@ -49,7 +49,7 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
 
             else:               # export without the scores
                 # TO-DO: check if row[1:] are tuples with 2 elements or not
-                track_ids_str = ' '.join(map(str, row[1:]))
+                track_ids_str = ' '.join(map(str, row[1][1:]))
                 writer.writerow([playlist_id, track_ids_str])
             
     print('> Submission file created: {}'.format(filename))
@@ -107,9 +107,3 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
     return result
 
 
-## test
-# r=importcsv('submissions/collaborative_BM25_scores_14-11-2018 11_48_06.csv', with_scores=True, check_len=8)
-# print('ok')
-#
-# exportcsv(r, 'testsub', 'test', with_scores=True, check_len=10)
-# print('ok')

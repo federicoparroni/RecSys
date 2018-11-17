@@ -93,8 +93,7 @@ class RecommenderBase(ABC):
 
         Returns
         -------
-        float
-            MAP@k for the provided recommendations
+        :return (float) MAP@k: for the provided recommendations
         """
         assert at_k > 0
 
