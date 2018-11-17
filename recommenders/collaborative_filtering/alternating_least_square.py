@@ -1,8 +1,7 @@
-from scipy.sparse import load_npz
-import data
 import numpy as np
 import implicit # The Cython library
 from recommenders.recommender_base import RecommenderBase
+
 
 class AlternatingLeastSquare(RecommenderBase):
 
@@ -78,7 +77,7 @@ class AlternatingLeastSquare(RecommenderBase):
 
         return ranking
 
-    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[],
+    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[],
                         verbose=False):
         """
         look for comment on superclass method
