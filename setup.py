@@ -4,7 +4,7 @@ setuptools.setup(
     name="gabdampar_recommender",
     version="0.0.1",
     author="Gabdampar",
-    # author_email="author@example.com",
+    author_email="damicoedoardo@gmail.com giovanni.gabbolini@gmail.com federico.parroni@live.it",
     description="Another recommender system algorithms collection",
     url="https://github.com/pypa/sampleproject",
     license='MIT',
