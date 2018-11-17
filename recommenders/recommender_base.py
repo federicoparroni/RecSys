@@ -73,7 +73,7 @@ class RecommenderBase(ABC):
                 log.progressbar(i, L, prefix='Building recommendations ')
         return result
 
-    def validate(self, recommendations, test_urm, at_k=10):
+    def evaluate(self, recommendations, test_urm, at_k=10):
         """
         Return the MAP@k evaluation for the provided recommendations
         computed with respect to the test_urm

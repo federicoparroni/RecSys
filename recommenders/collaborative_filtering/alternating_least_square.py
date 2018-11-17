@@ -78,7 +78,7 @@ class AlternatingLeastSquare(RecommenderBase):
 
         return ranking
 
-    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[],
+    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[],
                         verbose=False):
         """
         look for comment on superclass method

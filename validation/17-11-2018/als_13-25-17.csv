@@ -1,0 +1,13 @@
+
+
+Factors: 1
+ Regulatization: 0.1
+ Iterations: 1
+ Alpha_val: 15
+ evaluation map@10: 0.002952904988610187
+
+Factors: 2
+ Regulatization: 0.1
+ Iterations: 1
+ Alpha_val: 15
+ evaluation map@10: 0.0028684370736787
