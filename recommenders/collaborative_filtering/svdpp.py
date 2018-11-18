@@ -9,7 +9,16 @@ import pandas as pd
 class SvdPP(RecommenderBase):
 
     def __init__(self, URM):
-        r, c = URM.nonzero()
+
+        print('train set built')
+        # double check if training set is built fine for sgd
+        # for u, i, r in self.trainset.all_ratings():
+        #     a = 1
+
+    def fit(self, urm, n_factors=20, n_epochs=20, lr_all=0.007, reg_all=0.02, init_mean=0,
+            init_std_dev=0.1, verbose=True):
+        # create the training set
+        r, c = urm.nonzero()
         ones = np.ones(len(r), dtype=np.int32)
         d = np.vstack((r, c, ones)).transpose()
         df = pd.DataFrame(d)
@@ -17,13 +26,8 @@ class SvdPP(RecommenderBase):
         reader = Reader()
         data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
         self.trainset = data.build_full_trainset()
-        print('train set built')
-        # double check if training set is built fine for sgd
-        # for u, i, r in self.trainset.all_ratings():
-        #     a = 1
 
-    def fit(self, n_factors=20, n_epochs=20, lr_all=0.007, reg_all=0.02, init_mean=0,
-            init_std_dev=0.1, verbose=True):
+        # fit
         self.algo = SVDpp(n_factors=n_factors, n_epochs=n_epochs, lr_all=lr_all, init_mean=init_mean,
                           init_std_dev=init_std_dev, verbose=verbose)
         self.algo.fit(self.trainset)

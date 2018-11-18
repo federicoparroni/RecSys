@@ -116,14 +116,10 @@ class RecommenderBase(ABC):
                 ap /= m
                 aps += ap
 
-<<<<<<< HEAD
         result = aps/len(recommendations)
         if print_result:
             print('map: {}'.format(result))
         return result
-=======
-        return aps/len(recommendations)
-
 
     def _insert_userids_as_first_col(self, userids, recommendations):
         """
@@ -133,4 +129,3 @@ class RecommenderBase(ABC):
         np_target_id = np.array(userids)
         target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
         return np.concatenate((target_id_t, recommendations), axis=1)
->>>>>>> master
