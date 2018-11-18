@@ -101,13 +101,13 @@ class CollaborativeFilteringBase(RecommenderBase):
         else:
             return True
 
-    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[]):
+    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():
             return None
         else:
             return self.recommend_batch([userid], N, urm, filter_already_liked, with_scores, items_to_exclude)
 
-    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         if not self._has_fit():
             return None
         else:

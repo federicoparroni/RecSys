@@ -10,7 +10,7 @@ class RecommenderBase(ABC):
         pass
 
     @abstractmethod
-    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[]):
+    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """
         Recommends the N best items for the specified user
 
@@ -35,7 +35,7 @@ class RecommenderBase(ABC):
         """
         pass
     
-    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         """
         Recommends the N best items for the specified list of users
 
