@@ -1,6 +1,6 @@
 # Recommender System 2018 Challenge Polimi
 <p align="center">
-  <img width="90%" src="https://storage.googleapis.com/kaggle-competitions/kaggle/7509/logos/header.png" alt="Recommender System 2018 Challenge Polimi">
+  <img width="100%" src="https://i.imgur.com/tm9mSuM.png" alt="Recommender System 2018 Challenge Polimi">
 </p>
 
 ## 1. Preprocessing
