@@ -2,8 +2,9 @@
 Provides a quick access to the dataset and saved matrices
 """
 
-import pandas as pd
+# import pandas as pd
 from scipy.sparse import load_npz
+import pandas as pd
 
 """ 
 PATHS 
@@ -17,7 +18,7 @@ _PLAYLISTS_PATH = 'raw_data/original_csv/train.csv'
 # || playlist_id ||
 _TARGET_PLAYLISTS_PATH = 'raw_data/original_csv/target_playlists.csv'
 
-_URM_PATH = 'raw_data/matrices/urm.npz'
+_URM_PATH = './raw_data/matrices/urm.npz'
 
 _URM_TRAIN_PATH = 'raw_data/matrices/urm_train.npz'
 
