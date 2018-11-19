@@ -89,10 +89,7 @@ def get_playlists_df():
 def get_target_playlists():
     global _target_playlists
     if _target_playlists is None:
-        _target_playlists = []
-        temp = pd.read_csv(_TARGET_PLAYLISTS_PATH).values
-        for i in temp:
-            _target_playlists.append(i[0])
+        _target_playlists = [p[0] for p in pd.read_csv(_TARGET_PLAYLISTS_PATH).values]
     return _target_playlists
 
 def get_all_playlists():

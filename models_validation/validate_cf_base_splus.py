@@ -4,7 +4,9 @@ import utils.log as log
 
 urm = data.get_urm_train()
 test = data.get_urm_test()
-targetids = data.get_target_playlists()
+#targetids = data.get_target_playlists()
+targetids = data.get_all_playlists()
+
 
 s_plus = CollaborativeFilteringBase.SIM_SPLUS
 

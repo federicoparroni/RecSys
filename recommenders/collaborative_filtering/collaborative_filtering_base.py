@@ -35,7 +35,8 @@ class CollaborativeFilteringBase(RecommenderBase):
 
     def fit(self, urm, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None):
         """
-        Initialize the model with a distance metric
+        Initialize the model and compute the similarity matrix S with a distance metric.
+        Access the similarity matrix using: self._sim_matrix
 
         Parameters
         ----------
@@ -111,28 +112,30 @@ class CollaborativeFilteringBase(RecommenderBase):
         if not self._has_fit():
             return None
         else:
-            urm = urm if urm is not None else self._urm
+            urm = urm[[userids]] if urm is not None else self._urm[userids]
             # compute the R^ by multiplying R•S
-            r_hat = sim.dot_product(urm, self._sim_matrix, target_rows=userids, k=data.N_TRACKS, format_output='csr', verbose=verbose)
+            r_hat = sim.dot_product(urm, self._sim_matrix, target_rows=None, k=data.N_TRACKS, format_output='csr', verbose=verbose)
             
             if filter_already_liked:
-                user_profile_batch = urm[userids]
+                user_profile_batch = urm
                 r_hat[user_profile_batch.nonzero()] = -np.inf
             if len(items_to_exclude)>0:
+                # TO-DO: test this part
                 r_hat = r_hat.T
                 r_hat[items_to_exclude] = -np.inf
                 r_hat = r_hat.T
             
-            # convert to np matrix
-            r_hat = r_hat[userids].todense()
-
-            # magic code 🔮 to take the top N recommendations
+            # convert to np matrix and select only the target rows
+            r_hat = r_hat.todense()
+            
+            # magic code of Mauri 🔮 to take the top N recommendations
             ranking = np.zeros((r_hat.shape[0], N), dtype=np.int)
+            
             for i in range(r_hat.shape[0]):
                 scores = r_hat[i]      # workaround
                 relevant_items_partition = (-scores).argpartition(N)[0,0:N]
-                relevant_items_partition_sorting = np.argsort(-scores[0, relevant_items_partition])
-                ranking[i] = relevant_items_partition[0, relevant_items_partition_sorting]
+                relevant_items_partition_sorting = np.argsort(-scores[0,relevant_items_partition])
+                ranking[i] = relevant_items_partition[0,relevant_items_partition_sorting]
             
             # include userids as first column
             recommendations = self._insert_userids_as_first_col(userids, ranking)

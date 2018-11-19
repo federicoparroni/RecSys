@@ -7,12 +7,15 @@ class RecommenderBase(ABC):
 
     @abstractmethod
     def fit(self):
+        """
+        Fit the model on the data. Inherited class should extend this method in the appropriate way.
+        """
         pass
 
     @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """
-        Recommends the N best items for the specified user
+        Recommend the N best items for the specified user
 
         Parameters
         ----------
@@ -37,7 +40,7 @@ class RecommenderBase(ABC):
     
     def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         """
-        Recommends the N best items for the specified list of users
+        Recommend the N best items for the specified list of users
 
         Parameters
         ----------
