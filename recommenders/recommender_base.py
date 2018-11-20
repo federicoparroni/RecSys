@@ -1,17 +1,21 @@
 from abc import ABCMeta, abstractmethod
 import utils.log as log
+import numpy as np
 
 class RecommenderBase(object):
     """ Defines the interface that all recommendations models expose """
 
     @abstractmethod
     def fit(self):
+        """
+        Fit the model on the data. Inherited class should extend this method in the appropriate way.
+        """
         pass
 
     @abstractmethod
-    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[]):
+    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """
-        Recommends the N best items for the specified user
+        Recommend the N best items for the specified user
 
         Parameters
         ----------
@@ -34,9 +38,11 @@ class RecommenderBase(object):
         """
         pass
     
+
     def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+
         """
-        Recommends the N best items for the specified list of users
+        Recommend the N best items for the specified list of users
 
         Parameters
         ----------
@@ -65,6 +71,7 @@ class RecommenderBase(object):
         L=len(userids)
         result = []
         for userid in userids:
+            print('recommending {}'.format(userid))
             recs = self.recommend(userid, N=N, urm=urm, filter_already_liked=filter_already_liked,
                                     with_scores=with_scores, items_to_exclude=items_to_exclude)
             result.append(recs)
@@ -73,7 +80,7 @@ class RecommenderBase(object):
                 log.progressbar(i, L, prefix='Building recommendations ')
         return result
 
-    def evaluate(self, recommendations, test_urm, at_k=10):
+    def evaluate(self, recommendations, test_urm, at_k=10, print_result = True):
         """
         Return the MAP@k evaluation for the provided recommendations
         computed with respect to the test_urm
@@ -114,4 +121,16 @@ class RecommenderBase(object):
                 ap = ap/m
                 aps = aps + ap
 
-        return aps/len(recommendations)
+        result = aps/len(recommendations)
+        if print_result:
+            print('map: {}'.format(result))
+        return result
+
+    def _insert_userids_as_first_col(self, userids, recommendations):
+        """
+        Add target id in a way that recommendations is a list as follows
+        [ [playlist1_id, id1, id2, ....., id10], ...., [playlist_id2, id1, id2, ...] ]
+        """
+        np_target_id = np.array(userids)
+        target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
+        return np.concatenate((target_id_t, recommendations), axis=1)
