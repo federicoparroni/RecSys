@@ -72,3 +72,9 @@ evaluate(self, recommendations, test_urm, at_k=10)
 ```
 Return the MAP@k (default MAP10) evaluation for the provided recommendations
 computed with respect to the test_urm.
+
+## Run the models
+
+To run the models, check the various files inside: `run`.
+
+Each file contains a `run` and a `test` function: `test` only calls `run` in verbose mode, without saving any result into the disk, useful to try a model and see how it behaves
