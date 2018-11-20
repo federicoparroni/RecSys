@@ -53,7 +53,7 @@ class DistanceBasedRecommender(RecommenderBase):
         implicit: bool, optional
             If true, treat the URM as implicit, otherwise consider explicit ratings (real values) in the URM
         alpha: float, optional, included in [0,1]
-        beta: float, optional
+        beta: float, optional, included in [0,1]
         l: float, optional, balance coefficient used in s_plus distance, included in [0,1]
         c: float, optional, cosine coefficient, included in [0,1]
         """
@@ -78,19 +78,26 @@ class DistanceBasedRecommender(RecommenderBase):
             return
         # save the urm for later usage
         self._matrix = matrix
-        # compute and stores the similarity matrix using one of the distance metric
-        models={
-            #self.SIM_DOTPRODUCT: sim.dot_product(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit),
-            self.SIM_COSINE: sim.cosine(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit),
-            self.SIM_ASYMCOSINE: sim.asymmetric_cosine(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha),
-            self.SIM_JACCARD: sim.jaccard(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit),
-            self.SIM_DICE: sim.dice(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit),
-            self.SIM_TVERSKY: sim.tversky(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta),
-            self.SIM_P3ALPHA: sim.p3alpha(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha),
-            self.SIM_RP3BETA: sim.rp3beta(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta),
-            self.SIM_SPLUS: sim.s_plus(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, l=l, t1=alpha, t2=beta, c=c)
-        }
-        self._sim_matrix = models[distance]
+        # compute and stores the similarity matrix using one of the distance metric: S = R'•R
+        if distance==self.SIM_COSINE:
+            self._sim_matrix = sim.cosine(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+        elif distance==self.SIM_ASYMCOSINE:
+            self._sim_matrix = sim.asymmetric_cosine(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha)
+        elif distance==self.SIM_JACCARD:
+            self._sim_matrix = sim.jaccard(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+        elif distance==self.SIM_DICE:
+            self._sim_matrix = sim.dice(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+        elif distance==self.SIM_TVERSKY:
+            self._sim_matrix = sim.tversky(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta)
+        elif distance==self.SIM_P3ALPHA:
+            self._sim_matrix = sim.p3alpha(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha)
+        elif distance==self.SIM_RP3BETA:
+            self._sim_matrix = sim.rp3beta(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta)
+        elif distance==self.SIM_SPLUS:
+            self._sim_matrix = sim.s_plus(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, l=l, t1=alpha, t2=beta, c=c)
+        else:
+            log.error('Invalid distance metric: {}'.format(distance))
+        #self.SIM_DOTPRODUCT: sim.dot_product(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
     
     def _has_fit(self):
         """
@@ -112,32 +119,33 @@ class DistanceBasedRecommender(RecommenderBase):
         if not self._has_fit():
             return None
         else:
-            matrix = matrix[[userids]] if matrix is not None else self._matrix[userids]
+            matrix = matrix[userids] if matrix is not None else self._matrix[userids]
             # compute the R^ by multiplying R•S
-            r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_TRACKS, format_output='csr', verbose=verbose)
+            r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=verbose)
             
             if filter_already_liked:
                 user_profile_batch = matrix
                 r_hat[user_profile_batch.nonzero()] = -np.inf
             if len(items_to_exclude)>0:
-                # TO-DO: test this part
+                # TO-DO: test this part because it does not work!
                 r_hat = r_hat.T
                 r_hat[items_to_exclude] = -np.inf
                 r_hat = r_hat.T
             
-            # convert to np matrix and select only the target rows
-            r_hat = r_hat.todense()
-            
-            # magic code of Mauri 🔮 to take the top N recommendations
-            ranking = np.zeros((r_hat.shape[0], N), dtype=np.int)
-            
-            for i in range(r_hat.shape[0]):
-                scores = r_hat[i]      # workaround
-                relevant_items_partition = (-scores).argpartition(N)[0,0:N]
-                relevant_items_partition_sorting = np.argsort(-scores[0,relevant_items_partition])
-                ranking[i] = relevant_items_partition[0,relevant_items_partition_sorting]
-            
-            # include userids as first column
-            recommendations = self._insert_userids_as_first_col(userids, ranking)
+            recommendations = self._extract_top_items(r_hat, N=N)
+            return self._insert_userids_as_first_col(userids, recommendations)
 
-            return recommendations
+    def _extract_top_items(self, r_hat, N):
+        # convert to np matrix
+        r_hat = r_hat.todense()
+        
+        # magic code of Mauri 🔮 to take the top N recommendations
+        ranking = np.zeros((r_hat.shape[0], N), dtype=np.int)
+        for i in range(r_hat.shape[0]):
+            scores = r_hat[i]
+            relevant_items_partition = (-scores).argpartition(N)[0,0:N]
+            relevant_items_partition_sorting = np.argsort(-scores[0,relevant_items_partition])
+            ranking[i] = relevant_items_partition[0,relevant_items_partition_sorting]
+        
+        # include userids as first column
+        return ranking
