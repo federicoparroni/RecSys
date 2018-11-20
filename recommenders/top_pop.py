@@ -1,5 +1,4 @@
-from main import Data
-import pandas as pd
+from test.als_test import Data
 
 data = Data()
 

@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 import utils.log as log
 import numpy as np
 
-class RecommenderBase(ABC):
+class RecommenderBase(object):
     """ Defines the interface that all recommendations models expose """
 
     @abstractmethod
@@ -38,7 +38,9 @@ class RecommenderBase(ABC):
         """
         pass
     
-    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
+
+    def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+
         """
         Recommend the N best items for the specified list of users
 
@@ -104,20 +106,20 @@ class RecommenderBase(ABC):
             log.error('Invalid value of k {}'.format(at_k))
             return
 
-        aps = 0
+        aps = 0.0
         for r in recommendations:
             row = test_urm.getrow(r[0]).indices
             m = min(at_k, len(row))
 
-            ap = 0
+            ap = 0.0
+            n_elems_found = 0.0
             for j in range(1, m+1):
-                n_elems_found = 0
                 if r[j] in row:
                     n_elems_found += 1
-                    ap += n_elems_found/j
-            if m>0:
-                ap /= m
-                aps += ap
+                    ap = ap + n_elems_found/j
+            if m > 0:
+                ap = ap/m
+                aps = aps + ap
 
         result = aps/len(recommendations)
         if verbose:
