@@ -43,7 +43,7 @@ def histogram_of_interactions():
     #counts.plot(x='playlist_id', y='interactions', kind='scatter', figsize=(200,100))
     
     hist = counts.groupby('interactions').size().reset_index(name='counts')
-    hist.plot(x='interactions', y='counts', kind='bar', xticks=range(101), fontsize=7, figsize=(150,100))
+    hist.plot(x='interactions', y='counts', kind='bar', fontsize=7, figsize=(150,100))
 
     # plot histogram
     plt.show(block=True)
