@@ -2,7 +2,6 @@
 Provides a quick access to the dataset and saved matrices
 """
 
-# import pandas as pd
 from scipy.sparse import load_npz
 import pandas as pd
 

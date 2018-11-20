@@ -9,7 +9,7 @@ import csv
 import time
 import os
 
-def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix=True, fieldnames=['playlist_id', 'track_ids']):
+def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix=True, fieldnames=['playlist_id', 'track_ids'], verbose=False):
     """
     Save a list of recommendations into a csv file ready for submission
 
@@ -51,8 +51,9 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
                 # TO-DO: check if row[1:] are tuples with 2 elements or not
                 track_ids_str = ' '.join(map(str, row[1:]))
                 writer.writerow([playlist_id, track_ids_str])
-            
-    print('> Submission file created: {}'.format(filename))
+    
+    if verbose:  
+        print('> Submission file created: {}'.format(filename))
 
 
 def _check_len(n, check_len):

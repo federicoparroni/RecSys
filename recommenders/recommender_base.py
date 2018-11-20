@@ -78,7 +78,7 @@ class RecommenderBase(ABC):
                 log.progressbar(i, L, prefix='Building recommendations ')
         return result
 
-    def evaluate(self, recommendations, test_urm, at_k=10, print_result = True):
+    def evaluate(self, recommendations, test_urm, at_k=10, verbose=True):
         """
         Return the MAP@k evaluation for the provided recommendations
         computed with respect to the test_urm
@@ -98,7 +98,7 @@ class RecommenderBase(ABC):
 
         Returns
         -------
-        :return (float) MAP@k: for the provided recommendations
+        MAP@k: (float) MAP for the provided recommendations
         """
         if not at_k > 0:
             log.error('Invalid value of k {}'.format(at_k))
@@ -120,8 +120,8 @@ class RecommenderBase(ABC):
                 aps += ap
 
         result = aps/len(recommendations)
-        if print_result:
-            print('map: {}'.format(result))
+        if verbose:
+            log.warning('MAP: {}'.format(result))
         return result
 
     def _insert_userids_as_first_col(self, userids, recommendations):
