@@ -66,7 +66,6 @@ class RecommenderBase(ABC):
         L=len(userids)
         result = []
         for userid in userids:
-            print('recommending {}'.format(userid))
             recs = self.recommend(userid, N=N, urm=urm, filter_already_liked=filter_already_liked,
                                     with_scores=with_scores, items_to_exclude=items_to_exclude)
             result.append(recs)
