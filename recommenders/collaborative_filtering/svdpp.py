@@ -8,6 +8,11 @@ import pandas as pd
 
 class SvdPP(RecommenderBase):
 
+    """
+        SVDpp algorithm.
+        Actually woring bad, just a draft
+    """
+
     def __init__(self, URM):
 
         print('train set built')

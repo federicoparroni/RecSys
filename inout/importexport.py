@@ -9,7 +9,7 @@ import csv
 import time
 import os
 
-def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix=True, fieldnames=['playlist_id', 'track_ids']):
+def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix=True, fieldnames=['playlist_id', 'track_ids'], verbose=False):
     """
     Save a list of recommendations into a csv file ready for submission
 
@@ -51,8 +51,9 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
                 # TO-DO: check if row[1:] are tuples with 2 elements or not
                 track_ids_str = ' '.join(map(str, row[1:]))
                 writer.writerow([playlist_id, track_ids_str])
-            
-    print('> Submission file created: {}'.format(filename))
+    
+    if verbose:  
+        print('> Submission file created: {}'.format(filename))
 
 
 def _check_len(n, check_len):
@@ -66,10 +67,9 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
 
     Parameters
     ----------
-    recs:             list of recommendations
-    path:             str, folder to save csv in
-    name:             str, name of the file
-    with_scores:      bool, whether to export scores or not in the csv
+    filename:         (str) path of the file
+    skip_first_row:   (str) whether of not skip the first row (for example, to skip the header row)
+    with_scores:      (bool) whether to import a csv the contains scores or not
     check_len:        check if all rows contains the specified number of recommendations
 
     Returns
@@ -105,4 +105,3 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
             else:
                 j+=1
     return result
-
