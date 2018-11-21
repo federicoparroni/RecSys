@@ -1,18 +1,21 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 import utils.log as log
 import numpy as np
 
-class RecommenderBase(ABC):
+class RecommenderBase(object):
     """ Defines the interface that all recommendations models expose """
 
     @abstractmethod
     def fit(self):
+        """
+        Fit the model on the data. Inherited class should extend this method in the appropriate way.
+        """
         pass
 
     @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """
-        Recommends the N best items for the specified user
+        Recommend the N best items for the specified user
 
         Parameters
         ----------
@@ -35,9 +38,11 @@ class RecommenderBase(ABC):
         """
         pass
     
-    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
+
+    def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+
         """
-        Recommends the N best items for the specified list of users
+        Recommend the N best items for the specified list of users
 
         Parameters
         ----------
@@ -74,7 +79,7 @@ class RecommenderBase(ABC):
                 log.progressbar(i, L, prefix='Building recommendations ')
         return result
 
-    def evaluate(self, recommendations, test_urm, at_k=10, print_result = True):
+    def evaluate(self, recommendations, test_urm, at_k=10, verbose=True):
         """
         Return the MAP@k evaluation for the provided recommendations
         computed with respect to the test_urm
@@ -94,30 +99,30 @@ class RecommenderBase(ABC):
 
         Returns
         -------
-        :return (float) MAP@k: for the provided recommendations
+        MAP@k: (float) MAP for the provided recommendations
         """
         if not at_k > 0:
             log.error('Invalid value of k {}'.format(at_k))
             return
 
-        aps = 0
+        aps = 0.0
         for r in recommendations:
             row = test_urm.getrow(r[0]).indices
             m = min(at_k, len(row))
 
-            ap = 0
+            ap = 0.0
+            n_elems_found = 0.0
             for j in range(1, m+1):
-                n_elems_found = 0
                 if r[j] in row:
                     n_elems_found += 1
-                    ap += n_elems_found/j
-            if m>0:
-                ap /= m
-                aps += ap
+                    ap = ap + n_elems_found/j
+            if m > 0:
+                ap = ap/m
+                aps = aps + ap
 
         result = aps/len(recommendations)
-        if print_result:
-            print('map: {}'.format(result))
+        if verbose:
+            log.warning('MAP: {}'.format(result))
         return result
 
     def _insert_userids_as_first_col(self, userids, recommendations):
