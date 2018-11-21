@@ -1,22 +1,11 @@
 from recommenders.recommender_base import RecommenderBase
-from utils import check_matrix_format as cm
-import numpy as np
-from sklearn.linear_model import ElasticNet
-import time
-import scipy.sparse as sps
-import sys
 import multiprocessing
-from multiprocessing import Pool
 from functools import partial
 import pathos.pools as pp
-
-
 import numpy as np
 import scipy.sparse as sps
-
 from sklearn.linear_model import ElasticNet
-
-import time, sys
+import time
 
 
 class SLIMElasticNetRecommender(RecommenderBase):
@@ -35,8 +24,6 @@ class SLIMElasticNetRecommender(RecommenderBase):
         http://glaros.dtc.umn.edu/gkhome/fetch/papers/SLIM2011icdm.pdf
     """
 
-    RECOMMENDER_NAME = "SLIMElasticNetRecommender"
-
     def __init__(self, URM_train):
         self.URM_train = URM_train
 
@@ -49,33 +36,20 @@ class SLIMElasticNetRecommender(RecommenderBase):
             self.l1_ratio = 1.0
 
         # initialize the ElasticNet model
-        model = ElasticNet(alpha=1.0,
-                            l1_ratio=self.l1_ratio,
+        model = ElasticNet(alpha=0.001,
+                            l1_ratio=0.05,
                             positive=self.positive_only,
                             fit_intercept=False,
                             copy_X=False,
-                            precompute=True,
+                            precompute=False,
                             selection='random',
-                            max_iter=5,
+                            max_iter=100,
                             tol=1e-4)
 
-        # Use array as it reduces memory requirements compared to lists
-        dataBlock = 10000000
-
-        rows = np.zeros(dataBlock, dtype=np.int32)
-        cols = np.zeros(dataBlock, dtype=np.int32)
-        values = np.zeros(dataBlock, dtype=np.float32)
-
-        numCells = 0
-
-        start_time = time.time()
-        start_time_printBatch = start_time
 
         #print(currentItem)
-        print(str(self.count*100/20635)+'%')
-        self.count += 1
-
-
+        #print(self.count)
+        #self.count += 1
 
         # get the target column
         y = URM_train[:, currentItem].toarray()
@@ -90,14 +64,13 @@ class SLIMElasticNetRecommender(RecommenderBase):
         # fit one ElasticNet model per column
         model.fit(self.URM_train, y)
 
-        # self.model.coef_ contains the coefficient of the ElasticNet model
-        # let's keep only the non-zero values
-
         # Select topK values
         # Sorting is done in three steps. Faster then plain np.argsort for higher number of items
         # - Partition the data to extract the set of relevant items
         # - Sort only the relevant items
         # - Get the original item index
+
+        print(model.coef_.max())
 
         nonzero_model_coef_index = model.sparse_coef_.indices
         nonzero_model_coef_value = model.sparse_coef_.data
@@ -108,13 +81,16 @@ class SLIMElasticNetRecommender(RecommenderBase):
         relevant_items_partition_sorting = np.argsort(-nonzero_model_coef_value[relevant_items_partition])
         ranking = relevant_items_partition[relevant_items_partition_sorting]
 
-        values = model.coef_[ranking]
-        rows = ranking
-        cols = [currentItem] * len(ranking)
+        values = nonzero_model_coef_value[ranking]
+        rows = nonzero_model_coef_index[ranking]
+
+        #we need a column vector of same shape of the above rows vector filled with current item value
+        cols = np.ones(rows.shape)
+        cols = cols*currentItem
 
         return values, rows, cols
 
-    def fit(self, l1_penalty=1, l2_penalty=10, positive_only=True, topK=100, workers=multiprocessing.cpu_count()):
+    def fit(self, l1_penalty=1, l2_penalty=1, positive_only=True, topK=100, workers=multiprocessing.cpu_count()):
         self.count = 0
         self.l1_penalty = l1_penalty
         self.l2_penalty = l2_penalty
@@ -126,8 +102,11 @@ class SLIMElasticNetRecommender(RecommenderBase):
         self.URM_train = sps.csc_matrix(self.URM_train)
         n_items = self.URM_train.shape[1]
 
+        #create a copy of the URM since each _pfit will modify it
+        copy_urm = self.URM_train.copy()
+
         # oggetto riferito alla funzione nel quale predefinisco parte dell'input
-        _pfit = partial(self._partial_fit, self.URM_train)
+        _pfit = partial(self._partial_fit, copy_urm)
 
         # creo un pool con un certo numero di processi
         pool = pp.ProcessPool(self.workers)
@@ -173,6 +152,9 @@ class SLIMElasticNetRecommender(RecommenderBase):
         recommendations = np.concatenate((target_id_t, ranking), axis=1)
 
         return recommendations
+
+    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
+        pass
 
 
 

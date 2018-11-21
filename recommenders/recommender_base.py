@@ -1,8 +1,9 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
+from abc import ABC
 import utils.log as log
 import numpy as np
 
-class RecommenderBase(object):
+class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
 
     @abstractmethod
@@ -39,7 +40,7 @@ class RecommenderBase(object):
         pass
     
 
-    def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+    def recommend_batch(self, userids, urm,  N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
 
         """
         Recommend the N best items for the specified list of users
