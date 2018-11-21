@@ -3,11 +3,9 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
 import data as d
 from preprocessing.process_interactions import ProcessInteractions
-from preprocessing.split import SplitRandom
-import pandas as pd
+from preprocessing.split import SplitRandomNonSequentiasLastSequential
 import os
 from random import randint
-
 
 def create_urms(proc_int, split):
     """
@@ -20,7 +18,7 @@ def create_urms(proc_int, split):
     split           (Split) personalizes the split into train and test of data coming after ProcessInteractions
     """
 
-    path = "../raw_data/new" + str(randint(1, 100))
+    path = "raw_data/new" + str(randint(1, 100))
     print('starting dataset creation of urms in ' + path)
     os.mkdir(path)
 
@@ -33,12 +31,9 @@ def create_urms(proc_int, split):
     # create urms
     _save(df, df_train, path)
 
-
 """
     sub-methods used by create_urms
 """
-
-
 def _save(df, df_train, folder_path):
     urm = _create_urm(df)
     sp_urm = csr_matrix(urm)
@@ -59,7 +54,7 @@ def _create_urm(df):
     return urm
 
 
-df = pd.read_csv('../raw_data/original_csv/train.csv')
+df = d.get_playlists_df()
 pi = ProcessInteractions(df)
-s = SplitRandom(0.2)
+s = SplitRandomNonSequentiasLastSequential(0.2)
 create_urms(pi, s)

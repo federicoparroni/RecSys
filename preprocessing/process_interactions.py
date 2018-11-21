@@ -1,7 +1,8 @@
 class ProcessInteractions:
 
     """
-        pre process the dataframe associated to train.csv
+        pre process the dataframe associated to train.csv.
+        e.g. It can be used to eliminate from the dataset the first perc of samples
     """
 
     def __init__(self, df):
