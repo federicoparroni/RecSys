@@ -1,4 +1,4 @@
-from recommenders.conten_based.SLIM_RMSE import SLIMElasticNetRecommender
+from recommenders.collaborative_filtering.SLIM_RMSE import SLIMElasticNetRecommender
 import data as d
 import inout.importexport as io
 
@@ -15,3 +15,5 @@ recommendations = recommender.recommend_batch(userids=t_id)
 map10 = recommender.evaluate(recommendations, test_urm=urm_test)
 print('map@10: {}'.format(map10))
 io.exportcsv(recommendations, path='submissions', name='slim_rmse')
+
+

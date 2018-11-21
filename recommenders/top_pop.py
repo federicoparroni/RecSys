@@ -1,4 +1,4 @@
-from test.als_test import Data
+from run.als import Data
 
 data = Data()
 

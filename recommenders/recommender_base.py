@@ -14,6 +14,16 @@ class RecommenderBase(ABC):
         pass
 
     @abstractmethod
+    def get_r_hat(self, load_from_file=False, path=''):
+        """
+        :param load_from_file: if the matrix has been saved can be set to true for load it from it
+        :param path: path in which the matrix has been saved
+        -------
+        :return the extimated urm from the recommender
+        """
+        pass
+
+    @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """
         Recommend the N best items for the specified user
