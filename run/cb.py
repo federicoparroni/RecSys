@@ -38,11 +38,16 @@ def run(distance, urm=None, icm=None, urm_test=None, targetids=None, k=100, shri
     urm_test = _urm_test if urm_test is None else urm_test
     targetids = _targetids if targetids is None else targetids
 
+
     model = ContentBasedRecommender()
     model.fit(icm=icm, k=k, distance=distance, shrink=shrink, threshold=threshold, alpha=alpha, beta=beta, l=l, c=c)
-    recs = model.recommend_batch(targetids, urm, N=10, verbose=verbose)
+    recs = model.recommend_batch(userids=targetids, urm=urm, N=10, verbose=verbose)
 
-    map10 = model.evaluate(recs, test_urm=urm_test, verbose=verbose)
+    map10 = None
+    if len(recs) > 0:
+        map10 = model.evaluate(recs, test_urm=urm_test, verbose=verbose)
+    else:
+        log.warning('No recommendations available, skip evaluation')
 
     if export:
         exportcsv(recs, path='submission', name='cb_{}'.format(distance), verbose=verbose)
@@ -53,7 +58,7 @@ def run(distance, urm=None, icm=None, urm_test=None, targetids=None, k=100, shri
     return recs, map10
 
 
-def _test(distance=ContentBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+def test(distance=ContentBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, alpha=0.5, beta=0.5, l=0.5, c=0.5):
     """
     Test the model without saving the results. Default distance: SPLUS
     """
@@ -64,4 +69,4 @@ def _test(distance=ContentBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    _test()
+    test()

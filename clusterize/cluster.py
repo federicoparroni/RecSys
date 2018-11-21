@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def cluster_urm_by_interactions_count(clip):
+def cluster_users_by_interactions_count(clip):
     """
     Split the playlists based on interactions count above or below the specified clip value.
     
@@ -26,8 +26,8 @@ def cluster_urm_by_interactions_count(clip):
     # build dataframe of number of interactions: playlist_id | tracks_count
     counts = playlists.groupby('playlist_id').size().reset_index(name='counts')
 
-    # split based on the 
-    return counts[counts['counts']<=clip].values, counts[counts['counts']>clip].values
+    # split based on the interactions counts
+    return counts[counts['counts']<=clip]['playlist_id'].values, counts[counts['counts']>clip]['playlist_id'].values
 
 
 def histogram_of_interactions():
@@ -43,7 +43,7 @@ def histogram_of_interactions():
     #counts.plot(x='playlist_id', y='interactions', kind='scatter', figsize=(200,100))
     
     hist = counts.groupby('interactions').size().reset_index(name='counts')
-    hist.plot(x='interactions', y='counts', kind='bar', xticks=range(101), fontsize=7, figsize=(150,100))
+    hist.plot(x='interactions', y='counts', kind='bar', fontsize=7, figsize=(150,100))
 
     # plot histogram
     plt.show(block=True)

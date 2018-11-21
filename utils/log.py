@@ -19,10 +19,27 @@
 # UNDERLINE = '\033[4m'
 
 def info(string, end='\n'):
+    """
+    Print a log message in _BLUE
+    """
     print('{}{}{}'.format('\033[34m',string,'\033[0m'), end=end)
+
+def success(string, end='\n'):
+    """
+    Print a log message in _GREEN
+    """
+    print('{}{}{}'.format('\033[32m',string,'\033[0m'), end=end)
+    
 def warning(string, end='\n'):
+    """
+    Print a log message in _YELLOW
+    """
     print('{}{}{}'.format('\033[93m',string,'\033[0m'), end=end)
+
 def error(string, end='\n'):
+    """
+    Print a log message in _RED
+    """
     print('{}{}{}'.format('\033[91m',string,'\033[0m'), end=end)
 
 def progressbar(iteration, total, prefix='', suffix='', decimals=1, length=50, fill='█'):
