@@ -1,14 +1,25 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
+from abc import ABC
 import utils.log as log
 import numpy as np
 
-class RecommenderBase(object):
+class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
 
     @abstractmethod
     def fit(self):
         """
         Fit the model on the data. Inherited class should extend this method in the appropriate way.
+        """
+        pass
+
+    @abstractmethod
+    def get_r_hat(self, load_from_file=False, path=''):
+        """
+        :param load_from_file: if the matrix has been saved can be set to true for load it from it
+        :param path: path in which the matrix has been saved
+        -------
+        :return the extimated urm from the recommender
         """
         pass
 
@@ -39,7 +50,7 @@ class RecommenderBase(object):
         pass
     
 
-    def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
+    def recommend_batch(self, userids, urm,  N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
 
         """
         Recommend the N best items for the specified list of users
@@ -71,7 +82,6 @@ class RecommenderBase(object):
         L=len(userids)
         result = []
         for userid in userids:
-            print('recommending {}'.format(userid))
             recs = self.recommend(userid, N=N, urm=urm, filter_already_liked=filter_already_liked,
                                     with_scores=with_scores, items_to_exclude=items_to_exclude)
             result.append(recs)
