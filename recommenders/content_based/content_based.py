@@ -72,3 +72,8 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         
         recommendations = self._extract_top_items(self.r_hat, N=N)
         return self._insert_userids_as_first_col(userids, recommendations).tolist()
+
+
+    def get_r_hat(self, load_from_file=False, path=''):
+        pass
+
