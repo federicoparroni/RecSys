@@ -79,18 +79,17 @@ class CollaboriveFiltering(DistanceBasedRecommender):
         urm_test = _urm_test if urm_test is None else urm_test
         targetids = _targetids if targetids is None else targetids
 
-        model = DistanceBasedRecommender()
-        model.fit(urm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)
-        recs = model.recommend_batch(targetids, urm=urm, with_scores=with_scores, verbose=verbose)
+        self.fit(urm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)
+        recs = self.recommend_batch(targetids, urm=urm, with_scores=with_scores, verbose=verbose)
 
         map10 = None
         if len(recs) > 0:
-            map10 = model.evaluate(recs, test_urm=urm_test, verbose=verbose)
+            map10 = self.evaluate(recs, test_urm=urm_test, verbose=verbose)
         else:
             log.warning('No recommendations available, skip evaluation')
 
         if export:
-            exportcsv(recs, path='submission', name='cf_{}'.format(distance), verbose=verbose)
+            exportcsv(recs, path='submission', name='{}_{}'.format(self.name,distance), verbose=verbose)
 
         if verbose:
             log.info('Run in: {:.2f}s'.format(time.time()-start))
