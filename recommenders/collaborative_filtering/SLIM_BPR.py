@@ -1,6 +1,6 @@
 import numpy as np
 from recommenders.recommender_base import RecommenderBase
-import data as d
+import data.data as data as d
 import pyximport
 import time
 import sys

@@ -8,6 +8,7 @@ from sklearn.linear_model import ElasticNet
 import time
 import utils.log as log
 
+completed=0
 
 class SLIMElasticNetRecommender(RecommenderBase):
     """
@@ -63,8 +64,8 @@ class SLIMElasticNetRecommender(RecommenderBase):
         # - Partition the data to extract the set of relevant items
         # - Sort only the relevant items
         # - Get the original item index
-
-        print(model.coef_.max())
+        if model.coef_.max() == 0:
+            print('TORO IL MAX È 0 TROPPA REGOLARIZZAZIONE ;)')
 
         nonzero_model_coef_index = model.sparse_coef_.indices
         nonzero_model_coef_value = model.sparse_coef_.data
@@ -82,11 +83,16 @@ class SLIMElasticNetRecommender(RecommenderBase):
         cols = np.ones(rows.shape)
         cols = cols*currentItem
 
+        global completed
+        completed += 1
+        print(completed)
+        log.progressbar(iteration=completed, total=20635)
+
         return values, rows, cols
 
     def fit(self,
-            l1_ratio=0.3, positive_only=True, alpha=1e-5, fit_intercept=False, copy_X=False, precompute=False,
-            selection='random', max_iter=1, topK=100, tol=1e-4, workers=multiprocessing.cpu_count()):
+            l1_ratio=0.1, positive_only=True, alpha=1e-4, fit_intercept=False, copy_X=False, precompute=False,
+            selection='random', max_iter=100, topK=100, tol=1e-4, workers=multiprocessing.cpu_count()):
 
         """
         call this method for fit the model _pfit will be called from here
@@ -171,6 +177,9 @@ class SLIMElasticNetRecommender(RecommenderBase):
         np_target_id = np.array(userids)
         target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
         recommendations = np.concatenate((target_id_t, ranking), axis=1)
+
+        global completed
+        completed=0
 
         return recommendations
 

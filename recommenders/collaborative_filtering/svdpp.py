@@ -2,8 +2,8 @@ from surprise import SVDpp
 from recommenders.recommender_base import RecommenderBase
 import numpy as np
 from surprise import Reader
-from surprise import Dataset
-import data as d
+from surprise import data.data as dataset
+import data.data as data as d
 import pandas as pd
 
 class SvdPP(RecommenderBase):

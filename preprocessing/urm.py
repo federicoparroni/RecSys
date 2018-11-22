@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
-import data as d
+import data.data as data as d
 from preprocessing.process_interactions import ProcessInteractions
 from preprocessing.split import SplitRandomNonSequentiasLastSequential
 import os

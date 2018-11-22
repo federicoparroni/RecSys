@@ -9,7 +9,7 @@ from recommenders.recommender_base import RecommenderBase
 import utils.log as log
 import numpy as np
 import similaripy as sim
-import data
+import data.data as data
 
 class DistanceBasedRecommender(RecommenderBase):
     """
@@ -30,6 +30,8 @@ class DistanceBasedRecommender(RecommenderBase):
     SIM_SPLUS = 'splus'
 
     def __init__(self):
+        super(DistanceBasedRecommender, self).__init__()
+        self.name = 'distancebased'
         self._sim_matrix = None
         self._matrix = None
 
@@ -109,31 +111,39 @@ class DistanceBasedRecommender(RecommenderBase):
         else:
             return True
 
-    def recommend(self, userid, N=10, matrix=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
+    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():
             return None
-        else:
-            return self.recommend_batch([userid], N, matrix, filter_already_liked, with_scores, items_to_exclude)
+        
+        return self.recommend_batch([userid], N, filter_already_liked, with_scores, items_to_exclude)
 
-    def recommend_batch(self, userids, N=10, matrix=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
+    def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         if not self._has_fit():
             return None
+
+        if userids is not None:
+            if len(userids) > 0:
+                matrix = urm[userids] if urm is not None else self._matrix[userids]
+            else:
+                return []
         else:
-            matrix = matrix[userids] if matrix is not None else self._matrix[userids]
-            # compute the R^ by multiplying R•S
-            r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=verbose)
-            
-            if filter_already_liked:
-                user_profile_batch = matrix
-                r_hat[user_profile_batch.nonzero()] = -np.inf
-            if len(items_to_exclude)>0:
-                # TO-DO: test this part because it does not work!
-                r_hat = r_hat.T
-                r_hat[items_to_exclude] = -np.inf
-                r_hat = r_hat.T
-            
-            recommendations = self._extract_top_items(r_hat, N=N)
-            return self._insert_userids_as_first_col(userids, recommendations)
+            print('Recommending for all users...')
+            matrix = urm if urm is not None else self._matrix
+        
+        # compute the R^ by multiplying R•S
+        self.r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=verbose)
+        
+        if filter_already_liked:
+            user_profile_batch = matrix
+            self.r_hat[user_profile_batch.nonzero()] = -np.inf
+        if len(items_to_exclude)>0:
+            # TO-DO: test this part because it does not work!
+            self.r_hat = self.r_hat.T
+            self.r_hat[items_to_exclude] = -np.inf
+            self.r_hat = self.r_hat.T
+        
+        recommendations = self._extract_top_items(self.r_hat, N=N)
+        return self._insert_userids_as_first_col(userids, recommendations).tolist()
 
     def _extract_top_items(self, r_hat, N):
         # convert to np matrix

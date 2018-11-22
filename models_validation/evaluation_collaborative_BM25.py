@@ -1,5 +1,5 @@
 from scipy.sparse import load_npz
-from data import Data
+from data import data.data as data
 import implicit
 from recommenders import model_bridge as M
 from evaluation.map_evaluation import evaluate_map
