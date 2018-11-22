@@ -1,5 +1,5 @@
 import clusterize.cluster as cluster
-import data
+import data.data as data
 import run.cb as cb
 import run.cf as cf
 from recommenders.recommender_base import RecommenderBase

@@ -1,5 +1,5 @@
 from recommenders.collaborative_filtering.alternating_least_square import AlternatingLeastSquare
-import data as d
+import data.data as data as d
 from inout import importexport
 from models_validation.validate_als import validate_als
 

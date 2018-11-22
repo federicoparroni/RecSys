@@ -1,5 +1,5 @@
 from recommenders.collaborative_filtering.alternating_least_square import AlternatingLeastSquare
-import data as d
+import data.data as data as d
 import time
 import os
 

@@ -1,5 +1,5 @@
 from recommenders.distance_based_recommender import DistanceBasedRecommender
-import data
+import data.data as data
 import utils.log as log
 from inout.importexport import exportcsv
 import time

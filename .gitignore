@@ -1,13 +1,6 @@
-pistoloni/bin
-pistoloni/lib
-pistoloni/include
 pip-selfcheck.json
 .idea
-pistoloni/.idea
 .Python
-Hace/__pycache__/
-Hace/submissions
-pistoloni/submissions
 submissions
 *.pyc
 .vscode
@@ -19,12 +12,9 @@ preprocessing/order_song_playlists\.py
 pyvenv.cfg
 
 raw_data/original_csv/\.~lock\.train\.csv#
+
 Cython/SLIM_BPR/build
-
 Cython/SLIM_BPR/compileCython\.py
-
 Cython/SLIM_BPR/SLIM_BPR_Cython_Epoch\.c
-
 Cython/SLIM_BPR/SLIM_BPR_Cython_Epoch\.html
-
 Cython/SLIM_BPR/SLIM_BPR_Cython_Epoch\.pyx

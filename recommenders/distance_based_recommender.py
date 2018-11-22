@@ -9,7 +9,7 @@ from recommenders.recommender_base import RecommenderBase
 import utils.log as log
 import numpy as np
 import similaripy as sim
-import data
+import data.data as data
 
 class DistanceBasedRecommender(RecommenderBase):
     """
@@ -30,6 +30,8 @@ class DistanceBasedRecommender(RecommenderBase):
     SIM_SPLUS = 'splus'
 
     def __init__(self):
+        super(DistanceBasedRecommender, self).__init__()
+        self.name = 'distance_name'
         self._sim_matrix = None
         self._matrix = None
 
@@ -129,18 +131,18 @@ class DistanceBasedRecommender(RecommenderBase):
             matrix = urm if urm is not None else self._matrix
         
         # compute the R^ by multiplying R•S
-        r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=verbose)
+        self.r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=verbose)
         
         if filter_already_liked:
             user_profile_batch = matrix
-            r_hat[user_profile_batch.nonzero()] = -np.inf
+            self.r_hat[user_profile_batch.nonzero()] = -np.inf
         if len(items_to_exclude)>0:
             # TO-DO: test this part because it does not work!
-            r_hat = r_hat.T
-            r_hat[items_to_exclude] = -np.inf
-            r_hat = r_hat.T
+            self.r_hat = self.r_hat.T
+            self.r_hat[items_to_exclude] = -np.inf
+            self.r_hat = self.r_hat.T
         
-        recommendations = self._extract_top_items(r_hat, N=N)
+        recommendations = self._extract_top_items(self.r_hat, N=N)
         return self._insert_userids_as_first_col(userids, recommendations).tolist()
 
     def _extract_top_items(self, r_hat, N):

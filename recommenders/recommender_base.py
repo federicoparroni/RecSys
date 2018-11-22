@@ -6,6 +6,10 @@ import numpy as np
 class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
 
+    def __init__(self):
+        self.name = 'recommenderbase'
+        self.r_hat = None
+
     @abstractmethod
     def fit(self):
         """
@@ -13,7 +17,6 @@ class RecommenderBase(ABC):
         """
         pass
 
-    @abstractmethod
     def get_r_hat(self, load_from_file=False, path=''):
         """
         :param load_from_file: if the matrix has been saved can be set to true for load it from it
@@ -21,7 +24,7 @@ class RecommenderBase(ABC):
         -------
         :return the extimated urm from the recommender
         """
-        pass
+        return self.r_hat
 
     @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):

@@ -1,4 +1,4 @@
-import data as d
+import data.data as data as d
 import math
 import pandas as pd
 
