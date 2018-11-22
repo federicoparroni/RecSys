@@ -1,10 +1,11 @@
 import numpy as np
 from recommenders.recommender_base import RecommenderBase
-import data.data as data as d
+import data.data as d
 import pyximport
 import time
 import sys
 import utils.log as log
+from scipy.sparse import load_npz
 from inout import importexport
 pyximport.install(setup_args={"script_args":[],
                               "include_dirs":np.get_include()},
@@ -22,6 +23,7 @@ class SLIM_BPR(RecommenderBase):
         self.URM_train=URM_train
         self.n_users = URM_train.shape[0]
         self.n_items = URM_train.shape[1]
+        self.name = 'slim_bpr'
 
     def fit(self, epochs=30, URM_test=None, user_ids=None, batch_size = 1000, validate_every_N_epochs = 1,
             start_validation_after_N_epochs = 0, lambda_i = 0.0, lambda_j = 0.0,
@@ -179,7 +181,6 @@ class SLIM_BPR(RecommenderBase):
         else:
             return [userid] + list(ranking)
 
-
     def _filter_seen_on_scores(self, user_id, scores):
 
         seen = self.URM_train.indices[self.URM_train.indptr[user_id]:self.URM_train.indptr[user_id + 1]]
@@ -187,13 +188,19 @@ class SLIM_BPR(RecommenderBase):
         scores[seen] = -np.inf
         return scores
 
-    def get_r_hat(self):
+    def get_r_hat(self, load_from_file=False, path=''):
+        if load_from_file:
+            return load_npz(path)
+        else:
+            return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
+
+    def run(self):
         pass
 
 # test
-# s = SLIM_BPR(d.get_urm())
-# s.fit(epochs=100, validate_every_N_epochs=101, learning_rate=1e-2,
-#       lambda_i = 1e-4, lambda_j = 1e-4)
-# recs = s.recommend_batch(d.get_target_playlists(), urm=d.get_urm_train(), N=10, filter_already_liked=True, with_scores=False)
-# # s.evaluate(recs, d.get_urm_test(), print_result=True)
+s = SLIM_BPR(d.get_urm())
+s.fit(epochs=1, validate_every_N_epochs=101, learning_rate=1e-2,
+      lambda_i = 1e-4, lambda_j = 1e-4)
+# s.evaluate(recs, d.get_urm_test(), print_result=True)
 # importexport.exportcsv(recs, 'submission', 'SLIM_BPR')
+s.save_r_hat()

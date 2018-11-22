@@ -21,12 +21,21 @@ class RecommenderBase(ABC):
         pass
 
     @abstractmethod
+    def run(self):
+        """
+        Handle all the operations needed to run this model a single time.
+        In particular, creates the object, performs the fit and get the recommendations.
+        Then, it can either evaluate the recommendations or export the model
+        """
+        pass
+
+    @abstractmethod
     def get_r_hat(self, load_from_file=False, path=''):
         """
         :param load_from_file: if the matrix has been saved can be set to true for load it from it
         :param path: path in which the matrix has been saved
         -------
-        :return the extimated urm from the recommender
+        :return the extimated urm from the recommender, with just the target playlists rows
         """
         pass
 
@@ -68,7 +77,6 @@ class RecommenderBase(ABC):
     
 
     def recommend_batch(self, userids, urm,  N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[], verbose=False):
-
         """
         Recommend the N best items for the specified list of users
 
