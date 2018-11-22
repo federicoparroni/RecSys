@@ -1,6 +1,7 @@
 import data.data as d
 import math
 import pandas as pd
+import random
 
 class Split:
     """
@@ -32,7 +33,7 @@ class SplitRandom(Split):
     def process(self, df):
         """
         From each playlist, removes the percentual of songs specified in the constructor by randomly picking
-        songs inside the playlist
+        the given percentage of songs inside the playlist
 
         @Param
         df:             (panda's df) dataframe associated to train.csv
@@ -40,7 +41,8 @@ class SplitRandom(Split):
         @Output
         df:             the dataframe from which we have removed the picked songs
         """
-        return df.drop(df.sample(frac=self.perc).index)
+        return df.groupby('playlist_id').apply(
+            lambda x: x.iloc[random.sample(range(0, len(x)-1), math.floor(len(x)*(1-self.perc)))].reset_index(drop=True))
 
 
 class SplitRandomNonSequentiasLastSequential(Split):
@@ -75,6 +77,9 @@ class SplitRandomNonSequentiasLastSequential(Split):
         seq_df = df[df.playlist_id.isin(seq_l)]
         non_seq_df = df[df.playlist_id.isin(non_seq_l)]
 
-        seq_df_dropped = seq_df.groupby('playlist_id').apply(lambda x: x.iloc[:-math.floor(len(x)*self.perc)]).reset_index(drop=True)
-        non_seq_df_dropped = non_seq_df.drop(non_seq_df.sample(frac=self.perc).index)
+        seq_df_dropped = seq_df.groupby('playlist_id').apply(
+            lambda x: x.iloc[:-math.floor(len(x)*self.perc)]).reset_index(drop=True)
+        non_seq_df_dropped = non_seq_df.groupby('playlist_id').apply(
+            lambda x: x.iloc[random.sample(range(0, len(x)-1), math.floor(len(x)*(1-self.perc)))].reset_index(drop=True))
+
         return pd.concat([seq_df_dropped, non_seq_df_dropped]).sort_values(by='playlist_id', kind='mergesort')
