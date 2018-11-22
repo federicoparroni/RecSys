@@ -1,7 +1,10 @@
 import numpy as np
 import implicit # The Cython library
 from recommenders.recommender_base import RecommenderBase
-
+import data.data as data
+from inout.importexport import exportcsv
+import utils.log as log
+import time
 
 class AlternatingLeastSquare(RecommenderBase):
 
@@ -17,20 +20,18 @@ class AlternatingLeastSquare(RecommenderBase):
 
     [link text](http://www.example.com)
     """
-    def __init__(self, URM):
-        self.urm = URM
 
-
-    def fit(self, factors=100, regularization=0.01, iterations=100, alpha_val=25):
+    def fit(self, urm_train, factors=100, regularization=0.01, iterations=100, alpha=25):
         """
         train the model finding the two matrices U and V: U*V.T=R  (R is the extimated URM)
 
         Parameters
         ----------
+        :param (csr) urm_train: The URM matrix of shape (number_users, number_items).
         :param (int) factors: How many latent features we want to compute.
         :param (float) regularization: lambda_val regularization value
         :param (int) iterations: How many times we alternate between fixing and updating our user and item vectors
-        :param (int) alpha_val: The rate in which we'll increase our confidence in a preference with more interactions.
+        :param (int) alpha: The rate in which we'll increase our confidence in a preference with more interactions.
 
         Returns
         -------
@@ -38,6 +39,7 @@ class AlternatingLeastSquare(RecommenderBase):
         :return (csr_matrix) item_vecs: matrix N_item x factors
 
         """
+        self.urm = urm_train
         sparse_item_user = self.urm.T
 
         # Initialize the als model and fit it using the sparse item-user matrix
@@ -46,7 +48,7 @@ class AlternatingLeastSquare(RecommenderBase):
                                                           iterations=iterations)
 
         # Calculate the confidence by multiplying it by our alpha value.
-        data_conf = (sparse_item_user*alpha_val).astype('double')
+        data_conf = (sparse_item_user*alpha).astype('double')
 
         # Fit the model
         self._model.fit(data_conf)
@@ -77,8 +79,7 @@ class AlternatingLeastSquare(RecommenderBase):
 
         return ranking
 
-    def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=False, items_to_exclude=[],
-                        verbose=False):
+    def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         """
         look for comment on superclass method
         """
@@ -109,3 +110,64 @@ class AlternatingLeastSquare(RecommenderBase):
         return recommendations
 
 
+    def run(self, urm_train=None, urm=None, urm_test=None, targetids=None,
+            factors=100, regularization=0.01, iterations=100, alpha=25, with_scores=False, export=True, verbose=True):
+        """
+        Run the model and export the results to a file
+
+        Parameters
+        ----------
+        num_factors : int, number of latent factors
+        urm : csr matrix, URM. If None, used: data.get_urm_train(). This should be the
+            entire URM for which the targetids corresponds to the row indexes.
+        urm_test : csr matrix, urm where to test the model. If None, use: data.get_urm_test()
+        targetids : list, target user ids. If None, use: data.get_target_playlists()
+
+        Returns
+        -------
+        recs: (list) recommendations
+        map10: (float) MAP10 for the provided recommendations
+        """
+        _urm = data.get_urm_train()
+        _icm = data.get_icm()
+        _urm_test = data.get_urm_test()
+        _targetids = data.get_target_playlists()
+        #_targetids = data.get_all_playlists()
+
+        start = time.time()
+
+        urm_train = _urm if urm_train is None else urm_train
+        #urm = _urm if urm is None else urm
+        urm_test = _urm_test if urm_test is None else urm_test
+        targetids = _targetids if targetids is None else targetids
+
+        self.fit(urm_train=urm_train, factors=factors, regularization=regularization, iterations=iterations, alpha=alpha)
+        recs = self.recommend_batch(userids=targetids, with_scores=with_scores, verbose=verbose)
+
+        map10 = None
+        if len(recs) > 0:
+            map10 = self.evaluate(recs, test_urm=urm_test, verbose=verbose)
+        else:
+            log.warning('No recommendations available, skip evaluation')
+
+        if export:
+            exportcsv(recs, path='submission', name=self.name, verbose=verbose)
+
+        if verbose:
+            log.info('Run in: {:.2f}s'.format(time.time()-start))
+        
+        return recs, map10
+
+    def test(self, num_factors=250):
+        """
+        Test the model without saving the results. Default distance: SPLUS
+        """
+        return self.run(factors=200, iterations=10)
+
+
+"""
+If this file is executed, test the SPLUS distance metric
+"""
+if __name__ == '__main__':
+    model = AlternatingLeastSquare()
+    model.test()
