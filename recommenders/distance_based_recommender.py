@@ -31,7 +31,7 @@ class DistanceBasedRecommender(RecommenderBase):
 
     def __init__(self):
         super(DistanceBasedRecommender, self).__init__()
-        self.name = 'distance_name'
+        self.name = 'distancebased'
         self._sim_matrix = None
         self._matrix = None
 
