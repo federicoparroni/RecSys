@@ -1,4 +1,4 @@
-import data.data as data as d
+import data.data as d
 import math
 import pandas as pd
 
@@ -60,7 +60,7 @@ class SplitRandomNonSequentiasLastSequential(Split):
         From each non sequential playlist, removes the percentual of songs specified in the constructor by randomly
         picking songs inside the playlist. For each sequential playlist, removes just the last songs of the playlist.
         This is done because this way the train-test splitting of kaggle is reproduced.
-        See https://www.kaggle.com/c/recommender-system-2018-challenge-polimi/discussion/69325 for details
+        See https://www.kaggle.com/c/recommender-system-2018-challenge-polimi/discussion/69325
 
         @Param
         df:             (panda's df) dataframe associated to train.csv

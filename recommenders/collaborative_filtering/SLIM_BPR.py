@@ -181,7 +181,6 @@ class SLIM_BPR(RecommenderBase):
         else:
             return [userid] + list(ranking)
 
-
     def _filter_seen_on_scores(self, user_id, scores):
 
         seen = self.URM_train.indices[self.URM_train.indptr[user_id]:self.URM_train.indptr[user_id + 1]]
@@ -193,17 +192,15 @@ class SLIM_BPR(RecommenderBase):
         if load_from_file:
             return load_npz(path)
         else:
-            return self.URM_train.dot(self.W_sparse)
+            return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
 
-    # def run(self, distance, urm=None, icm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
-    #     alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
+    def run(self):
+        pass
 
 # test
 s = SLIM_BPR(d.get_urm())
 s.fit(epochs=1, validate_every_N_epochs=101, learning_rate=1e-2,
       lambda_i = 1e-4, lambda_j = 1e-4)
-recs = s.recommend_batch(d.get_target_playlists(), urm=d.get_urm_train(), N=10, filter_already_liked=True, with_scores=False)
-s.get_r_hat()
-
 # s.evaluate(recs, d.get_urm_test(), print_result=True)
 # importexport.exportcsv(recs, 'submission', 'SLIM_BPR')
+s.save_r_hat()

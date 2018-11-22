@@ -1,11 +1,12 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
-import data.data as data as d
+import data.data as d
 from preprocessing.process_interactions import ProcessInteractions
 from preprocessing.split import SplitRandomNonSequentiasLastSequential
 import os
 from random import randint
+
 
 def create_urms(proc_int, split):
     """
@@ -31,10 +32,11 @@ def create_urms(proc_int, split):
     # create urms
     _save(df, df_train, path)
 
-"""
-    sub-methods used by create_urms
-"""
+
 def _save(df, df_train, folder_path):
+    """
+        sub-methods used by create_urms
+    """
     urm = _create_urm(df)
     sp_urm = csr_matrix(urm)
     save_npz(folder_path + '/urm', sp_urm)
@@ -48,13 +50,10 @@ def _save(df, df_train, folder_path):
 
 
 def _create_urm(df):
-    urm = np.zeros((d.N_PLAYLISTS, d.N_TRACKS))
-    for i in range(df.shape[0]):
-        urm[df.iloc[i, 0], df.iloc[i, 1]] = 1
-    return urm
+    return csr_matrix(df.values)
 
 
-df = d.get_playlists_df()
+df = d.get_playlists_df()                           # reads train.csv path
 pi = ProcessInteractions(df)
 s = SplitRandomNonSequentiasLastSequential(0.2)
 create_urms(pi, s)
