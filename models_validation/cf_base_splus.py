@@ -28,4 +28,4 @@ with open('splus_validation.txt', 'w') as file:
                             file.write(logmsg)
                             
                             i+=1
-                            print('{0:.2f} completed: {}/{}'.format(i/tot*100,i,tot))
+                            print('{:.2f} completed: {}/{}'.format(float(i)/tot*100,i,tot))
