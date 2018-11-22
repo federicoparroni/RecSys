@@ -12,8 +12,8 @@ t_id = d.get_target_playlists()
 recommender = SLIMElasticNetRecommender(urm)
 recommender.fit()
 recommendations = recommender.recommend_batch(userids=t_id)
-#map10 = recommender.evaluate(recommendations, test_urm=urm_test)
-#print('map@10: {}'.format(map10))
+map10 = recommender.evaluate(recommendations, test_urm=urm_test)
+print('map@10: {}'.format(map10))
 io.exportcsv(recommendations, path='submissions', name='slim_rmse')
 
 
