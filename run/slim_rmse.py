@@ -1,5 +1,5 @@
 from recommenders.collaborative_filtering.SLIM_RMSE import SLIMElasticNetRecommender
-import data.data as data as d
+import data.data as d
 import inout.importexport as io
 
 urm = d.get_urm()
@@ -10,10 +10,11 @@ t_id = d.get_target_playlists()
 
 
 recommender = SLIMElasticNetRecommender(urm)
-recommender.fit()
+recommender.fit(max_iter=1)
+recommender.save_r_hat()
 recommendations = recommender.recommend_batch(userids=t_id)
-#map10 = recommender.evaluate(recommendations, test_urm=urm_test)
-#print('map@10: {}'.format(map10))
+map10 = recommender.evaluate(recommendations, test_urm=urm_test)
+print('map@10: {}'.format(map10))
 io.exportcsv(recommendations, path='submissions', name='slim_rmse')
 
 

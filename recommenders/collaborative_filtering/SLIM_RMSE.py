@@ -8,7 +8,10 @@ from sklearn.linear_model import ElasticNet
 import time
 import utils.log as log
 
-completed=0
+completed = 0
+old = 0
+s_time = 0
+r_time = 0
 
 class SLIMElasticNetRecommender(RecommenderBase):
     """
@@ -28,6 +31,7 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
     def __init__(self, URM_train):
         self.URM_train = URM_train
+        self.name = 'slim_rmse_elasticnet'
 
     def _partial_fit(self, URM_train, currentItem):
 
@@ -85,8 +89,20 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
         global completed
         completed += 1
-        print(completed)
-        log.progressbar(iteration=completed, total=20635)
+
+        global old
+        global s_time
+        global r_time
+
+        #code for print
+        if round(completed*100*4/20635, 2) > old:
+            print(str(round(completed*100*4/20635, 2)) + '%')
+            if time.clock()-r_time > 60:
+                print(str(time.clock()-s_time) + 's elapsed from the start of the training')
+                r_time = time.clock()
+            old = round(completed*100*4/20635, 2)
+
+
 
         return values, rows, cols
 
@@ -140,6 +156,12 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
         # avvio il pool passando la funzione (con la parte fissa dell'input)
         # e il rimanente parametro, variabile
+        print('train start')
+        global s_time
+        global r_time
+        s_time = time.clock()
+        r_time = time.clock()
+
         res = pool.map(_pfit, np.arange(n_items))
 
         # res contains a vector of (values, rows, cols) tuples
