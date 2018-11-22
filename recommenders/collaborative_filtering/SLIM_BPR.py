@@ -5,6 +5,7 @@ import pyximport
 import time
 import sys
 import utils.log as log
+from inout import importexport
 pyximport.install(setup_args={"script_args":[],
                               "include_dirs":np.get_include()},
                   reload_support=True)
@@ -53,7 +54,7 @@ class SLIM_BPR(RecommenderBase):
         from Cython.SLIM_BPR.SLIM_BPR_Cython_Epoch import SLIM_BPR_Cython_Epoch
 
         self.cythonEpoch = SLIM_BPR_Cython_Epoch(self.URM_train,
-                                                 sparse_weights = True,
+                                                 sparse_weights = False,
                                                  topK=topK,
                                                  learning_rate=learning_rate,
                                                  li_reg = lambda_i,
@@ -186,8 +187,13 @@ class SLIM_BPR(RecommenderBase):
         scores[seen] = -np.inf
         return scores
 
+    def get_r_hat(self):
+        pass
+
 # test
-# s = SLIM_BPR(d.get_urm_train())
-# s.fit(epochs=2, URM_test=d.get_urm_test(), user_ids=d.get_target_playlists(), validate_every_N_epochs=1, learning_rate=1e-4)
+# s = SLIM_BPR(d.get_urm())
+# s.fit(epochs=100, validate_every_N_epochs=101, learning_rate=1e-2,
+#       lambda_i = 1e-4, lambda_j = 1e-4)
 # recs = s.recommend_batch(d.get_target_playlists(), urm=d.get_urm_train(), N=10, filter_already_liked=True, with_scores=False)
-# s.evaluate(recs, d.get_urm_test(), print_result=True)
+# # s.evaluate(recs, d.get_urm_test(), print_result=True)
+# importexport.exportcsv(recs, 'submission', 'SLIM_BPR')
