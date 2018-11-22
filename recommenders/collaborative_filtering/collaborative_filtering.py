@@ -1,5 +1,5 @@
 """
-Collaborive filtering recommender.
+Collaborative filtering recommender.
 """
 
 from recommenders.distance_based_recommender import DistanceBasedRecommender
@@ -8,14 +8,14 @@ import utils.log as log
 from inout.importexport import exportcsv
 import time
 
-class CollaboriveFiltering(DistanceBasedRecommender):
+class CollaborativeFiltering(DistanceBasedRecommender):
     """
     Computes the recommendations for a user by looking for the similar users based on the
     item which they rated
     """
 
     def __init__(self):
-        super(CollaboriveFiltering, self).__init__()
+        super(CollaborativeFiltering, self).__init__()
         self.name = 'collaborativefiltering'
 
     def fit(self, urm_train, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None):
@@ -42,7 +42,13 @@ class CollaboriveFiltering(DistanceBasedRecommender):
         l: float, optional, balance coefficient used in s_plus distance, included in [0,1]
         c: float, optional, cosine coefficient, included in [0,1]
         """
-        super(CollaboriveFiltering, self).fit(urm_train, k, distance, shrink, threshold, implicit, alpha, beta, l, c)
+        super(CollaborativeFiltering, self).fit(urm_train, k, distance, shrink, threshold, implicit, alpha, beta, l, c)
+
+    # def get_r_hat(self):
+    #     """
+    #     Return the r_hat matrix as: R^ = R•S ONLY for the TARGET USERS
+    #     """
+    #     return super(CollaborativeFiltering, self).get_r_hat()
 
     def run(self, distance, urm_train=None, urm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0, implicit=True,
         alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
@@ -108,5 +114,5 @@ class CollaboriveFiltering(DistanceBasedRecommender):
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    model = CollaboriveFiltering()
+    model = CollaborativeFiltering()
     model.test()

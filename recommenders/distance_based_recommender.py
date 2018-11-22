@@ -111,6 +111,13 @@ class DistanceBasedRecommender(RecommenderBase):
         else:
             return True
 
+    def get_r_hat(self):
+        """
+        Return the r_hat matrix as: R^ = R•S ONLY for the TARGET USERS
+        """
+        _urm = self._matrix[data.get_target_playlists()]
+        return sim.dot_product(_urm, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=False)
+
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():
             return None
