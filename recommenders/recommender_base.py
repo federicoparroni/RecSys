@@ -17,6 +17,14 @@ class RecommenderBase(ABC):
         """
         pass
 
+    def run(self):
+        """
+        Handle all the operations needed to run this model a single time.
+        In particular, creates the object, performs the fit and get the recommendations.
+        Then, it can either evaluate the recommendations or export the model
+        """
+        pass
+
     def get_r_hat(self, load_from_file=False, path=''):
         """
         :param load_from_file: if the matrix has been saved can be set to true for load it from it
