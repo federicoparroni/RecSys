@@ -31,6 +31,7 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
     def __init__(self, URM_train):
         self.URM_train = URM_train
+        self.name = 'slim_rmse_elasticnet'
 
     def _partial_fit(self, URM_train, currentItem):
 
@@ -94,12 +95,12 @@ class SLIMElasticNetRecommender(RecommenderBase):
         global r_time
 
         #code for print
-        if round(completed*100/20635, 2) > old:
-            print(str(round(completed*100/20635, 2)) + '%')
+        if round(completed*100*4/20635, 2) > old:
+            print(str(round(completed*100*4/20635, 2)) + '%')
             if time.clock()-r_time > 60:
                 print(str(time.clock()-s_time) + 's elapsed from the start of the training')
                 r_time = time.clock()
-            old = round(completed*100/20635, 2)
+            old = round(completed*100*4/20635, 2)
 
 
 

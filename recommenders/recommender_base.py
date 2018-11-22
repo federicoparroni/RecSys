@@ -2,13 +2,15 @@ from abc import abstractmethod
 from abc import ABC
 import utils.log as log
 import numpy as np
+import scipy.sparse as sps
+import time
+from utils.check_matrix_format import check_matrix
 
 class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
 
     def __init__(self):
         self.name = 'recommenderbase'
-        self.r_hat = None
 
     @abstractmethod
     def fit(self):
@@ -17,6 +19,7 @@ class RecommenderBase(ABC):
         """
         pass
 
+    @abstractmethod
     def get_r_hat(self, load_from_file=False, path=''):
         """
         :param load_from_file: if the matrix has been saved can be set to true for load it from it
@@ -24,7 +27,13 @@ class RecommenderBase(ABC):
         -------
         :return the extimated urm from the recommender
         """
-        return self.r_hat
+        pass
+
+    def save_r_hat(self):
+        r_hat = self.get_r_hat()
+        r_hat = check_matrix(r_hat, format='csr')
+        sps.save_npz('raw_data/saved_r_hat/' + self.name + time.strftime('_%H-%M-%S'), r_hat)
+
 
     @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
