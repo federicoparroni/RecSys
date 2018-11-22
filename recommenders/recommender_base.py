@@ -5,6 +5,7 @@ import numpy as np
 import scipy.sparse as sps
 import time
 from utils.check_matrix_format import check_matrix
+import os
 
 class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
@@ -32,7 +33,11 @@ class RecommenderBase(ABC):
     def save_r_hat(self):
         r_hat = self.get_r_hat()
         r_hat = check_matrix(r_hat, format='csr')
-        sps.save_npz('raw_data/saved_r_hat/' + self.name + time.strftime('_%H-%M-%S'), r_hat)
+
+        # create dir if not exists
+        filename = 'raw_data/saved_r_hat/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        sps.save_npz(filename, r_hat)
 
 
     @abstractmethod
