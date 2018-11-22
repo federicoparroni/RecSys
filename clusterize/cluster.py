@@ -3,7 +3,7 @@ Functions for partition the train dataset based on different criteria
 and visualize some (maybe) useful characteristics.
 """
 
-import data
+import data.data as data
 import pandas as pd
 import matplotlib.pyplot as plt
 

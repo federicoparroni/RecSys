@@ -1,5 +1,5 @@
 from recommenders.content_based.content_based import ContentBasedRecommender
-import data
+import data.data as data
 import utils.log as log
 from inout.importexport import exportcsv
 import time

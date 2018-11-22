@@ -1,6 +1,6 @@
 from recommenders.recommender_base import RecommenderBase
 import implicit
-import data as d
+import data.data as data as d
 
 class BPR(RecommenderBase):
 

@@ -1,6 +1,6 @@
 from recommenders.distance_based_recommender import DistanceBasedRecommender
 import run.cf
-import data
+import data.data as data
 import utils.log as log
 
 

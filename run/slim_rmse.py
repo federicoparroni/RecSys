@@ -1,5 +1,5 @@
 from recommenders.collaborative_filtering.SLIM_RMSE import SLIMElasticNetRecommender
-import data as d
+import data.data as data as d
 import inout.importexport as io
 
 urm = d.get_urm()
