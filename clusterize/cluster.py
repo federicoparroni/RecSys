@@ -37,7 +37,9 @@ def histogram_of_interactions():
     y axis: count of playlists with that number of interactions
     """
     playlists = data.get_playlists_df()
-    counts = playlists.groupby('playlist_id').size().reset_index(name='interactions')
+    target_playlist = pd.DataFrame({'playlist_id':data.get_target_playlists()})
+
+    counts = playlists.merge(target_playlist).groupby('playlist_id').size().reset_index(name='interactions')
     
     # plot counts for each playlist
     #counts.plot(x='playlist_id', y='interactions', kind='scatter', figsize=(200,100))
