@@ -19,37 +19,141 @@ class SLIM_BPR(RecommenderBase):
     Various optimization methods are available. Worth mentioning are 'adagrad' and 'sgd'.
     """
 
-    def __init__(self, URM_train):
-        self.URM_train=URM_train
-        self.n_users = URM_train.shape[0]
-        self.n_items = URM_train.shape[1]
+    def __init__(self):
         self.name = 'slim_bpr'
 
-    def fit(self, epochs=30, URM_test=None, user_ids=None, batch_size = 1000, validate_every_N_epochs = 1,
-            start_validation_after_N_epochs = 0, lambda_i = 0.0, lambda_j = 0.0,
-            learning_rate = 0.01, topK = 200, sgd_mode='adagrad'):
+    def run(self, epochs=30, batch_size=1000, lambda_i=0.0, lambda_j=0.0, learning_rate=0.01, topK=200,
+            sgd_mode = 'adagrad', export_results=True, export_r_hat=False):
+        """
+        meant as a shortcut to run the model after the validation procedure,
+        allowing the export of the scores on the playlists or of the estimated csr matrix
+
+        :param epochs(int)
+        :param batch_size(int) after how many items the params should be updated
+        :param lambda_i(float) first regularization term
+        :param lambda_j(float) second regularization term
+        :param learning_rate(float) algorithm learning rate
+        :param topK(int) how many elements should be taken into account while computing URM*W
+        :param sgd_mode(string) optimization algorithm
+        :param export_results(bool) export a ready-to-kaggle csv with the predicted songs for each playlist
+        :param export_r_hat(bool) whether to export or not the estimated csr matrix
+        """
+
+        self.fit(URM_train=d.get_urm(),
+                 epochs=epochs,
+                 URM_test=None,
+                 user_ids=None,
+                 batch_size=batch_size,
+                 validate_every_N_epochs=1,
+                 start_validation_after_N_epochs=epochs+1,
+                 lambda_i=lambda_i,
+                 lambda_j=lambda_j,
+                 learning_rate=learning_rate,
+                 topK=topK,
+                 sgd_mode=sgd_mode)
+        if export_results:
+            print('exporting results')
+            recs = self.recommend_batch(d.get_target_playlists(),
+                                         N=10,
+                                         urm=d.get_urm(),
+                                         filter_already_liked=True,
+                                         with_scores=False,
+                                         items_to_exclude=[],
+                                         verbose=False)
+            importexport.exportcsv(recs, 'submission', self._print(epochs=epochs,
+                                                                   batch_size=batch_size,
+                                                                   lambda_i=lambda_i,
+                                                                   lambda_j=lambda_j,
+                                                                   learning_rate=learning_rate,
+                                                                   topK=topK,
+                                                                   sgd_mode=sgd_mode
+                                                                   ))
+        elif export_r_hat:
+            print('saving estimated urm')
+            s.save_r_hat()
+
+    def validate(self, epochs=200, user_ids=d.get_target_playlists(),
+            batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0.0],
+            lambda_j = [0.0], learning_rate = [0.01], topK = [200], sgd_mode='adagrad', log_path=None):
+        """
+        train the model finding matrix W
+        :param epochs(int)
+        :param batch_size(list) after how many items the params should be updated
+        :param lambda_i(list) first regularization term
+        :param lambda_j(list) second regularization term
+        :param learning_rate(list) algorithm learning rate
+        :param topK(list) how many elements should be taken into account while computing URM*W
+        :param sgd_mode(string) optimization algorithm
+        :param user_ids(list) needed if we'd like to perform validation
+        :param validate_every_N_epochs(int) how often the MAP evaluation should be displayed
+        :param start_validation_after_N_epochs(int)
+        :param log_path(string) folder to which the validation results should be saved
+        """
+        if log_path != None:
+            orig_stdout = sys.stdout
+            f = open(log_path + '/' + self.name + ' ' + time.strftime('_%H-%M-%S') + ' ' +
+                     time.strftime('%d-%m-%Y') + '.txt', 'w')
+            sys.stdout = f
+
+        for li in lambda_i:
+            for lj in lambda_j:
+                for tk in topK:
+                    for lr in learning_rate:
+                        for b in batch_size:
+                            print(self._print(epochs=epochs,
+                                              batch_size=b,
+                                              lambda_i=li,
+                                              lambda_j=lj,
+                                              learning_rate=lr,
+                                              topK=tk,
+                                              sgd_mode=sgd_mode))
+                            s.fit(URM_train=d.get_urm_train(),
+                                  epochs=epochs,
+                                  URM_test=d.get_urm_test(),
+                                  user_ids=user_ids,
+                                  batch_size=b,
+                                  validate_every_N_epochs=validate_every_N_epochs,
+                                  start_validation_after_N_epochs=start_validation_after_N_epochs,
+                                  lambda_i = li,
+                                  lambda_j = lj,
+                                  learning_rate = lr,
+                                  topK=tk,
+                                  sgd_mode=sgd_mode
+                                  )
+
+        if log_path != None:
+            sys.stdout = orig_stdout
+            f.close()
+
+    def _print(self, epochs=30, batch_size=1000, lambda_i=0.0, lambda_j=0.0, learning_rate=0.01, topK=200,
+               sgd_mode = 'adagrad'):
+        return self.name + ' n epochs: ' + str(epochs) + ' batch_size: ' + str(batch_size) + \
+               ' lambda_i: ' + str(lambda_i) + ' lamnda_j: ' + str(lambda_j) + ' learing_rate: ' + str(learning_rate) +\
+               ' top_K: ' + str(topK) + ' opt method: ' + sgd_mode
+
+    def fit(self, URM_train=d.get_urm_train(), epochs=30, URM_test=d.get_urm_test(), user_ids=d.get_target_playlists(),
+            batch_size = 1000, validate_every_N_epochs = 1, start_validation_after_N_epochs = 0, lambda_i = 0.0,
+            lambda_j = 0.0, learning_rate = 0.01, topK = 200, sgd_mode='adagrad'):
 
         """
         train the model finding matrix W
-
-        Parameters
-        ----------
-        :param (int) epochs
-        :param (csr_matrix) URM_test: needed if we'd like to perform validation
-        :param (list) user_ids: needed if we'd like to perform validation
-        :param (int) batch_size: after how many items the params should be updated
-        :param (int) validate_every_N_epochs: how often the MAP evaluation should be displayed
-        :param (int) start_validation_after_N_epochs
-        :param (float) lambda_i: first regularization term
-        :param (float) lambda_j: second regularization term
-        :param (float) learning_rate: algorithm learning rate
-        :param (int) topK: how many elements should be taken into account while computing URM*W
-        :param (string) sgd_mode: optimization algorithm
-
-        Returns
-        -------
-
+        :param epochs(int)
+        :param batch_size(int) after how many items the params should be updated
+        :param lambda_i(float) first regularization term
+        :param lambda_j(float) second regularization term
+        :param learning_rate(float) algorithm learning rate
+        :param topK(int) how many elements should be taken into account while computing URM*W
+        :param sgd_mode(string) optimization algorithm
+        :param URM_train(csr_matrix) the URM used to train the model. Either the full or the validation one
+        :param URM_test(csr_matrix) needed if we'd like to perform validation
+        :param user_ids(list) needed if we'd like to perform validation
+        :param validate_every_N_epochs(int) how often the MAP evaluation should be displayed
+        :param start_validation_after_N_epochs(int)
         """
+
+        self.URM_train = URM_train
+        self.n_users = URM_train.shape[0]
+        self.n_items = URM_train.shape[1]
 
         self.sgd_mode = sgd_mode
 
@@ -64,7 +168,6 @@ class SLIM_BPR(RecommenderBase):
                                                  batch_size=1,
                                                  symmetric = True,
                                                  sgd_mode = sgd_mode)
-
 
         # Cal super.fit to start training
         self._fit_alreadyInitialized(epochs=epochs,
@@ -194,13 +297,6 @@ class SLIM_BPR(RecommenderBase):
         else:
             return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
 
-    def run(self):
-        pass
-
 # test
-s = SLIM_BPR(d.get_urm())
-s.fit(epochs=1, validate_every_N_epochs=101, learning_rate=1e-2,
-      lambda_i = 1e-4, lambda_j = 1e-4)
-# s.evaluate(recs, d.get_urm_test(), print_result=True)
-# importexport.exportcsv(recs, 'submission', 'SLIM_BPR')
-s.save_r_hat()
+s = SLIM_BPR()
+s.validate(epochs=10, lambda_i=[0.0, 0.1], lambda_j=[0.1], topK=[200], batch_size=[1000, 2000], log_path='.')
