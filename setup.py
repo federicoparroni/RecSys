@@ -18,6 +18,9 @@ setuptools.setup(
         'numpy',
         'pandas',
         'scipy',
+        'scikit-learn',
+        'matplotlib',
+        'implicit',
         'similaripy'
     ]
 )

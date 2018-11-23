@@ -5,33 +5,36 @@ Collaborative filtering recommender.
 from recommenders.distance_based_recommender import DistanceBasedRecommender
 import data.data as data
 import utils.log as log
+import similaripy as sim
+import numpy as np
 from inout.importexport import exportcsv
 import time
 
-class CollaborativeFiltering(DistanceBasedRecommender):
+class CFUserBased(DistanceBasedRecommender):
     """
     Computes the recommendations for a user by looking for the similar users based on the
     item which they rated
     """
 
     def __init__(self):
-        super(CollaborativeFiltering, self).__init__()
-        self.name = 'collaborativefiltering'
+        super(CFUserBased, self).__init__()
+        self._matrix_mul_order = 'inverse'
+        self.name = 'CFuser'
 
-    def fit(self, urm_train, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None):
+    def fit(self, urm_train, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
         """
         Initialize the model and compute the similarity matrix S with a distance metric.
         Access the similarity matrix using: self._sim_matrix
 
         Parameters
         ----------
-        urm_train : csr_matrix
+        urm_train: csr_matrix
             The URM matrix of shape (number_users, number_items) to train the model with.
-        k : int
+        k: int
             K nearest neighbour to consider.
-        distance : str
+        distance: str
             One of the supported distance metrics, check collaborative_filtering_base constants.
-        shrink : float, optional
+        shrink: float, optional
             Shrink term used in the normalization
         threshold: float, optional
             All the values under this value are cutted from the final result
@@ -42,16 +45,18 @@ class CollaborativeFiltering(DistanceBasedRecommender):
         l: float, optional, balance coefficient used in s_plus distance, included in [0,1]
         c: float, optional, cosine coefficient, included in [0,1]
         """
-        super(CollaborativeFiltering, self).fit(urm_train, k, distance, shrink, threshold, implicit, alpha, beta, l, c)
+        return super(CFUserBased, self).fit(urm_train, k=k, distance=distance, shrink=shrink, threshold=threshold,
+                                            implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, verbose=verbose)
 
-    # def get_r_hat(self):
-    #     """
-    #     Return the r_hat matrix as: R^ = R•S ONLY for the TARGET USERS
-    #     """
-    #     return super(CollaborativeFiltering, self).get_r_hat()
+    def get_r_hat(self, only_target=True, verbose=False):
+        """
+        Return the r_hat matrix as: R^ = S•R, ONLY for the TARGET USERS
+        """
+        return super(CFUserBased, self).get_r_hat(verbose=verbose)
 
-    def run(self, distance, urm_train=None, urm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0, implicit=True,
-        alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
+
+    def run(self, distance, urm_train=None, urm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
+            implicit=True, alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
         """
         Run the model and export the results to a file
 
@@ -103,7 +108,7 @@ class CollaborativeFiltering(DistanceBasedRecommender):
         return recs, map10
 
 
-    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
         """
         Test the model without saving the results. Default distance: SPLUS
         """
@@ -114,5 +119,5 @@ class CollaborativeFiltering(DistanceBasedRecommender):
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    model = CollaborativeFiltering()
+    model = CFUserBased()
     model.test()
