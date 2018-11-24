@@ -8,6 +8,7 @@ import numpy as np
 import csv
 import time
 import os
+import utils.dated_directory as datedir
 
 def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix=True, fieldnames=['playlist_id', 'track_ids'], verbose=False):
     """
@@ -23,11 +24,9 @@ def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix
     :param add_time_suffix:    bool, whether to add or not the time stamp at the end of the file name
     :param fieldnames:         list of str, name of the fields to insert as first row in the csv
     """
-    folder = time.strftime('%d-%m-%Y')
-    filename = '{}/{}/{}{}{}.csv'.format(path, folder, name, '_scores' if with_scores else '',
-                                         time.strftime('_%H-%M-%S') if add_time_suffix else '')
-    # create dir if not exists
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    
+    fname = '{}{}'.format(name, '_scores' if with_scores else '')
+    filename = datedir.create_folder(rootpath=path, filename=fname, extension='csv', append_time_suffix=add_time_suffix)
 
     with open(filename, 'w') as csv_file:
         writer = csv.writer(csv_file)
