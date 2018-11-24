@@ -7,6 +7,8 @@ import scipy.sparse as sps
 from sklearn.linear_model import ElasticNet
 import time
 import utils.log as log
+import data.data as data
+from inout.importexport import exportcsv
 
 completed = 0
 old = 0
@@ -211,13 +213,55 @@ class SLIMElasticNetRecommender(RecommenderBase):
     def get_r_hat(self, load_from_file=False, path=''):
         """
         compute the r_hat for the model
-        :return  r_hat
+        :return  r_hat only for the target playlists
         """
         if load_from_file:
             r_hat = sps.load_npz(path)
         else:
             if self.W_sparse == None:
                 log.error('the recommender has not been trained, call the fit() method for compute W')
-            r_hat = self.URM_train.dot(self.W_sparse)
+            r_hat = self.URM_train[data.get_target_playlists()].dot(self.W_sparse)
         return r_hat
+
+    def run(self, urm_train=None, urm=None, urm_test=None, targetids=None,
+            factors=100, regularization=0.01, iterations=100, alpha=25, with_scores=False, export=True, verbose=True):
+        """
+        Run the model and export the results to a file
+
+        Returns
+        -------
+        :return: recs: (list) recommendations
+        :return: map10: (float) MAP10 for the provided recommendations
+        """
+        _urm_train = data.get_urm_train()
+        _urm = data.get_urm()
+        _icm = data.get_icm()
+        _urm_test = data.get_urm_test()
+        _targetids = data.get_target_playlists()
+        # _targetids = data.get_all_playlists()
+
+        start = time.time()
+
+        urm_train = _urm_train if urm_train is None else urm_train
+        urm = _urm if urm is None else urm
+        urm_test = _urm_test if urm_test is None else urm_test
+        targetids = _targetids if targetids is None else targetids
+
+        self.fit(l1_ratio=0.1, positive_only=True, alpha=1e-4, fit_intercept=False, copy_X=False, precompute=False,
+            selection='random', max_iter=100, topK=100, tol=1e-4, workers=multiprocessing.cpu_count())
+        recs = self.recommend_batch(userids=targetids, with_scores=with_scores, verbose=verbose)
+
+        map10 = None
+        if len(recs) > 0:
+            map10 = self.evaluate(recs, test_urm=urm_test, verbose=verbose)
+        else:
+            log.warning('No recommendations available, skip evaluation')
+
+        if export:
+            exportcsv(recs, path='submission', name=self.name, verbose=verbose)
+
+        if verbose:
+            log.info('Run in: {:.2f}s'.format(time.time() - start))
+
+        return recs, map10
 
