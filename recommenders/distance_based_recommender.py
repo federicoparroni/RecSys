@@ -33,9 +33,9 @@ class DistanceBasedRecommender(RecommenderBase):
         super(DistanceBasedRecommender, self).__init__()
         self.name = 'distancebased'
         self._sim_matrix = None
-        self._matrix = None
+        self._matrix_mul_order = 'standard' # if you want R•R', or 'inverse' if you want to compute R'•R
 
-    def fit(self, matrix, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None):
+    def fit(self, matrix, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
         """
         Initialize the model and compute the similarity matrix S with a distance metric.
         Access the similarity matrix using: self._sim_matrix
@@ -78,48 +78,55 @@ class DistanceBasedRecommender(RecommenderBase):
         if distance==self.SIM_SPLUS and not(0 <= l <= 1 and 0 <= c <= 1 and 0 <= alpha <= 1 and 0 <= beta <= 1):
             log.error('Invalid parameter alpha/beta/l/c in s_plus similarity')
             return
-        # save the urm for later usage
-        self._matrix = matrix
-        # compute and stores the similarity matrix using one of the distance metric: S = R'•R
+        
+        # compute and stores the similarity matrix using one of the distance metric: S = R•R'
         if distance==self.SIM_COSINE:
-            self._sim_matrix = sim.cosine(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+            self._sim_matrix = sim.cosine(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit)
         elif distance==self.SIM_ASYMCOSINE:
-            self._sim_matrix = sim.asymmetric_cosine(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha)
+            self._sim_matrix = sim.asymmetric_cosine(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha)
         elif distance==self.SIM_JACCARD:
-            self._sim_matrix = sim.jaccard(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+            self._sim_matrix = sim.jaccard(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit)
         elif distance==self.SIM_DICE:
-            self._sim_matrix = sim.dice(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+            self._sim_matrix = sim.dice(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit)
         elif distance==self.SIM_TVERSKY:
-            self._sim_matrix = sim.tversky(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta)
+            self._sim_matrix = sim.tversky(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta)
         elif distance==self.SIM_P3ALPHA:
-            self._sim_matrix = sim.p3alpha(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha)
+            self._sim_matrix = sim.p3alpha(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha)
         elif distance==self.SIM_RP3BETA:
-            self._sim_matrix = sim.rp3beta(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta)
+            self._sim_matrix = sim.rp3beta(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit, alpha=alpha, beta=beta)
         elif distance==self.SIM_SPLUS:
-            self._sim_matrix = sim.s_plus(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit, l=l, t1=alpha, t2=beta, c=c)
+            self._sim_matrix = sim.s_plus(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit, l=l, t1=alpha, t2=beta, c=c)
         else:
             log.error('Invalid distance metric: {}'.format(distance))
-        #self.SIM_DOTPRODUCT: sim.dot_product(matrix.T, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+        #self.SIM_DOTPRODUCT: sim.dot_product(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit)
+        return self._sim_matrix
     
     def _has_fit(self):
         """
         Check if the model has been fit correctly before being used
         """
-        if self._matrix is None or self._sim_matrix is None:
+        if self._sim_matrix is None:
             log.error('Cannot recommend without having fit with a proper matrix. Call method \'fit\'.')
             return False
         else:
             return True
 
-    def get_r_hat(self):
+    def get_r_hat(self, verbose=False):
         """
-        Return the r_hat matrix as: R^ = R•S ONLY for the TARGET USERS
+        Return the r_hat matrix as: R^ = R•S or R^ = S•R
         """
-        _urm = self._matrix[data.get_target_playlists()]
-        return sim.dot_product(_urm, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=False)
+        R = data.get_urm()
+        targetids = data.get_target_playlists()
+        if self._matrix_mul_order == 'inverse':
+            return sim.dot_product(self._sim_matrix, R, target_rows=targetids, k=R.shape[0], format_output='csr', verbose=verbose)[targetids]
+        else:
+            return sim.dot_product(R, self._sim_matrix, target_rows=targetids, k=R.shape[0], format_output='csr', verbose=verbose)[targetids]
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():
+            return None
+        if not userid >= 0:
+            log.error('Invalid user id: {}'.format(userid))
             return None
         
         return self.recommend_batch([userid], N, filter_already_liked, with_scores, items_to_exclude)
@@ -128,30 +135,35 @@ class DistanceBasedRecommender(RecommenderBase):
         if not self._has_fit():
             return None
 
-        if userids is not None:
-            if len(userids) > 0:
-                matrix = urm[userids] if urm is not None else self._matrix[userids]
-            else:
-                return []
-        else:
+        R = data.get_urm() if urm is None else urm
+
+        if userids is None or not len(userids) > 0:
             print('Recommending for all users...')
-            matrix = urm if urm is not None else self._matrix
-        
-        # compute the R^ by multiplying R•S
-        self.r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_PLAYLISTS, format_output='csr', verbose=verbose)
+            
+        # compute the R^ by multiplying: R•S or S•R 
+        if self._matrix_mul_order == 'inverse':
+            R_hat = sim.dot_product(self._sim_matrix, R, target_rows=userids, k=R.shape[0], format_output='csr', verbose=verbose)
+        else:
+            R_hat = sim.dot_product(R, self._sim_matrix, target_rows=userids, k=R.shape[0], format_output='csr', verbose=verbose)
         
         if filter_already_liked:
-            user_profile_batch = matrix
-            self.r_hat[user_profile_batch.nonzero()] = -np.inf
+            # remove from the R^ the items already in the R
+            R_hat[R.nonzero()] = -np.inf
         if len(items_to_exclude)>0:
             # TO-DO: test this part because it does not work!
-            self.r_hat = self.r_hat.T
-            self.r_hat[items_to_exclude] = -np.inf
-            self.r_hat = self.r_hat.T
-        
-        recommendations = self._extract_top_items(self.r_hat, N=N)
+            R_hat = R_hat.T
+            R_hat[items_to_exclude] = -np.inf
+            R_hat = R_hat.T
+
+        # make recommendations only for the target rows
+        if len(userids) > 0: 
+            R_hat = R_hat[userids]
+        else:
+            userids = [i for i in range(R_hat.shape[0])]
+        recommendations = self._extract_top_items(R_hat, N=N)
         return self._insert_userids_as_first_col(userids, recommendations).tolist()
 
+    
     def _extract_top_items(self, r_hat, N):
         # convert to np matrix
         r_hat = r_hat.todense()

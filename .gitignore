@@ -18,3 +18,5 @@ Cython/SLIM_BPR/compileCython\.py
 Cython/SLIM_BPR/SLIM_BPR_Cython_Epoch\.c
 Cython/SLIM_BPR/SLIM_BPR_Cython_Epoch\.html
 Cython/SLIM_BPR/SLIM_BPR_Cython_Epoch\.pyx
+
+raw_data/saved_r_hat/
