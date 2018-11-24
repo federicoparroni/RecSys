@@ -9,7 +9,8 @@ import csv
 import time
 import os
 
-def exportcsv(recs, path, name, with_scores=False, check_len=10, add_time_suffix=True, fieldnames=['playlist_id', 'track_ids'], verbose=False):
+def exportcsv(recs, path='submissions', name='', with_scores=False, check_len=10, add_time_suffix=True,
+              fieldnames=['playlist_id', 'track_ids'], verbose=False):
     """
     Save a list of recommendations into a csv file ready for submission
 

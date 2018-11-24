@@ -1,0 +1,101 @@
+
+
+Factors: 20
+ Iteration: 2
+ evaluation map@10: 0.02895942817775247
+
+Factors: 20
+ Iteration: 5
+ evaluation map@10: 0.02763863054295781
+
+Factors: 20
+ Iteration: 7
+ evaluation map@10: 0.02773678056500363
+
+Factors: 20
+ Iteration: 10
+ evaluation map@10: 0.02767613184996205
+
+Factors: 20
+ Iteration: 20
+ evaluation map@10: 0.027774341663517107
+
+Factors: 50
+ Iteration: 2
+ evaluation map@10: 0.03910191866654054
+
+Factors: 50
+ Iteration: 5
+ evaluation map@10: 0.03983509358465595
+
+Factors: 50
+ Iteration: 7
+ evaluation map@10: 0.03910338795981341
+
+Factors: 50
+ Iteration: 10
+ evaluation map@10: 0.03912998875661361
+
+Factors: 50
+ Iteration: 20
+ evaluation map@10: 0.03908626825081862
+
+Factors: 100
+ Iteration: 2
+ evaluation map@10: 0.04669487145691588
+
+Factors: 100
+ Iteration: 5
+ evaluation map@10: 0.04684636440224224
+
+Factors: 100
+ Iteration: 7
+ evaluation map@10: 0.045886020912068434
+
+Factors: 100
+ Iteration: 10
+ evaluation map@10: 0.045216104954018566
+
+Factors: 100
+ Iteration: 20
+ evaluation map@10: 0.04561195997102528
+
+Factors: 150
+ Iteration: 2
+ evaluation map@10: 0.0500679592466615
+
+Factors: 150
+ Iteration: 5
+ evaluation map@10: 0.048397068200428134
+
+Factors: 150
+ Iteration: 7
+ evaluation map@10: 0.047918374748047166
+
+Factors: 150
+ Iteration: 10
+ evaluation map@10: 0.047294693011463676
+
+Factors: 150
+ Iteration: 20
+ evaluation map@10: 0.04735068379944567
+
+Factors: 200
+ Iteration: 2
+ evaluation map@10: 0.05266374951184168
+
+Factors: 200
+ Iteration: 5
+ evaluation map@10: 0.05007206968064997
+
+Factors: 200
+ Iteration: 7
+ evaluation map@10: 0.04906359095490034
+
+Factors: 200
+ Iteration: 10
+ evaluation map@10: 0.048578479796548016
+
+Factors: 200
+ Iteration: 20
+ evaluation map@10: 0.04852410742630371

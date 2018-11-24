@@ -1,42 +1,51 @@
 import clusterize.cluster as cluster
 import data.data as data
-import run.cb as cb
-import run.cf as cf
 from recommenders.recommender_base import RecommenderBase
-import inout.importexport as export
 import utils.log as log
+import numpy as np
 
-CLIP = 7
+class HybridClusterInteractionsCount(RecommenderBase):
 
-# get the 2 clusterized datasets
-urm = data.get_urm_train()
-target_playlists = data.get_target_playlists()
+    def __init__(self):
+        self.name = 'Hybrid_Cluster'
 
-p1, p2 = cluster.cluster_users_by_interactions_count(clip=CLIP)
-urm1 = urm[p1]
-urm2 = urm[p2]
+    def fit(self, clip=7):
+        sparse_pl, dense_pl = cluster.cluster_users_by_interactions_count(clip=clip)
 
-# filter target playlists from the 2 clusters
-s1 = set(p1)
-s2 = set(p2)
-s_target = set(target_playlists)
-s1_target = s1 & s_target
-s2_target = s2 & s_target
-p1 = list(s1_target)
-p2 = list(s2_target)
+        log.success('Cluster 1 (interactions count <= {}): {} playlists'.format(clip, len(sparse_pl)))
+        log.success('Cluster 2 (interactions count  > {}): {} playlists'.format(clip, len(dense_pl)))
 
-log.success('Cluster 1 (interactions count <= {}): {} playlists'.format(CLIP, len(p1)))
-log.success('Cluster 2 (interactions count  > {}): {} playlists'.format(CLIP, len(p2)))
+        # filter target playlists from the 2 clusters
+        s1 = set(sparse_pl)
+        s2 = set(dense_pl)
+        s_target = set(data.get_target_playlists())
+        s1_target = s1 & s_target
+        s2_target = s2 & s_target
+        self.sparse_pl = list(s1_target)
+        self.dense_pl = list(s2_target)
 
-""" run the models on the 2 different clusters """
-#recs1, map1 = cb.run(distance='splus', targetids=p1, k=100, alpha=0.25, beta=0.25, l=0.5, c=0.5, shrink=10, export=False)
-#recs2, map2 = cf.run(distance='splus', targetids=p2, k=100, alpha=0.25, beta=0.25, l=0.5, c=0.5, shrink=10, export=False)
-recs1, map1 = cb.run(distance='splus', targetids=p1, k=100, alpha=0.25, beta=0.25, l=0.5, c=0.5, shrink=10, export=False)
-recs2, map2 = cf.run(distance='splus', urm_train=urm2, targetids=p2, k=100, alpha=0.25, beta=0.25, l=0.5, c=0.5, shrink=10, export=False)
+    def recommend_batch(self, rec_dense, rec_sparse, verbose=False):
 
-recs = recs1 + recs2
+        recommendation_dense = rec_dense.recommend_batch(userids=self.dense_pl)
+        recommendation_sparse = rec_sparse.recommend_batch(userids=self.sparse_pl)
 
-test_urm = data.get_urm_test()
-map10 = RecommenderBase.evaluate(self=None, recommendations=recs, test_urm=test_urm)
+        recommendations = np.concatenate((recommendation_dense, recommendation_sparse), axis=0)
+        ids = np.concatenate((np.array(self.dense_pl), np.array(self.sparse_pl)))
+        t_id = np.reshape(ids, (len(ids), 1))
 
-export.exportcsv(recs, path='submission', name='hybrid_cluster')
+        return np.concatenate((t_id, recommendations), axis=1)
+
+
+
+    def get_r_hat(self):
+        pass
+
+    def recommend(self):
+        pass
+
+    def run(self):
+        pass
+
+
+
+

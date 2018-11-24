@@ -39,13 +39,19 @@ class RecommenderBase(ABC):
         """
         pass
 
-    def save_r_hat(self):
+    def save_r_hat(self, evaluation=False):
+
         r_hat = self.get_r_hat()
         r_hat = check_matrix(r_hat, format='csr')
 
         # create dir if not exists
-        filename = 'raw_data/saved_r_hat/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        if evaluation:
+            filename = 'raw_data/saved_r_hat_evaluation/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+        else:
+            filename = 'raw_data/saved_r_hat/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+
         sps.save_npz(filename, r_hat)
 
 

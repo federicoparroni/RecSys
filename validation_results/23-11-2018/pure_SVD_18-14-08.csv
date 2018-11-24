@@ -1,0 +1,22 @@
+
+
+Factors: 5
+ evaluation map@10: 0.01171493773620559
+
+Factors: 30
+ evaluation map@10: 0.03404961615016366
+
+Factors: 50
+ evaluation map@10: 0.03988971548248911
+
+Factors: 100
+ evaluation map@10: 0.04569907432602658
+
+Factors: 200
+ evaluation map@10: 0.04874120633345922
+
+Factors: 400
+ evaluation map@10: 0.05124455627991922
+
+Factors: 600
+ evaluation map@10: 0.05135955114638435

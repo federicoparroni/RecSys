@@ -298,5 +298,11 @@ class SLIM_BPR(RecommenderBase):
             return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
 
 # test
-s = SLIM_BPR()
-s.validate(epochs=10, lambda_i=[0.0, 0.1], lambda_j=[0.1], topK=[200], batch_size=[1000, 2000], log_path='.')
+
+s = SLIM_BPR(d.get_urm_train())
+s.fit(epochs=100, validate_every_N_epochs=101, learning_rate=1e-2,
+      lambda_i = 1e-4, lambda_j = 1e-4)
+# s.evaluate(recs, d.get_urm_test(), print_result=True)
+# importexport.exportcsv(recs, 'submission', 'SLIM_BPR')
+s.save_r_hat(evaluation=True)
+

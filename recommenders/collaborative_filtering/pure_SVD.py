@@ -6,6 +6,7 @@ import numpy as np
 import utils.log as log
 from inout.importexport import exportcsv
 import time
+import os
 
 
 class Pure_SVD(RecommenderBase):
@@ -13,11 +14,12 @@ class Pure_SVD(RecommenderBase):
     def __init__(self):
         self.name = 'pureSVD'
 
-    def fit(self, urm_train, num_factors=50):
+    def fit(self, urm_train, num_factors=50, iteration='auto'):
         self.urm = urm_train
         U, Sigma, VT = randomized_svd(self.urm,
                                       n_components=num_factors,
-                                      random_state=None)
+                                      random_state=None,
+                                      n_iter=iteration)
         self.s_Vt = sps.diags(Sigma)*VT
         self.U = U
 
@@ -29,7 +31,9 @@ class Pure_SVD(RecommenderBase):
         -------
         :return the extimated urm from the recommender
         """
-        pass
+        U_filtered = self.U[data.get_target_playlists()]
+        r_hat = U_filtered.dot(self.s_Vt)
+        return sps.csr_matrix(r_hat)
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """
@@ -131,10 +135,45 @@ class Pure_SVD(RecommenderBase):
         """
         return self.run(num_factors=num_factors, export=False)
 
+    def validate(self, factors_array, iteration_array, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), verbose=True,
+                 write_on_file=True, userids=data.get_target_playlists(), N=10, filter_already_liked=True, items_to_exclude=[]):
+
+        #create the initial model
+        recommender = Pure_SVD()
+
+        path = 'validation_results/'
+        name = 'pure_SVD'
+        folder = time.strftime('%d-%m-%Y')
+        filename = '{}/{}/{}{}.csv'.format(path, folder, name, time.strftime('_%H-%M-%S'))
+        # create dir if not exists
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        with open(filename, 'w') as out:
+            for f in factors_array:
+                for i in iteration_array:
+                    #train the model with the parameters
+                    if verbose:
+                        print('\n\nTraining PURE_SVD with\n Factors: {}\n Iteration: {}\n'.format(f, i))
+                        print('\n training phase...')
+                    recommender.fit(urm_train=urm_train, num_factors=f, iteration=i)
+
+                    #get the recommendations from the trained model
+                    recommendations = recommender.recommend_batch(userids=userids, N=N, filter_already_liked=filter_already_liked,
+                                                                  items_to_exclude=items_to_exclude)
+                    #evaluate the model with map10
+                    map10 = recommender.evaluate(recommendations, test_urm=urm_test)
+                    if verbose:
+                        print('map@10: {}'.format(map10))
+
+                    #write on external files on folder models_validation
+                    if write_on_file:
+                        out.write('\n\nFactors: {}\n Iteration: {}\n evaluation map@10: {}'.format(f, i, map10))
+
+
 
 """
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = Pure_SVD()
-    model.test()
+    model.validate(factors_array=[600, 640, 700, 730, 800, 860, 1000], iteration_array=[1, 2, 5])

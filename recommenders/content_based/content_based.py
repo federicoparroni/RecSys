@@ -41,7 +41,42 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         c: float, optional, cosine coefficient, included in [0,1]
         """
         return super(ContentBasedRecommender, self).fit(matrix=icm, k=k, distance=distance, shrink=shrink, threshold=threshold, implicit=False, alpha=alpha, beta=beta, l=l, c=c)
-    
+
+    def recommend(self, userid, urm=None, N=10, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
+        if not userid >= 0:
+            log.error('Invalid user id')
+            return None
+        return self.recommend_batch([userid], urm, N, filter_already_liked, with_scores, items_to_exclude)
+
+    def recommend_batch(self, userids, urm=None, N=10, filter_already_liked=True, with_scores=False, items_to_exclude=[],
+                        verbose=False):
+        if not self._has_fit():
+            return None
+
+        if userids is not None:
+            if len(userids) > 0:
+                matrix = urm[userids] if urm is not None else data.get_urm()[userids]
+            else:
+                return []
+        else:
+            print('Recommending for all users...')
+            matrix = urm if urm is not None else data.get_urm()
+
+        # compute the R^ by multiplying R•S
+        self.r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_TRACKS, format_output='csr', verbose=verbose)
+        
+        if filter_already_liked:
+            user_profile_batch = matrix
+            self.r_hat[user_profile_batch.nonzero()] = -np.inf
+        if len(items_to_exclude)>0:
+            # TO-DO: test this part because it does not work!
+            self.r_hat = self.r_hat.T
+            self.r_hat[items_to_exclude] = -np.inf
+            self.r_hat = self.r_hat.T
+        
+        recommendations = self._extract_top_items(self.r_hat, N=N)
+        return self._insert_userids_as_first_col(userids, recommendations).tolist()
+
 
     def run(self, distance, urm=None, icm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
         alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
@@ -101,6 +136,9 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         Test the model without saving the results. Default distance: SPLUS
         """
         return self.run(distance=distance, k=k, shrink=shrink, threshold=threshold, alpha=alpha, beta=beta, l=l, c=c, export=False)
+
+    def get_r_hat(self, load_from_file=False, path=''):
+        pass
 
 
 """
