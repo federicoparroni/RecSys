@@ -9,6 +9,7 @@ import similaripy as sim
 import numpy as np
 from inout.importexport import exportcsv
 import time
+import utils.dated_directory as datedir
 
 class CFItemBased(DistanceBasedRecommender):
     """
@@ -108,11 +109,42 @@ class CFItemBased(DistanceBasedRecommender):
 
 
     def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    #def test(self, distance=DistanceBasedRecommender.SIM_COSINE, k=800, shrink=10, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
         """
         Test the model without saving the results. Default distance: SPLUS
         """
         return self.run(distance=distance, k=k, shrink=shrink, threshold=threshold, implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, export=False)
 
+
+def validate(self, ks, alphas, betas, ls, cs, shrinks, filename='splus_validation', path='validation_results', verbose=False):
+    distance = CFItemBased.SIM_SPLUS
+
+    # ks = [100, 200, 300]
+    # alphas = [0.25, 0.5, 0.75]
+    # betas = [0.25, 0.5, 0.75]
+    # ls = [0.25, 0.5, 0.75]
+    # cs = [0.25, 0.5, 0.75]
+    # shrinks = [0, 10, 30]
+
+    i=0
+    tot=len(ks)*len(alphas)*len(betas)*len(ls)*len(cs)*len(shrinks)
+
+    filename = datedir.create_folder(rootpath=path, filename=filename, extension='txt')
+    with open(filename, 'w') as file:
+        for k in ks:
+            for a in alphas:
+                for b in betas:
+                    for l in ls:
+                        for c in cs:
+                            for shrink in shrinks:
+                                model = CFItemBased()
+                                recs, map10 = model.run(distance=distance, k=k, shrink=shrink, alpha=a, beta=b, c=c, l=l, export=False, verbose=verbose)
+                                logmsg = 'MAP: {} \tknn: {} \ta: {} \tb: {} \tl: {} \tc: {} \tshrink: {}\n'.format(map10,k,a,b,l,c,shrink)
+                                #log.warning(logmsg)
+                                file.write(logmsg)
+                                
+                                i+=1
+                                log.progressbar(i,tot, prefix='Validation: ')
 
 """
 If this file is executed, test the SPLUS distance metric

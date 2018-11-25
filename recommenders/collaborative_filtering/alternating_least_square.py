@@ -59,12 +59,12 @@ class AlternatingLeastSquare(RecommenderBase):
         -------
         :return (csr_matrix) user_vecs: matrix N_user x factors
         :return (csr_matrix) item_vecs: matrix N_item x factors
-
         """
         self.urm = urm_train
         sparse_item_user = self.urm.T
 
         # Initialize the als model and fit it using the sparse item-user matrix
+        os.environ['OPENBLAS_NUM_THREADS'] = '1'
         self._model = implicit.als.AlternatingLeastSquares(factors=factors,
                                                           regularization=regularization,
                                                           iterations=iterations)
@@ -180,11 +180,11 @@ class AlternatingLeastSquare(RecommenderBase):
         
         return recs, map10
 
-    def test(self, num_factors=250):
+    def test(self, num_factors=250, export=False):
         """
         Test the model without saving the results. Default distance: SPLUS
         """
-        return self.run(factors=200, iterations=10)
+        return self.run(factors=200, iterations=10, export=export)
 
 
     def validate_als(self, factors_array, regularization_array, iterations_array, alpha_val_array, userids,
@@ -250,5 +250,5 @@ class AlternatingLeastSquare(RecommenderBase):
 If this file is executed, test the als
 """
 if __name__ == '__main__':
-    model = AlternatingLeastSquare()
+    model = AlternatingLeastSquare(data.get_urm_train())
     model.test()
