@@ -6,7 +6,7 @@ ALS --> MAP: 0.07672241213151923
  Factors: 500   Regulatization: 0.5     Iterations: 200     alpha: 25
 
 Collaborative Item Based --> MAP: 0.0743906113158225
- distance: SPLUS    knn: 600 	a: 0.25 	b: 0.5 	shrink: 10
+ distance: SPLUS    knn: 600 	a: 0.25 	b: 0.5 	shrink: 10  l: 0.25   c: 0.5
  
 Collaborative Item Based --> MAP: 0.07402175044091713
  distance: COSINE   knn: 700

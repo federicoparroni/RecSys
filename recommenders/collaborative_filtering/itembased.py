@@ -109,7 +109,7 @@ class CFItemBased(DistanceBasedRecommender):
 
 
     def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
-    #def test(self, distance=DistanceBasedRecommender.SIM_COSINE, k=800, shrink=10, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    #def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=600, shrink=10, threshold=0, implicit=True, alpha=0.25, beta=0.5, l=0.25, c=0.5):
         """
         Test the model without saving the results. Default distance: SPLUS
         """
