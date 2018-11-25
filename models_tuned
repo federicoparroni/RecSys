@@ -1,3 +1,9 @@
 PURE_SVD --> MAP: 0.058110539099899085
  Factors: 700
  Iteration: 1
+
+Collaborative Item Based --> MAP: 0.0743906113158225
+ distance: SPLUS    knn: 600 	a: 0.25 	b: 0.5 	shrink: 10
+ 
+Collaborative Item Based --> MAP: 0.07402175044091713
+ distance: COSINE   knn: 700    
