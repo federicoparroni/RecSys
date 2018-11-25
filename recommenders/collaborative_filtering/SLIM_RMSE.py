@@ -9,6 +9,7 @@ import time
 import utils.log as log
 import data.data as data
 from inout.importexport import exportcsv
+import os
 
 completed = 0
 old = 0
@@ -99,9 +100,9 @@ class SLIMElasticNetRecommender(RecommenderBase):
         #code for print
         if round(completed*100*4/20635, 2) > old:
             print(str(round(completed*100*4/20635, 2)) + '%')
-            if time.clock()-r_time > 60:
-                print(str(time.clock()-s_time) + 's elapsed from the start of the training')
-                r_time = time.clock()
+            #if time.clock()-r_time > 60:
+            #    print(str(time.clock()-s_time) + 's elapsed from the start of the training')
+            #    r_time = time.clock()
             old = round(completed*100*4/20635, 2)
 
 
@@ -265,3 +266,55 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
         return recs, map10
 
+def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=data.get_target_playlists(),
+                 urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), filter_already_liked=True,
+                 items_to_exclude=[], N=10, verbose=True, write_on_file=True):
+
+    """
+    -----------
+    :return: _
+    """
+
+
+    #create the initial model
+    recommender = SLIMElasticNetRecommender(urm_train)
+
+    path = 'validation_results/'
+    name = 'slim_rmse'
+    folder = time.strftime('%d-%m-%Y')
+    filename = '{}/{}/{}{}.csv'.format(path, folder, name, time.strftime('_%H-%M-%S'))
+    # create dir if not exists
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    with open(filename, 'w') as out:
+        for l in l1_ratio_array:
+            for a in alpha_array:
+                for m in max_iter_array:
+                    for k in topK_array:
+
+                        #train the model with the parameters
+                        if verbose:
+                            print('\n\nTraining slim_rmse with\n l1_ratio: {}\n alpha: {}\n'
+                                  'Iterations: {}\n topK: {}'.format(l, a, m, k))
+                            print('\n training phase...')
+                        recommender.fit(l1_ratio=l, alpha=a, max_iter=m, topK=k)
+
+                        #get the recommendations from the trained model
+                        recommendations = recommender.recommend_batch(userids=userids, N=N, filter_already_liked=filter_already_liked,
+                                                                      items_to_exclude=items_to_exclude)
+                        #evaluate the model with map10
+                        map10 = recommender.evaluate(recommendations, test_urm=urm_test)
+                        if verbose:
+                            print('map@10: {}'.format(map10))
+
+                        #write on external files on folder models_validation
+                        if write_on_file:
+                            out.write('\n\nl1_ratio: {}\n alpha: {}\n Iterations: {}\n '
+                                      'topK: {}\n evaluation map@10: {}'.format(l, a, m, k, map10))
+
+"""
+If this file is executed, test the SPLUS distance metric
+"""
+if __name__ == '__main__':
+    validate(l1_ratio_array=[0.1, 0.5, 0.9], alpha_array=[1e-4, 1e-5, 1e-6], max_iter_array=[100, 300, 500],
+             topK_array=[100, 400, 1000])
