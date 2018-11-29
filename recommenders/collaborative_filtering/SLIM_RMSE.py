@@ -32,8 +32,7 @@ class SLIMElasticNetRecommender(RecommenderBase):
         http://glaros.dtc.umn.edu/gkhome/fetch/papers/SLIM2011icdm.pdf
     """
 
-    def __init__(self, URM_train):
-        self.URM_train = URM_train
+    def __init__(self):
         self.name = 'slim_rmse_elasticnet'
 
     def _partial_fit(self, URM_train, currentItem):
@@ -109,7 +108,7 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
         return values, rows, cols
 
-    def fit(self,
+    def fit(self, urm,
             l1_ratio=0.1, positive_only=True, alpha=1e-4, fit_intercept=False, copy_X=False, precompute=False,
             selection='random', max_iter=100, topK=100, tol=1e-4, workers=multiprocessing.cpu_count()):
 
@@ -145,7 +144,7 @@ class SLIMElasticNetRecommender(RecommenderBase):
         self.topK = topK
         self.workers = workers
 
-        self.URM_train = sps.csc_matrix(self.URM_train)
+        self.URM_train = sps.csc_matrix(urm)
         n_items = self.URM_train.shape[1]
 
         #create a copy of the URM since each _pfit will modify it
@@ -277,7 +276,7 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
 
 
     #create the initial model
-    recommender = SLIMElasticNetRecommender(urm_train)
+    recommender = SLIMElasticNetRecommender()
 
     path = 'validation_results/'
     name = 'slim_rmse'
@@ -297,7 +296,7 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
                             print('\n\nTraining slim_rmse with\n l1_ratio: {}\n alpha: {}\n'
                                   'Iterations: {}\n topK: {}'.format(l, a, m, k))
                             print('\n training phase...')
-                        recommender.fit(l1_ratio=l, alpha=a, max_iter=m, topK=k)
+                        recommender.fit(urm=urm_train, l1_ratio=l, alpha=a, max_iter=m, topK=k)
 
                         #get the recommendations from the trained model
                         recommendations = recommender.recommend_batch(userids=userids, N=N, filter_already_liked=filter_already_liked,
@@ -316,5 +315,5 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    validate(l1_ratio_array=[0.1, 0.5, 0.9], alpha_array=[1e-4, 1e-5, 1e-6], max_iter_array=[100, 300, 500],
-             topK_array=[100, 400, 1000])
+    validate(l1_ratio_array=[0.5, 0.9], alpha_array=[0.5e-4], max_iter_array=[100],
+             topK_array=[100, 400])

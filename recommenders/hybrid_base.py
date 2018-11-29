@@ -3,12 +3,15 @@ import numpy as np
 import data.data as data
 import scipy.sparse as sps
 import utils.log as log
+import time
 
 
 class Hybrid(RecommenderBase):
     """
     recommender builded passing to the init method an array of extimated R (r_hat_array) that will be combined to obtain an hybrid r_hat
     """
+    MAX_MATRIX = 'MAX_MATRIX'
+    MAX_ROW = 'MAX_ROW'
 
     def __init__(self, r_hat_array, urm=data.get_urm()):
         self.r_hat_array = r_hat_array
@@ -47,7 +50,7 @@ class Hybrid(RecommenderBase):
             max_matrix = r.max()
             normalized_matrix = (r*weights_array[count]/max_matrix)
             #normalized_matrix.data *= 10
-            #normalized_matrix.data **= 3
+            #normalized_matrix.data **= 2
             normalized_r_hat_array.append(normalized_matrix)
             count += 1
         return normalized_r_hat_array
@@ -81,6 +84,8 @@ class Hybrid(RecommenderBase):
 
         print('matrices normalized')
 
+        start = time.time()
+
         hybrid_r_hat = sps.csr_matrix(np.zeros((normalized_r_hat_array[0].shape)))
 
         # STEP2
@@ -111,8 +116,9 @@ class Hybrid(RecommenderBase):
 
         print('recommendations created')
 
-        return self._insert_userids_as_first_col(userids, ranking)
+        print('{:.2f}'.format(time.time()-start))
 
+        return self._insert_userids_as_first_col(userids, ranking)
 
     def fit(self):
         pass
