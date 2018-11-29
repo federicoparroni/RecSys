@@ -24,3 +24,6 @@ raw_data/saved_r_hat/
 raw_data/saved_r_hat_evaluation/
 
 models_validation/
+validation_results/
+submission/
+
