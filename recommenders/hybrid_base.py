@@ -4,6 +4,8 @@ import data.data as data
 import scipy.sparse as sps
 import utils.log as log
 import time
+from bayes_opt import BayesianOptimization
+
 
 
 class Hybrid(RecommenderBase):
@@ -133,8 +135,54 @@ class Hybrid(RecommenderBase):
         pass
 
 
+    def validateStep(self, **dict):
+        # gather saved parameters from self
+        targetids = self._validation_dict['targetids']
+        urm_test = self._validation_dict['urm_test']
+        norm_mode = self._validation_dict['normalization_mode']
+        N = self._validation_dict['N']
+        filter_already_liked = self._validation_dict['filter_already_liked']
+        items_to_exclude = self._validation_dict['items_to_exclude']
 
+        # build weights array from dictionary
+        weights = []
+        for i in range(len(dict)):
+            w = dict['w{}'.format(i)]
+            weights.append(w)
+        
+        # evaluate the model with the current weigths
+        recs = self.recommend_batch(weights, userids=targetids, normalization_mode=norm_mode, N=N,
+            filter_already_liked=filter_already_liked, items_to_exclude=items_to_exclude, verbose=False)
+        return self.evaluate(recs, test_urm=urm_test)
 
+    def validate(self, iterations, urm_test, userids=data.get_target_playlists(), normalization_mode='MAX_MATRIX',
+                        N=10, filter_already_liked=True, items_to_exclude=[], verbose=False):
+        # save the params in self to collect them later
+        self._validation_dict = {
+            'targetids': userids,
+            'urm_test': urm_test,
+            'normalization_mode': normalization_mode,
+            'N': N,
+            'filter_already_liked': filter_already_liked,
+            'items_to_exclude': items_to_exclude
+        }
+
+        pbounds = {}
+        for i in range(len(self.r_hat_array)):
+            pbounds['w{}'.format(i)] = (0,1)
+
+        optimizer = BayesianOptimization(
+            f=self.validateStep,
+            pbounds=pbounds,
+            random_state=1,
+        )
+        optimizer.maximize(
+            init_points=2,
+            n_iter=iterations,
+        )
+
+        print(optimizer.max)
+        return optimizer
 
 
 
