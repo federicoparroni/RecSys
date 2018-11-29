@@ -23,6 +23,14 @@ _URM_TRAIN_PATH = 'raw_data/matrices/urm_train.npz'
 
 _URM_TEST_PATH = 'raw_data/matrices/urm_test.npz'
 
+_URM_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_urm_masked_sequential.npz'
+
+_URM_TRAIN_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_urm_masked_sequential_train_MAP.npz'
+
+_URM_TEST_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_urm_masked_sequential_test_MAP.npz'
+
+
+
 _ICM_PATH = 'raw_data/matrices/icm.npz'
 
 
@@ -66,6 +74,24 @@ def get_urm_test():
     global _urm_test
     if _urm_test is None:
         _urm_test = load_npz(_URM_TEST_PATH)
+    return _urm_test
+
+def get_urm_sequential_masked():
+    global _urm
+    if _urm is None:
+        _urm = load_npz(_URM_SEQUENTIAL_MASKED_PATH)
+    return _urm
+
+def get_urm_train_sequential_masked():
+    global _urm_train
+    if _urm_train is None:
+        _urm_train = load_npz(_URM_TRAIN_SEQUENTIAL_MASKED_PATH)
+    return _urm_train
+
+def get_urm_test_sequential_masked():
+    global _urm_test
+    if _urm_test is None:
+        _urm_test = load_npz(_URM_TEST_SEQUENTIAL_MASKED_PATH)
     return _urm_test
 
 def get_icm():

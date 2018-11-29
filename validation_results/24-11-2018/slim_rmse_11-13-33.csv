@@ -1,0 +1,109 @@
+
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 100
+ topK: 100
+ evaluation map@10: 0.0778021283698667
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 100
+ topK: 400
+ evaluation map@10: 0.08121514361300065
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 100
+ topK: 1000
+ evaluation map@10: 0.08152132607394792
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 300
+ topK: 100
+ evaluation map@10: 0.07780230694129528
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 300
+ topK: 400
+ evaluation map@10: 0.08121514361300065
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 300
+ topK: 1000
+ evaluation map@10: 0.0815075915060467
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 500
+ topK: 100
+ evaluation map@10: 0.07780462836986671
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 500
+ topK: 400
+ evaluation map@10: 0.08122625472411178
+
+l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 500
+ topK: 1000
+ evaluation map@10: 0.08150882607394794
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 100
+ topK: 100
+ evaluation map@10: 0.06249445949861422
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 100
+ topK: 400
+ evaluation map@10: 0.07469332015306125
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 100
+ topK: 1000
+ evaluation map@10: 0.0762718286879566
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 300
+ topK: 100
+ evaluation map@10: 0.062493907911312624
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 300
+ topK: 400
+ evaluation map@10: 0.07470132015306125
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 300
+ topK: 1000
+ evaluation map@10: 0.0762718286879566
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 500
+ topK: 100
+ evaluation map@10: 0.06249326902242374
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 500
+ topK: 400
+ evaluation map@10: 0.07469332015306125
+
+l1_ratio: 0.1
+ alpha: 1e-05
+ Iterations: 500
+ topK: 1000
+ evaluation map@10: 0.0762718286879566

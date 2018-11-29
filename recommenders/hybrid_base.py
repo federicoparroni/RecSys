@@ -3,12 +3,17 @@ import numpy as np
 import data.data as data
 import scipy.sparse as sps
 import utils.log as log
+import time
+from bayes_opt import BayesianOptimization
+
 
 
 class Hybrid(RecommenderBase):
     """
     recommender builded passing to the init method an array of extimated R (r_hat_array) that will be combined to obtain an hybrid r_hat
     """
+    MAX_MATRIX = 'MAX_MATRIX'
+    MAX_ROW = 'MAX_ROW'
 
     def __init__(self, r_hat_array, urm=data.get_urm()):
         self.r_hat_array = r_hat_array
@@ -47,7 +52,7 @@ class Hybrid(RecommenderBase):
             max_matrix = r.max()
             normalized_matrix = (r*weights_array[count]/max_matrix)
             #normalized_matrix.data *= 10
-            #normalized_matrix.data **= 3
+            #normalized_matrix.data **= 2
             normalized_r_hat_array.append(normalized_matrix)
             count += 1
         return normalized_r_hat_array
@@ -81,6 +86,8 @@ class Hybrid(RecommenderBase):
 
         print('matrices normalized')
 
+        start = time.time()
+
         hybrid_r_hat = sps.csr_matrix(np.zeros((normalized_r_hat_array[0].shape)))
 
         # STEP2
@@ -111,8 +118,9 @@ class Hybrid(RecommenderBase):
 
         print('recommendations created')
 
-        return self._insert_userids_as_first_col(userids, ranking)
+        print('{:.2f}'.format(time.time()-start))
 
+        return self._insert_userids_as_first_col(userids, ranking)
 
     def fit(self):
         pass
@@ -127,8 +135,54 @@ class Hybrid(RecommenderBase):
         pass
 
 
+    def validateStep(self, **dict):
+        # gather saved parameters from self
+        targetids = self._validation_dict['targetids']
+        urm_test = self._validation_dict['urm_test']
+        norm_mode = self._validation_dict['normalization_mode']
+        N = self._validation_dict['N']
+        filter_already_liked = self._validation_dict['filter_already_liked']
+        items_to_exclude = self._validation_dict['items_to_exclude']
 
+        # build weights array from dictionary
+        weights = []
+        for i in range(len(dict)):
+            w = dict['w{}'.format(i)]
+            weights.append(w)
+        
+        # evaluate the model with the current weigths
+        recs = self.recommend_batch(weights, userids=targetids, normalization_mode=norm_mode, N=N,
+            filter_already_liked=filter_already_liked, items_to_exclude=items_to_exclude, verbose=False)
+        return self.evaluate(recs, test_urm=urm_test)
 
+    def validate(self, iterations, urm_test, userids=data.get_target_playlists(), normalization_mode='MAX_MATRIX',
+                        N=10, filter_already_liked=True, items_to_exclude=[], verbose=False):
+        # save the params in self to collect them later
+        self._validation_dict = {
+            'targetids': userids,
+            'urm_test': urm_test,
+            'normalization_mode': normalization_mode,
+            'N': N,
+            'filter_already_liked': filter_already_liked,
+            'items_to_exclude': items_to_exclude
+        }
+
+        pbounds = {}
+        for i in range(len(self.r_hat_array)):
+            pbounds['w{}'.format(i)] = (0,1)
+
+        optimizer = BayesianOptimization(
+            f=self.validateStep,
+            pbounds=pbounds,
+            random_state=1,
+        )
+        optimizer.maximize(
+            init_points=2,
+            n_iter=iterations,
+        )
+
+        print(optimizer.max)
+        return optimizer
 
 
 

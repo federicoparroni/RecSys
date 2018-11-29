@@ -20,7 +20,7 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         super(ContentBasedRecommender, self).__init__()
         self.name = 'content_based'
 
-    def fit(self, icm, k, distance, shrink=0, threshold=0, alpha=None, beta=None, l=None, c=None):
+    def fit(self, urm, icm, k, distance, shrink=0, threshold=0, alpha=None, beta=None, l=None, c=None):
         """
         Initialize the model and compute the similarity matrix S with a distance metric.
         Access the similarity matrix using: self._sim_matrix
@@ -40,6 +40,7 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         l: float, optional, balance coefficient used in s_plus distance, included in [0,1]
         c: float, optional, cosine coefficient, included in [0,1]
         """
+        self.urm = urm
         return super(ContentBasedRecommender, self).fit(matrix=icm, k=k, distance=distance, shrink=shrink, threshold=threshold, implicit=False, alpha=alpha, beta=beta, l=l, c=c)
 
     def recommend(self, userid, urm=None, N=10, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
@@ -137,9 +138,10 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         """
         return self.run(distance=distance, k=k, shrink=shrink, threshold=threshold, alpha=alpha, beta=beta, l=l, c=c, export=False)
 
-    def get_r_hat(self, load_from_file=False, path=''):
-        pass
-
+    def get_r_hat(self):
+        r_hat = sim.dot_product(self.urm, self._sim_matrix, target_rows=data.get_target_playlists(),
+                                k=data.N_TRACKS, format_output='csr')
+        return r_hat[data.get_target_playlists()]
 
 """
 If this file is executed, test the SPLUS distance metric

@@ -291,11 +291,8 @@ class SLIM_BPR(RecommenderBase):
         scores[seen] = -np.inf
         return scores
 
-    def get_r_hat(self, load_from_file=False, path=''):
-        if load_from_file:
-            return load_npz(path)
-        else:
-            return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
+    def get_r_hat(self):
+        return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
 
 # test
 s = SLIM_BPR()

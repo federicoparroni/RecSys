@@ -21,6 +21,7 @@ setuptools.setup(
         'scikit-learn',
         'matplotlib',
         'implicit',
-        'similaripy'
+        'similaripy',
+        'bayesian-optimization'
     ]
 )

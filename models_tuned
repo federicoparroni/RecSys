@@ -10,3 +10,17 @@ Collaborative Item Based --> MAP: 0.0743906113158225
  
 Collaborative Item Based --> MAP: 0.07402175044091713
  distance: COSINE   knn: 700
+
+ Slim_rmse
+ l1_ratio: 0.1
+ alpha: 0.0001
+ Iterations: 100
+ topK: 400
+ evaluation map@10: 0.08121514361300065
+
+Collaborative User Based --> MAP: MAP: 0.06455402867535917
+ distance: SPLUS    knn: 400 	a: 0.25 	b: 0.5 	l: 0.25 	c: 0.25 	shrink: 0
+
+Collaborative User Based --> MAP: 0.06981850385802475
+ distance: RP3BETA  knn: 800 	a: 0.5  b: 0.5  shrink: 10
+

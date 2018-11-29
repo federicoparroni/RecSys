@@ -115,7 +115,7 @@ class DistanceBasedRecommender(RecommenderBase):
         """
         Return the r_hat matrix as: R^ = R•S or R^ = S•R
         """
-        R = data.get_urm()
+        R = self.urm
         targetids = data.get_target_playlists()
         if self._matrix_mul_order == 'inverse':
             return sim.dot_product(self._sim_matrix, R, target_rows=targetids, k=R.shape[0], format_output='csr', verbose=verbose)[targetids]
