@@ -59,6 +59,6 @@ def progressbar(iteration, total, prefix='', suffix='', decimals=1, length=50, f
     percent = ("{:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print('%s [%s] %s%% %s' % (prefix, bar, percent, suffix), end='\r')
+    print('%s [%s] %s%% %s' % (prefix, bar, percent, suffix), end='')
     if iteration == total:  # print new line on complete
         print('')

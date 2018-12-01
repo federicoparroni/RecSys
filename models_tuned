@@ -24,3 +24,33 @@ Collaborative User Based --> MAP: MAP: 0.06455402867535917
 Collaborative User Based --> MAP: 0.06981850385802475
  distance: RP3BETA  knn: 800 	a: 0.5  b: 0.5  shrink: 10
 
+
+ MAP: 0.08658685983560088
+|  4        |  0.08659  |  0.9663   |  0.9989   |  0.9158   |  0.01684  |  0.7526   |  0.01747  |  0.04235
+
+
+    def __init__(self,
+                 num_factors=200,
+                 reg=0.015,
+                 iters=10,
+                 scaling='linear',
+                 alpha=25,
+                 epsilon=1.0,
+                 init_mean=0.0,
+                 init_std=0.1,
+                 rnd_seed=42)
+
+                 map = 0.071
+
+MAP: 0.08641207670382983
+|  14       |  0.08641  |  0.08451  |  0.994    |  0.987    |  0.7958   |  0.964    |  0.9409
+
+r_hat_array.append(sps.load_npz(base_path+'_slim_bpr_18-42-00.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_slim_rmse_elasticnet_13-05-23.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_CFitem_17-59-19.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_content_based_17-58-51.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'_pureSVD_15-00-26.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'_CFuser_15-06-02.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'BM25.npz'))
+r_hat_array.append(sps.load_npz(base_path+'P3alpha.npz'))
