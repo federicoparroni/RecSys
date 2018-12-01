@@ -70,7 +70,7 @@ class SLIM_BPR(RecommenderBase):
                                                                    ))
         elif export_r_hat:
             print('saving estimated urm')
-            s.save_r_hat()
+            self.save_r_hat()
 
     def validate(self, epochs=200, user_ids=d.get_target_playlists(),
             batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0],

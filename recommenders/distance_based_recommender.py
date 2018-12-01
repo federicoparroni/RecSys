@@ -178,3 +178,6 @@ class DistanceBasedRecommender(RecommenderBase):
         
         # include userids as first column
         return ranking
+
+    def run(self):
+        pass
