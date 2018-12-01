@@ -22,7 +22,7 @@ class SLIM_BPR(RecommenderBase):
     def __init__(self):
         self.name = 'slim_bpr'
 
-    def run(self, epochs=30, batch_size=1000, lambda_i=0.0, lambda_j=0.0, learning_rate=0.01, topK=200,
+    def run(self, epochs=70, batch_size=1000, lambda_i=0.0, lambda_j=0.0, learning_rate=0.01, topK=1500,
             sgd_mode = 'adagrad', export_results=True, export_r_hat=False):
         """
         meant as a shortcut to run the model after the validation procedure,
@@ -73,8 +73,8 @@ class SLIM_BPR(RecommenderBase):
             s.save_r_hat()
 
     def validate(self, epochs=200, user_ids=d.get_target_playlists(),
-            batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0.0],
-            lambda_j = [0.0], learning_rate = [0.01], topK = [200], sgd_mode='adagrad', log_path=None):
+            batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0],
+            lambda_j = [0], learning_rate = [0.01], topK = [1500], sgd_mode='adagrad', log_path=None):
         """
         train the model finding matrix W
         :param epochs(int)
@@ -295,11 +295,5 @@ class SLIM_BPR(RecommenderBase):
         return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
 
 # test
-
 s = SLIM_BPR()
-s.fit(URM_train=d.get_urm_train(), epochs=100, validate_every_N_epochs=101, learning_rate=1e-2,
-      lambda_i=1e-4, lambda_j=1e-4)
-# s.evaluate(recs, d.get_urm_test(), print_result=True)
-# importexport.exportcsv(recs, 'submission', 'SLIM_BPR')
-s.save_r_hat(evaluation=True)
-
+s.run()
