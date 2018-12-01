@@ -23,12 +23,21 @@ def cluster_users_by_interactions_count(clip):
     2 lists of playlists ids
     """
     playlists = data.get_playlists_df()
-    
+
+    target_playlist = pd.DataFrame({'playlist_id':data.get_target_playlists()})
+    target_playlist['index'] = target_playlist.index
+
+    counts = target_playlist.merge(playlists).groupby(['playlist_id', 'index']).size().reset_index(name='counts')
+
+    #counts = counts.reset_index()
+    #counts.columns[2] = 'index'
+    #counts['index'] = counts.index
+
     # build dataframe of number of interactions: playlist_id | tracks_count
-    counts = playlists.groupby('playlist_id').size().reset_index(name='counts')
+    #counts = playlists.groupby('playlist_id').size().reset_index(name='counts')
 
     # split based on the interactions counts
-    return counts[counts['counts']<=clip]['playlist_id'].values, counts[counts['counts']>clip]['playlist_id'].values
+    return counts[counts['counts']<=clip]['index'].values, counts[counts['counts']>clip]['index'].values
 
 
 def histogram_of_interactions():
@@ -111,6 +120,6 @@ def histogram_of_top_pop_items(top_n, only_target=True):
     plt.show(block=True)
 
 if __name__ == "__main__":
-    #histogram_of_interactions()
-    cluster_users_by_top_pop_count(0.5)
+    histogram_of_interactions()
+    #cluster_users_by_top_pop_count(0.5)
     #histogram_of_top_pop_items(120)

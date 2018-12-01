@@ -1,5 +1,5 @@
 import numpy as np
-import implicit # The Cython library
+import implicit # The our_Cython library
 from recommenders.recommender_base import RecommenderBase
 import scipy.sparse as sps
 from utils import log

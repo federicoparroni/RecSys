@@ -15,12 +15,15 @@ class Hybrid(RecommenderBase):
     MAX_MATRIX = 'MAX_MATRIX'
     MAX_ROW = 'MAX_ROW'
 
-    def __init__(self, r_hat_array, urm=data.get_urm()):
+    def __init__(self, r_hat_array, normalization_mode, urm=data.get_urm()):
         self.r_hat_array = r_hat_array
         self.hybrid_r_hat = None
+        self.normalized_r_hat_array = None
         self.urm = urm
+        self._normalization(normalization_mode=normalization_mode)
+        print('matrices_normalized')
 
-    def normalize_max_row(self, weights_array):
+    def normalize_max_row(self):
         """
         :param userids: user for which compute the predictions
         :return: return an array containing the normalized matrices
@@ -30,18 +33,21 @@ class Hybrid(RecommenderBase):
         for r in self.r_hat_array:
             for row_index in range(r.shape[0]):
 
-                log.progressbar(row_index, r.shape[0])
                 print(row_index*100/r.shape[0])
 
-                row = r[row_index]
+                row = r.getrow(row_index)
                 max_row = row.max()
-                normalized_row = row*weights_array[count]/max_row
-                r[row_index] = normalized_row
+                r[row_index].data = r[row_index].data/max_row
+
+                #row = r[row_index]
+                #max_row = row.max()
+                #normalized_row = row/max_row
+                #r[row_index] = normalized_row
             normalized_r_hat_array.append(r)
             count+=1
         return normalized_r_hat_array
 
-    def normalize_max_matrix(self, weights_array):
+    def normalize_max_matrix(self):
         """
         :param userids: user for which compute the predictions
         :return: return an array containing the normalized matrices
@@ -50,15 +56,23 @@ class Hybrid(RecommenderBase):
         count = 0
         for r in self.r_hat_array:
             max_matrix = r.max()
-            normalized_matrix = (r*weights_array[count]/max_matrix)
-            #normalized_matrix.data *= 10
-            #normalized_matrix.data **= 2
-            normalized_r_hat_array.append(normalized_matrix)
+            r.data = r.data/max_matrix
+            #normalized_matrix = (r/max_matrix)
+            normalized_r_hat_array.append(r)
             count += 1
         return normalized_r_hat_array
 
-    def recommend_batch(self, weights_array, userids=data.get_target_playlists(), normalization_mode='MAX_MATRIX',
-                        N=10, filter_already_liked=True, items_to_exclude=[], verbose=False):
+    def _normalization(self, normalization_mode):
+        if normalization_mode=='MAX_ROW':
+            self.normalized_r_hat_array = self.normalize_max_row()
+        elif normalization_mode=='MAX_MATRIX':
+            self.normalized_r_hat_array = self.normalize_max_matrix()
+        else:
+            log.error('invalid string for normalization')
+            return
+
+    def recommend_batch(self, weights_array, userids=None, N=10, filter_already_liked=True,
+                        items_to_exclude=[], verbose=False):
         """
         method used for get the hybrid prediction from the r_hat_matrices passed as parameter during the creation of the recommender
         step1: normalize the matrices, there are two type of normalization
@@ -75,28 +89,19 @@ class Hybrid(RecommenderBase):
         :param verbose:
         :return:
         """
-        # STEP1
-        if normalization_mode=='MAX_ROW':
-            normalized_r_hat_array = self.normalize_max_row(weights_array)
-        elif normalization_mode=='MAX_MATRIX':
-            normalized_r_hat_array = self.normalize_max_matrix(weights_array)
-        else:
-            log.error('invalid string for normalization')
-            return
-
-        print('matrices normalized')
 
         start = time.time()
 
-        hybrid_r_hat = sps.csr_matrix(np.zeros((normalized_r_hat_array[0].shape)))
+        hybrid_r_hat = sps.csr_matrix(np.zeros((self.normalized_r_hat_array[0].shape)))
 
-        # STEP2
-        for m in normalized_r_hat_array:
-            hybrid_r_hat += m
+        count = 0
+        for m in self.normalized_r_hat_array:
+            hybrid_r_hat += m*weights_array[count]
+            count += 1
 
         #filter seen elements
         if filter_already_liked:
-            user_profile = self.urm[userids]
+            user_profile = self.urm[data.get_target_playlists()]
             hybrid_r_hat[user_profile.nonzero()] = -np.inf
 
         """
@@ -105,7 +110,16 @@ class Hybrid(RecommenderBase):
         reconstructed_r_hat[data.get_target_playlists()] = hybrid_r_hat
         """
 
-        # STEP3
+        if userids is None:
+            userids = data.get_target_playlists()
+            id_return = userids
+        else:
+            hybrid_r_hat = hybrid_r_hat[userids]
+
+            temp = np.array(data.get_target_playlists())
+            id_return = temp[userids]
+
+            # STEP3
         ranking = np.zeros((len(userids), N), dtype=np.int)
         hybrid_r_hat = hybrid_r_hat.todense()
 
@@ -120,7 +134,8 @@ class Hybrid(RecommenderBase):
 
         print('{:.2f}'.format(time.time()-start))
 
-        return self._insert_userids_as_first_col(userids, ranking)
+
+        return self._insert_userids_as_first_col(id_return, ranking)
 
     def fit(self):
         pass
@@ -139,7 +154,6 @@ class Hybrid(RecommenderBase):
         # gather saved parameters from self
         targetids = self._validation_dict['targetids']
         urm_test = self._validation_dict['urm_test']
-        norm_mode = self._validation_dict['normalization_mode']
         N = self._validation_dict['N']
         filter_already_liked = self._validation_dict['filter_already_liked']
         items_to_exclude = self._validation_dict['items_to_exclude']
@@ -151,17 +165,16 @@ class Hybrid(RecommenderBase):
             weights.append(w)
         
         # evaluate the model with the current weigths
-        recs = self.recommend_batch(weights, userids=targetids, normalization_mode=norm_mode, N=N,
+        recs = self.recommend_batch(weights, userids=targetids, N=N,
             filter_already_liked=filter_already_liked, items_to_exclude=items_to_exclude, verbose=False)
         return self.evaluate(recs, test_urm=urm_test)
 
-    def validate(self, iterations, urm_test, userids=data.get_target_playlists(), normalization_mode='MAX_MATRIX',
+    def validate(self, iterations, urm_test, userids=None,
                         N=10, filter_already_liked=True, items_to_exclude=[], verbose=False):
         # save the params in self to collect them later
         self._validation_dict = {
             'targetids': userids,
             'urm_test': urm_test,
-            'normalization_mode': normalization_mode,
             'N': N,
             'filter_already_liked': filter_already_liked,
             'items_to_exclude': items_to_exclude
