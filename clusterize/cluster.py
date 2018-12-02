@@ -79,7 +79,7 @@ def cluster_users_by_top_pop_count(clip_perc, top_n=100, only_target=True):
     # track_id | count
     toptracks_df = playlists_df.groupby('track_id').size().reset_index(name='count')
     #toptracks_df['relative_count'] = toptracks_df['count'] / tot_interactions
-    toptracks_df = toptracks_df.sort_values('count', ascending=False)[0:top_n]
+    toptracks_df = toptracks_df.sort_values('count', ascending=False).head(top_n)
 
     # playlist_id | top_pop_count
     filtered_df = playlists_df.merge(toptracks_df)
@@ -104,13 +104,13 @@ def histogram_of_top_pop_items(top_n, only_target=True):
         playlists_df = playlists_df.merge(target_playlist_df)
     # track_id | count
     toptracks_df = playlists_df.groupby('track_id').size().reset_index(name='count')
-    toptracks_df = toptracks_df.sort_values('count', ascending=False)[0:top_n]
+    toptracks_df = toptracks_df.sort_values('count', ascending=False).head(top_n)
     toptracks_df.plot(x='track_id', y='count', kind='bar', fontsize=6, figsize=(150,100))
 
     # plot histogram
     plt.show(block=True)
 
 if __name__ == "__main__":
-    #histogram_of_interactions()
-    cluster_users_by_top_pop_count(0.5)
+    histogram_of_interactions()
+    #cluster_users_by_top_pop_count(0.5)
     #histogram_of_top_pop_items(120)
