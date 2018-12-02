@@ -26,3 +26,4 @@ models_validation/
 validation_results/
 submission/
 
+cythoncompiled/build
