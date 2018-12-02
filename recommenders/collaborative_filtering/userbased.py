@@ -45,6 +45,7 @@ class CFUserBased(DistanceBasedRecommender):
         l: float, optional, balance coefficient used in s_plus distance, included in [0,1]
         c: float, optional, cosine coefficient, included in [0,1]
         """
+        self.urm = urm_train
         return super(CFUserBased, self).fit(urm_train, k=k, distance=distance, shrink=shrink, threshold=threshold,
                                             implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, verbose=verbose)
 

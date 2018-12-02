@@ -97,14 +97,12 @@ class SLIMElasticNetRecommender(RecommenderBase):
         global r_time
 
         #code for print
-        if round(completed*100*4/20635, 2) > old:
-            print(str(round(completed*100*4/20635, 2)) + '%')
+        if round(completed*100*4/data.N_PLAYLISTS, 2) > old:
+            print(str(round(completed*100*4/data.N_PLAYLISTS, 2)) + '%')
             #if time.clock()-r_time > 60:
             #    print(str(time.clock()-s_time) + 's elapsed from the start of the training')
             #    r_time = time.clock()
-            old = round(completed*100*4/20635, 2)
-
-
+            old = round(completed*100*4/data.N_PLAYLISTS, 2)
 
         return values, rows, cols
 
@@ -144,7 +142,9 @@ class SLIMElasticNetRecommender(RecommenderBase):
         self.topK = topK
         self.workers = workers
 
-        self.URM_train = sps.csc_matrix(urm)
+
+        #TRANSPOSE THE MATRIX SO I CAN LEARN THE USER USER SIMILARITY
+        self.URM_train = sps.csc_matrix(urm.T)
         n_items = self.URM_train.shape[1]
 
         #create a copy of the URM since each _pfit will modify it
@@ -178,11 +178,13 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
     def recommend_batch(self, userids, N=10, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         # compute the scores using the dot product
-        user_profile = self.URM_train[userids]
-        scores = user_profile.dot(self.W_sparse)
+        user_profile = self.URM_train.T
+
+        #INVERT PRODUCT
+        scores = self.W_sparse[userids].dot(user_profile)
 
         if filter_already_liked:
-            scores[user_profile.nonzero()] = -np.inf
+            scores[user_profile[userids].nonzero()] = -np.inf
 
         ranking = np.zeros((scores.shape[0], N), dtype=np.int)
         scores = scores.todense()
@@ -198,9 +200,7 @@ class SLIMElasticNetRecommender(RecommenderBase):
         add target id in a way that recommendations is a list as follows
         [ [playlist1_id, id1, id2, ....., id10], ...., [playlist_id2, id1, id2, ...] ]
         """
-        np_target_id = np.array(userids)
-        target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
-        recommendations = np.concatenate((target_id_t, ranking), axis=1)
+        recommendations = self._insert_userids_as_first_col(userids, ranking)
 
         global completed
         completed=0
@@ -315,5 +315,7 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    validate(l1_ratio_array=[0.5, 0.9], alpha_array=[0.5e-4], max_iter_array=[100],
-             topK_array=[100, 400])
+    rec = SLIMElasticNetRecommender()
+    rec.fit(urm=data.get_urm_train(), max_iter=1, topK=400, alpha=1e-4, l1_ratio=0.5)
+    recs = rec.recommend_batch(userids=data.get_target_playlists())
+    rec.evaluate(recommendations=recs, test_urm=data.get_urm_test())

@@ -1,5 +1,5 @@
 import numpy as np
-import implicit # The Cython library
+import implicit # The our_Cython library
 from recommenders.recommender_base import RecommenderBase
 import scipy.sparse as sps
 from utils import log
@@ -24,32 +24,30 @@ class AlternatingLeastSquare(RecommenderBase):
 
     [link text](http://www.example.com)
     """
-    def __init__(self, URM):
-        self.urm = URM
+    def __init__(self):
         self.name = 'ALS'
 
-    def get_r_hat(self, load_from_file=False, path=''):
+    def get_r_hat(self):
         """
         compute the r_hat for the model
         :return  r_hat
         """
-        if load_from_file:
-            r_hat = sps.load_npz(path)
-        else:
-            if self.user_vecs is None:
-                log.error('the recommender has not been trained, call the fit() method')
-            s_user_vecs = sps.csr_matrix(self.user_vecs)
-            s_item_vecs_t = sps.csr_matrix(self.item_vecs.T)
-            r_hat = s_user_vecs[data.get_target_playlists()].dot(s_item_vecs_t)
+
+        if self.user_vecs is None:
+            log.error('the recommender has not been trained, call the fit() method')
+
+        s_user_vecs = sps.csr_matrix(self.user_vecs)
+        s_item_vecs_t = sps.csr_matrix(self.item_vecs.T)
+        r_hat = s_user_vecs[data.get_target_playlists()].dot(s_item_vecs_t)
         return r_hat
 
-    def fit(self, urm_train=data.get_urm(), factors=550, regularization=0.15, iterations=300, alpha=25):
+    def fit(self, urm, factors, regularization, iterations, alpha):
         """
         train the model finding the two matrices U and V: U*V.T=R  (R is the extimated URM)
 
         Parameters
         ----------
-        :param (csr) urm_train: The URM matrix of shape (number_users, number_items).
+        :param (csr) urm: The URM matrix of shape (number_users, number_items).
         :param (int) factors: How many latent features we want to compute.
         :param (float) regularization: lambda_val regularization value
         :param (int) iterations: How many times we alternate between fixing and updating our user and item vectors
@@ -60,7 +58,7 @@ class AlternatingLeastSquare(RecommenderBase):
         :return (csr_matrix) user_vecs: matrix N_user x factors
         :return (csr_matrix) item_vecs: matrix N_item x factors
         """
-        self.urm = urm_train
+        self.urm = urm
         sparse_item_user = self.urm.T
 
         # Initialize the als model and fit it using the sparse item-user matrix
@@ -80,7 +78,7 @@ class AlternatingLeastSquare(RecommenderBase):
         self.item_vecs = self._model.item_factors
 
 
-    def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=True, items_to_exclude=[]):
+    def recommend(self, userid, N=10, filter_already_liked=True, with_scores=True, items_to_exclude=[]):
         """
         look for comment on superclass method
         """
@@ -163,7 +161,7 @@ class AlternatingLeastSquare(RecommenderBase):
         urm_test = _urm_test if urm_test is None else urm_test
         targetids = _targetids if targetids is None else targetids
 
-        self.fit(urm_train=urm_train, factors=factors, regularization=regularization, iterations=iterations, alpha=alpha)
+        self.fit(urm=urm_train, factors=factors, regularization=regularization, iterations=iterations, alpha=alpha)
         recs = self.recommend_batch(userids=targetids, with_scores=with_scores, verbose=verbose)
 
         map10 = None
@@ -210,7 +208,7 @@ class AlternatingLeastSquare(RecommenderBase):
 
 
         #create the initial model
-        recommender = AlternatingLeastSquare(urm_train)
+        recommender = AlternatingLeastSquare()
 
         path = 'validation_results/'
         name = 'als'
@@ -230,7 +228,7 @@ class AlternatingLeastSquare(RecommenderBase):
                                 print('\n\nTraining ALS with\n Factors: {}\n Regulatization: {}\n'
                                       'Iterations: {}\n Alpha_val: {}'.format(f, r, i, a))
                                 print('\n training phase...')
-                            recommender.fit(f, r, i, a)
+                            recommender.fit(urm=urm_train, factors=f, regularization=r, iterations=i, alpha=a)
 
                             #get the recommendations from the trained model
                             recommendations = recommender.recommend_batch(userids=userids, N=N, filter_already_liked=filter_already_liked,
@@ -250,5 +248,7 @@ class AlternatingLeastSquare(RecommenderBase):
 If this file is executed, test the als
 """
 if __name__ == '__main__':
-    model = AlternatingLeastSquare(data.get_urm_train())
-    model.test()
+    rec = AlternatingLeastSquare()
+    rec.fit()
+    recommendations = rec.recommend_batch()
+    rec.evaluate()

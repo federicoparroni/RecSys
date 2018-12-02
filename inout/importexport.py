@@ -10,7 +10,7 @@ import time
 import os
 import utils.dated_directory as datedir
 
-def exportcsv(recs, path='submissions', name='', with_scores=False, check_len=10, add_time_suffix=True,
+def exportcsv(recs, path='submission', name='', with_scores=False, check_len=10, add_time_suffix=True,
               fieldnames=['playlist_id', 'track_ids'], verbose=False):
     """
     Save a list of recommendations into a csv file ready for submission
