@@ -22,7 +22,7 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         super(ContentBasedRecommender, self).__init__()
         self.name = 'content_based'
 
-    def fit(self, urm, icm, k, distance, shrink=0, threshold=0, alpha=None, beta=None, l=None, c=None):
+    def fit(self, urm, icm, k=0, distance='cosine', shrink=0, threshold=0, alpha=None, beta=None, l=None, c=None):
         """
         Initialize the model and compute the Similarity matrix S with a distance metric.
         Access the Similarity matrix using: self._sim_matrix
@@ -106,18 +106,18 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         recs: (list) recommendations
         map10: (float) MAP10 for the provided recommendations
         """
-        _urm = data.get_urm_train()
-        _icm = data.get_icm()
-        _urm_test = data.get_urm_test()
-        _targetids = data.get_target_playlists()
+        # _urm = data.get_urm_train()
+        # _icm = data.get_icm()
+        # _urm_test = data.get_urm_test()
+        # _targetids = data.get_target_playlists()
         #_targetids = data.get_all_playlists()
 
         start = time.time()
 
-        urm = _urm if urm is None else urm
-        icm = _icm if icm is None else icm
-        urm_test = _urm_test if urm_test is None else urm_test
-        targetids = _targetids if targetids is None else targetids
+        # urm = _urm if urm is None else urm
+        # icm = _icm if icm is None else icm
+        # urm_test = _urm_test if urm_test is None else urm_test
+        # targetids = _targetids if targetids is None else targetids
 
         self._print(distance, k, shrink, threshold, alpha, beta, l, c)
 
@@ -139,8 +139,8 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         return recs, map10
 
 
-    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, alpha=0.5,
-             beta=0.5, l=0.5, c=0.5, export_results=True, export_r_hat = False):
+    #def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=600, shrink=10, threshold=0, alpha=0.25, beta=0.5, l=0.5, c=0.25):
         """
         meant as a shortcut to run the model after the validation procedure,
         allowing the export of the scores on the playlists or of the estimated csr matrix
@@ -162,7 +162,9 @@ class ContentBasedRecommender(DistanceBasedRecommender):
             self.save_r_hat()
         return recs, map
 
-    def validate(self, distance=[DistanceBasedRecommender.SIM_SPLUS], k=[100], shrink=[0], threshold=[0], alpha=[0.5],
+    def validate(self, urm, icm, urm_test,
+                 targetids,distance=[DistanceBasedRecommender.SIM_SPLUS], k=[100], shrink=[0],
+                 threshold=[0], alpha=[0.5],
                  beta=[0.5], l=[0.5], c=[0.5], log_path=None):
 
         if log_path != None:
@@ -180,10 +182,10 @@ class ContentBasedRecommender(DistanceBasedRecommender):
                                 for l_ in l:
                                     for c_ in c:
                                         self.run(dist,
-                                                 urm=d.get_urm_train(),
-                                                 icm=d.get_icm(),
-                                                 urm_test=d.get_urm_test(),
-                                                 targetids=d.get_target_playlists(),
+                                                 urm=urm,
+                                                 icm=icm,
+                                                 urm_test=urm_test,
+                                                 targetids=targetids,
                                                  k=k_,
                                                  shrink=s,
                                                  threshold=t,
@@ -209,8 +211,12 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = ContentBasedRecommender()
-    model.validate(distance=[DistanceBasedRecommender.SIM_SPLUS],
-                   k=[100],
+    model.validate(d.get_urm_train(),
+                   d.get_icm(),
+                   d.get_urm_test(),
+                   d.get_target_playlists(),
+                   distance=[DistanceBasedRecommender.SIM_SPLUS],
+                   k=[10],
                    shrink=[100],
                    l=[0.5],
                    alpha=[0.25],

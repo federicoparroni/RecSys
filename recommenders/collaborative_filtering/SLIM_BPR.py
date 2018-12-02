@@ -70,7 +70,7 @@ class SLIM_BPR(RecommenderBase):
                                                                    ))
         elif export_r_hat:
             print('saving estimated urm')
-            s.save_r_hat()
+            self.save_r_hat()
 
     def validate(self, epochs=200, user_ids=d.get_target_playlists(),
             batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0],
@@ -157,7 +157,7 @@ class SLIM_BPR(RecommenderBase):
 
         self.sgd_mode = sgd_mode
 
-        from our_Cython.SLIM_BPR.SLIM_BPR_Cython_Epoch import SLIM_BPR_Cython_Epoch
+        from cythoncompiled.SLIM_BPR.SLIM_BPR_Cython_Epoch import SLIM_BPR_Cython_Epoch
 
         self.cythonEpoch = SLIM_BPR_Cython_Epoch(self.URM_train,
                                                  sparse_weights = False,

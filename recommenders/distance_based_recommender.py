@@ -118,9 +118,11 @@ class DistanceBasedRecommender(RecommenderBase):
         R = self.urm
         targetids = data.get_target_playlists()
         if self._matrix_mul_order == 'inverse':
-            return sim.dot_product(self._sim_matrix, R, target_rows=targetids, k=R.shape[0], format_output='csr', verbose=verbose)[targetids]
+            return sim.dot_product(self._sim_matrix, R, target_rows=targetids, k=R.shape[0],
+                                    format_output='csr', verbose=verbose)[targetids]
         else:
-            return sim.dot_product(R, self._sim_matrix, target_rows=targetids, k=R.shape[0], format_output='csr', verbose=verbose)[targetids]
+            return sim.dot_product(R, self._sim_matrix, target_rows=targetids, k=R.shape[0],
+                                    format_output='csr', verbose=verbose)[targetids]
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():
@@ -178,3 +180,6 @@ class DistanceBasedRecommender(RecommenderBase):
         
         # include userids as first column
         return ranking
+
+    def run(self):
+        pass
