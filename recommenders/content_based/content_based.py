@@ -139,8 +139,8 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         return recs, map10
 
 
-    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, alpha=0.5,
-             beta=0.5, l=0.5, c=0.5, export_results=True, export_r_hat = False):
+    #def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=100, shrink=0, threshold=0, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=600, shrink=10, threshold=0, alpha=0.25, beta=0.5, l=0.5, c=0.25):
         """
         meant as a shortcut to run the model after the validation procedure,
         allowing the export of the scores on the playlists or of the estimated csr matrix

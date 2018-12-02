@@ -33,7 +33,6 @@ _URM_TEST_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_
 
 _ICM_PATH = 'raw_data/matrices/icm.npz'
 
-
 #sparse_matrices CSR format
 _urm = None
 _urm_train = None
@@ -43,6 +42,7 @@ _icm = None
 #pandas frame
 _tracks_df = None
 _playlists_df = None
+_seq_playlist_df = None
 
 #np.array
 _target_playlists = None
@@ -53,6 +53,9 @@ N_PLAYLISTS = 50445 + 1
 N_TRACKS = 20634 + 1
 N_ARTISTS = 6667 + 1
 N_ALBUMS = 12743 + 1
+
+NUM_SEQUENTIAL = 5000
+
        
 """ 
 GET METHODS 
@@ -117,6 +120,15 @@ def get_target_playlists():
     if _target_playlists is None:
         _target_playlists = [p[0] for p in pd.read_csv(_TARGET_PLAYLISTS_PATH).values]
     return _target_playlists
+
+def get_sequential_target_playlists():
+    return get_target_playlists()[0:NUM_SEQUENTIAL]
+
+def get_sequential_target_playlists_df():
+    global _seq_playlist_df
+    if _seq_playlist_df is None:
+        _seq_playlist_df = pd.read_csv(_TARGET_PLAYLISTS_PATH).head(NUM_SEQUENTIAL)
+    return _seq_playlist_df
 
 def get_all_playlists():
     global _all_playlists
