@@ -54,3 +54,15 @@ r_hat_array.append(sps.load_npz(base_path+'_content_based_17-58-51.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'_CFuser_15-06-02.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'BM25.npz'))
 r_hat_array.append(sps.load_npz(base_path+'P3alpha.npz'))
+
+    IALS 0.076
+    def __init__(self,
+                 num_factors=500,
+                 reg=0.015,
+                 iters=10,
+                 scaling='linear',
+                 alpha=25,
+                 epsilon=1.0,
+                 init_mean=0.0,
+                 init_std=0.1,
+                 rnd_seed=42):

@@ -37,8 +37,8 @@ class DistanceBasedRecommender(RecommenderBase):
 
     def fit(self, matrix, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
         """
-        Initialize the model and compute the similarity matrix S with a distance metric.
-        Access the similarity matrix using: self._sim_matrix
+        Initialize the model and compute the Similarity matrix S with a distance metric.
+        Access the Similarity matrix using: self._sim_matrix
 
         Parameters
         ----------
@@ -64,22 +64,22 @@ class DistanceBasedRecommender(RecommenderBase):
         l = -1 if l is None else l
         c = -1 if c is None else c
         if distance==self.SIM_ASYMCOSINE and not(0 <= alpha <= 1):
-            log.error('Invalid parameter alpha in asymmetric cosine similarity!')
+            log.error('Invalid parameter alpha in asymmetric cosine Similarity!')
             return
         if distance==self.SIM_TVERSKY and not(0 <= alpha <= 1 and 0 <= beta <= 1):
-            log.error('Invalid parameter alpha/beta in tversky similarity!')
+            log.error('Invalid parameter alpha/beta in tversky Similarity!')
             return
         if distance==self.SIM_P3ALPHA and alpha is None:
-            log.error('Invalid parameter alpha in p3alpha similarity')
+            log.error('Invalid parameter alpha in p3alpha Similarity')
             return
         if distance==self.SIM_RP3BETA and alpha is None and beta is None:
-            log.error('Invalid parameter alpha/beta in rp3beta similarity')
+            log.error('Invalid parameter alpha/beta in rp3beta Similarity')
             return
         if distance==self.SIM_SPLUS and not(0 <= l <= 1 and 0 <= c <= 1 and 0 <= alpha <= 1 and 0 <= beta <= 1):
-            log.error('Invalid parameter alpha/beta/l/c in s_plus similarity')
+            log.error('Invalid parameter alpha/beta/l/c in s_plus Similarity')
             return
         
-        # compute and stores the similarity matrix using one of the distance metric: S = R•R'
+        # compute and stores the Similarity matrix using one of the distance metric: S = R•R'
         if distance==self.SIM_COSINE:
             self._sim_matrix = sim.cosine(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit)
         elif distance==self.SIM_ASYMCOSINE:

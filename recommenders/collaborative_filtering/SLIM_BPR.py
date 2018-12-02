@@ -14,7 +14,7 @@ pyximport.install(setup_args={"script_args":[],
 class SLIM_BPR(RecommenderBase):
 
     """
-    Learns a items similarity matrix W. The estimated URM (URM^) can be obtained by URM*W.
+    Learns a items Similarity matrix W. The estimated URM (URM^) can be obtained by URM*W.
     In order to learn it, BPR loss is used.
     Various optimization methods are available. Worth mentioning are 'adagrad' and 'sgd'.
     """
