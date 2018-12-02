@@ -120,4 +120,6 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = CFUserBased()
-    model.test()
+    #model.fit(data.get_urm_train(), distance=CFUserBased.SIM_SPLUS,k=400,alpha=0.25,beta=0.5,shrink=0,l=0.25,c=0.25)
+    #model.save_r_hat(evaluation=True)
+    model.test(distance=DistanceBasedRecommender.SIM_TVERSKY, k=150, shrink=10, alpha=1, beta=1)
