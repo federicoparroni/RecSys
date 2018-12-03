@@ -37,8 +37,8 @@ class DistanceBasedRecommender(RecommenderBase):
 
     def fit(self, matrix, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
         """
-        Initialize the model and compute the similarity matrix S with a distance metric.
-        Access the similarity matrix using: self._sim_matrix
+        Initialize the model and compute the Similarity_MFD matrix S with a distance metric.
+        Access the Similarity_MFD matrix using: self._sim_matrix
 
         Parameters
         ----------
@@ -64,22 +64,22 @@ class DistanceBasedRecommender(RecommenderBase):
         l = -1 if l is None else l
         c = -1 if c is None else c
         if distance==self.SIM_ASYMCOSINE and not(0 <= alpha <= 1):
-            log.error('Invalid parameter alpha in asymmetric cosine similarity!')
+            log.error('Invalid parameter alpha in asymmetric cosine Similarity_MFD!')
             return
         if distance==self.SIM_TVERSKY and not(0 <= alpha <= 1 and 0 <= beta <= 1):
-            log.error('Invalid parameter alpha/beta in tversky similarity!')
+            log.error('Invalid parameter alpha/beta in tversky Similarity_MFD!')
             return
         if distance==self.SIM_P3ALPHA and alpha is None:
-            log.error('Invalid parameter alpha in p3alpha similarity')
+            log.error('Invalid parameter alpha in p3alpha Similarity_MFD')
             return
         if distance==self.SIM_RP3BETA and alpha is None and beta is None:
-            log.error('Invalid parameter alpha/beta in rp3beta similarity')
+            log.error('Invalid parameter alpha/beta in rp3beta Similarity_MFD')
             return
         if distance==self.SIM_SPLUS and not(0 <= l <= 1 and 0 <= c <= 1 and 0 <= alpha <= 1 and 0 <= beta <= 1):
-            log.error('Invalid parameter alpha/beta/l/c in s_plus similarity')
+            log.error('Invalid parameter alpha/beta/l/c in s_plus Similarity_MFD')
             return
         
-        # compute and stores the similarity matrix using one of the distance metric: S = R•R'
+        # compute and stores the Similarity_MFD matrix using one of the distance metric: S = R•R'
         if distance==self.SIM_COSINE:
             self._sim_matrix = sim.cosine(matrix, k=k, shrink=shrink, threshold=threshold, binary=implicit)
         elif distance==self.SIM_ASYMCOSINE:
@@ -119,10 +119,10 @@ class DistanceBasedRecommender(RecommenderBase):
         targetids = data.get_target_playlists()
         if self._matrix_mul_order == 'inverse':
             return sim.dot_product(self._sim_matrix, R, target_rows=targetids, k=R.shape[0],
-                                    format_output='csr', verbose=verbose)[targetids]
+                                    format_output='csr', verbose=verbose)
         else:
             return sim.dot_product(R, self._sim_matrix, target_rows=targetids, k=R.shape[0],
-                                    format_output='csr', verbose=verbose)[targetids]
+                                    format_output='csr', verbose=verbose)
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():

@@ -17,6 +17,7 @@ import time
 import clusterize.cluster as cluster
 
 
+"""
 base_path = 'raw_data/saved_r_hat/'
 
 r_hat_array = []
@@ -32,12 +33,13 @@ r_hat_array.append(sps.load_npz(base_path+'ALS_20-26-44.npz'))
 r_hat_array.append(sps.load_npz(base_path+'_content_based_14-15-56.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'pureSVD_19-24-20.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'CFuser_10-36-03.npz'))
+r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
 
 #low, high = cluster.cluster_users_by_interactions_count(10)
 
 print('matrices loaded')
 
-weights = [72, 81, 76, 32]
+weights = [72, 81, 76, 32, 71]
 
 hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX)
 
@@ -45,7 +47,7 @@ hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX)
 recommendations = hybrid_rec.recommend_batch(weights_array=weights)
 
 exportcsv(recommendations, path='submissions', name='hybrid')
-
+"""
 
 """
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
@@ -56,7 +58,7 @@ rec.fit(urm_train=data.get_urm_train(), distance=CFUserBased.SIM_SPLUS, k=400, a
 rec.save_r_hat(name='', evaluation=True)
 """
 
-"""
+
 start = time.time()
 
 base_path = 'raw_data/saved_r_hat_evaluation/'
@@ -65,13 +67,16 @@ r_hat_array = []
 
 r_hat_array.append(sps.load_npz(base_path+'_slim_bpr_18-42-00.npz'))
 r_hat_array.append(sps.load_npz(base_path+'_slim_rmse_elasticnet_13-05-23.npz'))
-r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
-r_hat_array.append(sps.load_npz(base_path+'_CFitem_17-59-19.npz'))
+
+#r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
+r_hat_array.append(sps.load_npz(base_path+'IALS.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'_CFitem_17-59-19.npz'))
 r_hat_array.append(sps.load_npz(base_path+'_content_based_17-58-51.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'_pureSVD_15-00-26.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'_CFuser_15-06-02.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'BM25.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'P3alpha.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
 
 print('MATRICES LOADED')
 print('{:.2f}'.format(time.time() - start))
@@ -90,9 +95,9 @@ hybrid_rec = Hybrid(r_hat_array, urm=data.get_urm_train(), normalization_mode=Hy
 # rec_l = hybrid_rec.recommend_batch(weights_array=weights_l, userids=low)
 # rec_h = hybrid_rec.recommend_batch(weights_array=weights_h, userids=high)
 # recs = np.concatenate((rec_l, rec_h))
-recs = hybrid_rec.recommend_batch(weights_array=[72, 81, 76, 32])
+recs = hybrid_rec.recommend_batch(weights_array=[1, 1, 1, 1, 1])#[72, 81, 76, 32, 71])
 hybrid_rec.evaluate(recs, test_urm=data.get_urm_test())
-"""
+
 
 """
 print('test on all')

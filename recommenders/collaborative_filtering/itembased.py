@@ -23,8 +23,8 @@ class CFItemBased(DistanceBasedRecommender):
 
     def fit(self, urm_train, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
         """
-        Initialize the model and compute the similarity matrix S with a distance metric.
-        Access the similarity matrix using: self._sim_matrix
+        Initialize the model and compute the Similarity_MFD matrix S with a distance metric.
+        Access the Similarity_MFD matrix using: self._sim_matrix
 
         Parameters
         ----------
@@ -154,4 +154,4 @@ if __name__ == '__main__':
     model = CFItemBased()
     # model.fit(data.get_urm_train(), distance=CFItemBased.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
     # model.save_r_hat(evaluation=True)
-    model.test()
+    model.fit()

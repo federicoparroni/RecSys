@@ -18,7 +18,7 @@ r_time = 0
 
 class SLIMElasticNetRecommender(RecommenderBase):
     """
-    Train a Sparse Linear Methods (SLIM) item similarity model.
+    Train a Sparse Linear Methods (SLIM) item Similarity_MFD model.
     NOTE: ElasticNet solver is parallel, a single intance of SLIM_ElasticNet will
           make use of half the cores available
 
@@ -210,17 +210,15 @@ class SLIMElasticNetRecommender(RecommenderBase):
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         pass
 
-    def get_r_hat(self, load_from_file=False, path=''):
+    def get_r_hat(self):
         """
         compute the r_hat for the model
         :return  r_hat only for the target playlists
         """
-        if load_from_file:
-            r_hat = sps.load_npz(path)
-        else:
-            if self.W_sparse == None:
-                log.error('the recommender has not been trained, call the fit() method for compute W')
-            r_hat = self.URM_train[data.get_target_playlists()].dot(self.W_sparse)
+        if self.W_sparse == None:
+            log.error('the recommender has not been trained, call the fit() method for compute W')
+            r_hat = data.get_empty_urm()
+            r_hat[data.get_target_playlists()] = self.URM_train[data.get_target_playlists()].dot(self.W_sparse)
         return r_hat
 
     def run(self, urm_train=None, urm=None, urm_test=None, targetids=None,
