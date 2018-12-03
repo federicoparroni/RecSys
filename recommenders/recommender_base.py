@@ -44,10 +44,10 @@ class RecommenderBase(ABC):
 
         # create dir if not exists
         if evaluation:
-            filename = 'raw_data/saved_r_hat_evaluation/{}_{}_{}'.format(name, self.name, time.strftime('%H-%M-%S'))
+            filename = 'raw_data/saved_r_hat_evaluation/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
             os.makedirs(os.path.dirname(filename), exist_ok=True)
         else:
-            filename = 'raw_data/saved_r_hat/{}_{}_{}'.format(name, self.name, time.strftime('%H-%M-%S'))
+            filename = 'raw_data/saved_r_hat/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
             os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         sps.save_npz(filename, r_hat)

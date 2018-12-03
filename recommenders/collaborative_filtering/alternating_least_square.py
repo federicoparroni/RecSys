@@ -250,6 +250,5 @@ If this file is executed, test the als
 """
 if __name__ == '__main__':
     rec = AlternatingLeastSquare()
-    rec.fit()
-    recommendations = rec.recommend_batch()
-    rec.evaluate()
+    rec.fit(urm=data.get_urm_train(), factors=500, regularization=0.5, iterations=200, alpha=25)
+    rec.save_r_hat(evaluation=True)

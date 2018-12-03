@@ -49,7 +49,7 @@ class CFItemBased(DistanceBasedRecommender):
         return super(CFItemBased, self).fit(urm_train.T, k=k, distance=distance, shrink=shrink, threshold=threshold,
                                             implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, verbose=verbose)
 
-    def get_r_hat(self, only_target=True, verbose=False):
+    def get_r_hat(self, verbose=False):
         """
         Return the r_hat matrix as: R^ = R•S, ONLY for the TARGET USERS
         """
@@ -152,6 +152,5 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = CFItemBased()
-    # model.fit(data.get_urm_train(), distance=CFItemBased.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
-    # model.save_r_hat(evaluation=True)
-    model.fit()
+    model.fit(urm_train=data.get_urm_train(), k=600, alpha=0.25, beta=0.5, shrink=10, l=0.25, c=0.5, distance=CFItemBased.SIM_SPLUS)
+    model.save_r_hat(evaluation=True, name=model.name)
