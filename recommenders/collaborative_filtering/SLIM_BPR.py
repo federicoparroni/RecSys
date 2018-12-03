@@ -157,7 +157,7 @@ class SLIM_BPR(RecommenderBase):
 
         self.sgd_mode = sgd_mode
 
-        from our_Cython.SLIM_BPR.SLIM_BPR_Cython_Epoch import SLIM_BPR_Cython_Epoch
+        from cythoncompiled.SLIM_BPR.SLIM_BPR_Cython_Epoch import SLIM_BPR_Cython_Epoch
 
         self.cythonEpoch = SLIM_BPR_Cython_Epoch(self.URM_train,
                                                  sparse_weights = False,
