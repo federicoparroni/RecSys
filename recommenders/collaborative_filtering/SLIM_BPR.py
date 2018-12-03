@@ -6,6 +6,7 @@ import time
 import sys
 import utils.log as log
 from scipy.sparse import load_npz
+import data.data as data
 from inout import importexport
 pyximport.install(setup_args={"script_args":[],
                               "include_dirs":np.get_include()},
@@ -14,7 +15,7 @@ pyximport.install(setup_args={"script_args":[],
 class SLIM_BPR(RecommenderBase):
 
     """
-    Learns a items Similarity matrix W. The estimated URM (URM^) can be obtained by URM*W.
+    Learns a items Similarity_MFD matrix W. The estimated URM (URM^) can be obtained by URM*W.
     In order to learn it, BPR loss is used.
     Various optimization methods are available. Worth mentioning are 'adagrad' and 'sgd'.
     """
@@ -292,7 +293,9 @@ class SLIM_BPR(RecommenderBase):
         return scores
 
     def get_r_hat(self):
-        return self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
+        r_hat = data.get_empty_urm()
+        r_hat[data.get_target_playlists()] = self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
+        return r_hat
 
 # test
 s = SLIM_BPR()

@@ -12,7 +12,7 @@ class Compute_Similarity_Euclidean:
     def __init__(self, dataMatrix, topK=100, shrink = 0,
                  similarity_from_distance_mode ="linear", row_weights = None, **args):
         """
-        Computes the euclidean Similarity on the columns of dataMatrix
+        Computes the euclidean Similarity_MFD on the columns of dataMatrix
         If it is computed on URM=|users|x|items|, pass the URM as is.
         If it is computed on ICM=|items|x|features|, pass the ICM transposed.
         :param dataMatrix:
@@ -73,7 +73,7 @@ class Compute_Similarity_Euclidean:
 
     def compute_similarity(self, start_col=None, end_col=None):
         """
-        Compute the Similarity for the given dataset
+        Compute the Similarity_MFD for the given dataset
         :param self:
         :param start_col: column to begin with
         :param end_col: column to stop before, end_col is excluded
@@ -109,7 +109,7 @@ class Compute_Similarity_Euclidean:
             if time.time() - start_time_print_batch >= 30 or columnIndex==end_col_local:
                 columnPerSec = processedItems / (time.time() - start_time)
 
-                print("Similarity column {} ( {:2.0f} % ), {:.2f} column/sec, elapsed time {:.2f} min".format(
+                print("Similarity_MFD column {} ( {:2.0f} % ), {:.2f} column/sec, elapsed time {:.2f} min".format(
                     processedItems, processedItems / (end_col_local - start_col_local) * 100, columnPerSec, (time.time() - start_time)/ 60))
 
                 sys.stdout.flush()

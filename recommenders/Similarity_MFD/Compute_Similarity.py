@@ -2,8 +2,8 @@
 import numpy as np
 import scipy.sparse as sps
 
-from recommenders.Similarity.Compute_Similarity_Python import Compute_Similarity_Python
-from recommenders.Similarity.Compute_Similarity_Euclidean import Compute_Similarity_Euclidean
+from recommenders.Similarity_MFD.Compute_Similarity_Python import Compute_Similarity_Python
+from recommenders.Similarity_MFD.Compute_Similarity_Euclidean import Compute_Similarity_Euclidean
 
 
 from enum import Enum
@@ -24,13 +24,13 @@ class Compute_Similarity:
 
     def __init__(self, dataMatrix, use_implementation = "density", similarity = None, **args):
         """
-        Interface object that will call the appropriate Similarity implementation
+        Interface object that will call the appropriate Similarity_MFD implementation
         :param dataMatrix:
         :param use_implementation:      "density" will choose the most efficient implementation automatically
                                         "cython" will use the cython implementation, if available. Most efficient for sparse matrix
                                         "python" will use the python implementation. Most efficent for dense matrix
-        :param similarity:              the type of Similarity to use, see SimilarityFunction enum
-        :param args:                    other args required by the specific Similarity implementation
+        :param similarity:              the type of Similarity_MFD to use, see SimilarityFunction enum
+        :param args:                    other args required by the specific Similarity_MFD implementation
         """
 
         self.dense = False
@@ -70,13 +70,10 @@ class Compute_Similarity:
                     use_implementation = "cython"
 
 
-
-
-
             if use_implementation == "cython":
 
                 try:
-                    from recommenders.Similarity.Cython.Compute_Similarity_Cython import Compute_Similarity_Cython
+                    from recommenders.Similarity_MFD.Cython.Compute_Similarity_Cython import Compute_Similarity_Cython
                     self.compute_similarity_object = Compute_Similarity_Cython(dataMatrix, **args)
 
                 except ImportError:
@@ -90,9 +87,6 @@ class Compute_Similarity:
             else:
 
                 raise  ValueError("Compute_Similarity: value for argument 'use_implementation' not recognized")
-
-
-
 
 
     def compute_similarity(self,  **args):

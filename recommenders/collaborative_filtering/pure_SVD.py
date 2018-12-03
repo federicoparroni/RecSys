@@ -31,9 +31,9 @@ class Pure_SVD(RecommenderBase):
         -------
         :return the extimated urm from the recommender
         """
-        U_filtered = self.U[data.get_target_playlists()]
-        r_hat = U_filtered.dot(self.s_Vt)
-        return sps.csr_matrix(r_hat)
+        r_hat = data.get_empty_urm()
+        r_hat[data.get_target_playlists()] = self.U[data.get_target_playlists()].dot(self.s_Vt)
+        return r_hat
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """

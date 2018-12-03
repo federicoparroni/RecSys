@@ -17,7 +17,7 @@ class IALS_numpy(object):
 
     # TODO: Add support for multiple confidence scaling functions (e.g. linear and log scaling)
     def __init__(self,
-                 num_factors=400,
+                 num_factors=500,
                  reg=0.015,
                  iters=10,
                  scaling='linear',
@@ -26,6 +26,7 @@ class IALS_numpy(object):
                  init_mean=0.0,
                  init_std=0.1,
                  rnd_seed=42):
+
         '''
         Initialize the model
         :param num_factors: number of latent factors
@@ -218,8 +219,8 @@ rec = IALS_numpy()
 rec.fit(R=data.get_urm_train())
 r_hat = sps.csr_matrix(np.dot(rec.X[data.get_target_playlists()], rec.Y.T))
 sps.save_npz('raw_data/saved_r_hat_evaluation/IALS', r_hat)
-recs = rec.recommend_batch(userids=data.get_target_playlists())
-rec.evaluate(recs, data.get_urm_test())
+#recs = rec.recommend_batch(userids=data.get_target_playlists())
+#rec.evaluate(recs, data.get_urm_test())
 
 
 

@@ -24,8 +24,8 @@ class ContentBasedRecommender(DistanceBasedRecommender):
 
     def fit(self, urm, icm, k=0, distance='cosine', shrink=0, threshold=0, alpha=None, beta=None, l=None, c=None):
         """
-        Initialize the model and compute the Similarity matrix S with a distance metric.
-        Access the Similarity matrix using: self._sim_matrix
+        Initialize the model and compute the Similarity_MFD matrix S with a distance metric.
+        Access the Similarity_MFD matrix using: self._sim_matrix
 
         Parameters
         ----------

@@ -29,7 +29,7 @@ class AlternatingLeastSquare(RecommenderBase):
 
     def get_r_hat(self):
         """
-        compute the r_hat for the model
+        compute the r_hat for the model filled with zeros in playlists not target
         :return  r_hat
         """
 
@@ -38,7 +38,8 @@ class AlternatingLeastSquare(RecommenderBase):
 
         s_user_vecs = sps.csr_matrix(self.user_vecs)
         s_item_vecs_t = sps.csr_matrix(self.item_vecs.T)
-        r_hat = s_user_vecs[data.get_target_playlists()].dot(s_item_vecs_t)
+        r_hat = data.get_empty_urm()
+        r_hat[data.get_target_playlists()]= s_user_vecs[data.get_target_playlists()].dot(s_item_vecs_t)
         return r_hat
 
     def fit(self, urm, factors, regularization, iterations, alpha):

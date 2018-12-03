@@ -11,7 +11,7 @@ class Compute_Similarity_Python:
                  asymmetric_alpha=0.5, tversky_alpha=1.0, tversky_beta=1.0,
                  similarity="cosine", row_weights=None):
         """
-        Computes the cosine Similarity on the columns of dataMatrix
+        Computes the cosine Similarity_MFD on the columns of dataMatrix
         If it is computed on URM=|users|x|items|, pass the URM as is.
         If it is computed on ICM=|items|x|features|, pass the ICM transposed.
         :param dataMatrix:
@@ -20,13 +20,13 @@ class Compute_Similarity_Python:
         :param normalize:           If True divide the dot product by the product of the norms
         :param row_weights:         Multiply the values in each row by a specified value. Array
         :param asymmetric_alpha     Coefficient alpha for the asymmetric cosine
-        :param similarity:  "cosine"        computes Cosine Similarity
+        :param similarity:  "cosine"        computes Cosine Similarity_MFD
                             "adjusted"      computes Adjusted Cosine, removing the average of the users
                             "asymmetric"    computes Asymmetric Cosine
                             "pearson"       computes Pearson Correlation, removing the average of the items
-                            "jaccard"       computes Jaccard Similarity for binary interactions using Tanimoto
-                            "dice"          computes Dice Similarity for binary interactions
-                            "tversky"       computes Tversky Similarity for binary interactions
+                            "jaccard"       computes Jaccard Similarity_MFD for binary interactions using Tanimoto
+                            "dice"          computes Dice Similarity_MFD for binary interactions
+                            "tversky"       computes Tversky Similarity_MFD for binary interactions
                             "tanimoto"      computes Tanimoto coefficient for binary interactions
         """
         """
@@ -177,7 +177,7 @@ class Compute_Similarity_Python:
 
     def compute_similarity(self, start_col=None, end_col=None, block_size=100):
         """
-        Compute the Similarity for the given dataset
+        Compute the Similarity_MFD for the given dataset
         :param self:
         :param start_col: column to begin with
         :param end_col: column to stop before, end_col is excluded
@@ -242,7 +242,7 @@ class Compute_Similarity_Python:
             if time.time() - start_time_print_batch >= 30 or end_col_block == end_col_local:
                 columnPerSec = processedItems / (time.time() - start_time)
 
-                print("Similarity column {} ( {:2.0f} % ), {:.2f} column/sec, elapsed time {:.2f} min".format(
+                print("Similarity_MFD column {} ( {:2.0f} % ), {:.2f} column/sec, elapsed time {:.2f} min".format(
                     processedItems, processedItems / (end_col_local - start_col_local) * 100, columnPerSec,
                                     (time.time() - start_time) / 60))
 

@@ -15,11 +15,11 @@ class Hybrid(RecommenderBase):
     MAX_MATRIX = 'MAX_MATRIX'
     MAX_ROW = 'MAX_ROW'
 
-    def __init__(self, r_hat_array, normalization_mode, urm=data.get_urm()):
+    def __init__(self, r_hat_array, normalization_mode, urm_filter_tracks):
         self.r_hat_array = r_hat_array
         self.hybrid_r_hat = None
         self.normalized_r_hat_array = None
-        self.urm = urm
+        self.urm_filter_tracks = urm_filter_tracks
         self._normalization(normalization_mode=normalization_mode)
         print('matrices_normalized')
 
@@ -55,9 +55,27 @@ class Hybrid(RecommenderBase):
         normalized_r_hat_array = []
         count = 0
         for r in self.r_hat_array:
+
+            #let the values positives
+            #min = r.min()
+            #print(min)
+            #if min < 0:
+            #    r.data = r.data - min
+
+            #avg = np.sum(r.data) / len(r.data)
+            #print('avg: {}'.format(avg))
+            #r.data = r.data - avg
+
             max_matrix = r.max()
-            r.data = r.data/max_matrix
-            #normalized_matrix = (r/max_matrix)
+            print('max: {}'.format(max_matrix))
+            r.data = r.data / max_matrix
+
+            #adding confidence
+            #r.data=r.data*(r.data-avg)*100
+            #for ind in range(len(r.data)):
+            #    confidence = (r.data[ind]-avg)*100
+            #    r.data[ind] = r.data[ind]*confidence
+
             normalized_r_hat_array.append(r)
             count += 1
         return normalized_r_hat_array
@@ -67,11 +85,13 @@ class Hybrid(RecommenderBase):
             self.normalized_r_hat_array = self.normalize_max_row()
         elif normalization_mode=='MAX_MATRIX':
             self.normalized_r_hat_array = self.normalize_max_matrix()
+        elif normalization_mode == 'NONE':
+            self.normalized_r_hat_array = self.r_hat_array
         else:
             log.error('invalid string for normalization')
             return
 
-    def recommend_batch(self, weights_array, userids=None, N=10, filter_already_liked=True,
+    def recommend_batch(self, weights_array, target_userids, N=10, filter_already_liked=True,
                         items_to_exclude=[], verbose=False):
         """
         method used for get the hybrid prediction from the r_hat_matrices passed as parameter during the creation of the recommender
@@ -92,7 +112,7 @@ class Hybrid(RecommenderBase):
 
         start = time.time()
 
-        hybrid_r_hat = sps.csr_matrix(np.zeros((self.normalized_r_hat_array[0].shape)))
+        hybrid_r_hat = data.get_empty_urm()
 
         count = 0
         for m in self.normalized_r_hat_array:
@@ -101,7 +121,7 @@ class Hybrid(RecommenderBase):
 
         #filter seen elements
         if filter_already_liked:
-            user_profile = self.urm[data.get_target_playlists()]
+            user_profile = self.urm_filter_tracks[data.get_target_playlists()]
             hybrid_r_hat[user_profile.nonzero()] = -np.inf
 
         """
@@ -110,32 +130,23 @@ class Hybrid(RecommenderBase):
         reconstructed_r_hat[data.get_target_playlists()] = hybrid_r_hat
         """
 
-        if userids is None:
-            userids = data.get_target_playlists()
-            id_return = userids
-        else:
-            hybrid_r_hat = hybrid_r_hat[userids]
-
-            temp = np.array(data.get_target_playlists())
-            id_return = temp[userids]
-
-            # STEP3
-        ranking = np.zeros((len(userids), N), dtype=np.int)
+        # STEP3
+        ranking = np.zeros((len(target_userids), N), dtype=np.int)
         hybrid_r_hat = hybrid_r_hat.todense()
 
-        for row_index in range(len(userids)):
+        count = 0
+        for row_index in target_userids:
             scores_row = hybrid_r_hat[row_index]
 
             relevant_items_partition = (-scores_row).argpartition(N)[0, 0:N]
             relevant_items_partition_sorting = np.argsort(-scores_row[0, relevant_items_partition])
-            ranking[row_index] = relevant_items_partition[0, relevant_items_partition_sorting[0, 0:N]]
+            ranking[count] = relevant_items_partition[0, relevant_items_partition_sorting[0, 0:N]]
+            count += 1
 
         print('recommendations created')
 
         print('{:.2f}'.format(time.time()-start))
-
-
-        return self._insert_userids_as_first_col(id_return, ranking)
+        return self._insert_userids_as_first_col(target_userids, ranking)
 
     def fit(self):
         pass

@@ -67,14 +67,16 @@ r_hat_array = []
 
 r_hat_array.append(sps.load_npz(base_path+'_slim_bpr_18-42-00.npz'))
 r_hat_array.append(sps.load_npz(base_path+'_slim_rmse_elasticnet_13-05-23.npz'))
-r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
-r_hat_array.append(sps.load_npz(base_path+'_CFitem_17-59-19.npz'))
+
+#r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
+r_hat_array.append(sps.load_npz(base_path+'IALS.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'_CFitem_17-59-19.npz'))
 r_hat_array.append(sps.load_npz(base_path+'_content_based_17-58-51.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'_pureSVD_15-00-26.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'_CFuser_15-06-02.npz'))
 #r_hat_array.append(sps.load_npz(base_path+'BM25.npz'))
-r_hat_array.append(sps.load_npz(base_path+'P3alpha.npz'))
-r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'P3alpha.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
 
 print('MATRICES LOADED')
 print('{:.2f}'.format(time.time() - start))
@@ -93,7 +95,7 @@ hybrid_rec = Hybrid(r_hat_array, urm=data.get_urm_train(), normalization_mode=Hy
 # rec_l = hybrid_rec.recommend_batch(weights_array=weights_l, userids=low)
 # rec_h = hybrid_rec.recommend_batch(weights_array=weights_h, userids=high)
 # recs = np.concatenate((rec_l, rec_h))
-recs = hybrid_rec.recommend_batch(weights_array=[72, 81, 76, 25, 32, 22, 24])#[72, 81, 76, 32, 71])
+recs = hybrid_rec.recommend_batch(weights_array=[1, 1, 1, 1, 1])#[72, 81, 76, 32, 71])
 hybrid_rec.evaluate(recs, test_urm=data.get_urm_test())
 
 

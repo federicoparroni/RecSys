@@ -18,7 +18,7 @@ r_time = 0
 
 class SLIMElasticNetRecommender(RecommenderBase):
     """
-    Train a Sparse Linear Methods (SLIM) item Similarity model.
+    Train a Sparse Linear Methods (SLIM) item Similarity_MFD model.
     NOTE: ElasticNet solver is parallel, a single intance of SLIM_ElasticNet will
           make use of half the cores available
 

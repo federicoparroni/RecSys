@@ -4,6 +4,7 @@ Provides a quick access to the dataset and saved matrices
 
 from scipy.sparse import load_npz
 import pandas as pd
+import scipy.sparse as sps
 
 """ 
 PATHS 
@@ -135,3 +136,7 @@ def get_all_playlists():
     if _all_playlists is None:
         _all_playlists = [p for p in range(N_PLAYLISTS)]
     return _all_playlists
+
+def get_empty_urm():
+    empty_urm = sps.csr_matrix(shape=(N_PLAYLISTS, N_TRACKS))
+    return empty_urm

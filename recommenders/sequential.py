@@ -14,6 +14,7 @@ import numpy as np
 from inout.importexport import exportcsv
 import time
 import utils.dated_directory as datedir
+import scipy.sparse as sps
 
 class SequentialRecommender(DistanceBasedRecommender):
     """
@@ -171,6 +172,7 @@ def validate(self, ks, alphas, betas, ls, cs, shrinks, filename='sequential_vali
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    model = SequentialRecommender(h=5, split_perc=0.2)
+    model = SequentialRecommender(h=5, split_perc=0.0)
     #model.save_r_hat(evaluation=True)
-    model.test(distance=SequentialRecommender.SIM_COSINE, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    #model.test(distance=SequentialRecommender.SIM_COSINE, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    sps.save_npz(model.get_r_hat())
