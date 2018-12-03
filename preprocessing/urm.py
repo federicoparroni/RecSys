@@ -4,13 +4,14 @@ from scipy.sparse import save_npz
 import data.data as d
 import pandas as pd
 from preprocessing.process_interactions import ProcessInteractions
+from preprocessing.process_interactions import GetSequentialPlaylists
 from preprocessing.split import SplitRandomNonSequentiasLastSequential
 from preprocessing.split import SplitRandom
 import os
 from random import randint
 
 
-def create_urms(proc_int, split):
+def create_urms(proc_int, split, save_dataframes=False):
     """
     Creates the full set of files containing sparse matrices needed for the train and test (except for the icm)
     The creation of the urms always starts from the train.csv and is personalized by specifying a ProcessInteractions
@@ -19,6 +20,7 @@ def create_urms(proc_int, split):
     @Params
     proc_int        (ProcessInteractions) personalizes the preprocess of the train.csv dataframe
     split           (Split) personalizes the split into train and test of data coming after ProcessInteractions
+    save_dataframes (Bool) whether to save the train and test dataframes or not
     """
     path = "raw_data/new" + str(randint(1, 100))
     print('starting dataset creation of urms in ' + path)
@@ -32,6 +34,10 @@ def create_urms(proc_int, split):
 
     # gets the test dataframe
     df_test = pd.concat([df, df_train]).drop_duplicates(keep=False)
+
+    if save_dataframes:
+        df_train.to_csv('{}/df_train.csv'.format(path), index=False)
+        df_test.to_csv('{}/df_test.csv'.format(path), index=False)
 
     # check if any playlist has at least one element in the test set
     _check_presence_test_samples(df_test, target='target')
@@ -76,7 +82,13 @@ def _create_urm(df):
                        shape=(d.N_PLAYLISTS, d.N_TRACKS))
 
 
-df = d.get_playlists_df()                           # reads train.csv path
+df = d.get_playlists_df()
+
 pi = ProcessInteractions(df)
-s = SplitRandom(0.2)
-create_urms(pi, s)
+s = SplitRandomNonSequentiasLastSequential(0.2)
+
+"""
+pi = GetSequentialPlaylists(df)
+s = SplitRandomNonSequentiasLastSequential(0.2)
+"""
+create_urms(pi, s, save_dataframes=True)
