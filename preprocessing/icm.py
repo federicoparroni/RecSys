@@ -17,10 +17,10 @@ def create_icm(df, thr):
                                                     - [] will not cluster at all
     :return: icm
     """
-    icm = np.zeros((d.N_TRACKS, d.N_ARTISTS + d.N_ALBUMS + len(thr)))
+    icm = np.zeros((d.N_TRACKS, d.N_ALBUMS + d.N_ARTISTS + len(thr)))
     for i in range(df.shape[0]):
-        icm[df.iloc[i, 0], df.iloc[i, 1]] = 1
-        icm[df.iloc[i, 0], df.iloc[i, 2]] = 1
+        icm[df.iloc[i, 0], df.iloc[i, 1]] = 3               # weight for album
+        icm[df.iloc[i, 0], d.N_ALBUMS + df.iloc[i, 2]] = 1  # weight for artist
         for j in range(len(thr)):
             duration = df.iloc[i, 3]/60
             if duration >= thr[j][0] and duration < thr[j][1]:
@@ -28,7 +28,8 @@ def create_icm(df, thr):
                 break
     return icm
 
-icm = create_icm(d.get_tracks_df(), [])# [[0, 0.75], [0.75, 1.5], [8, 12], [12, np.inf]])#.filter(items=['track_id', 'album_id', 'artist_id']))
+
+icm = create_icm(d.get_tracks_df(), [[0, 0.75], [0.75, 1.5], [8, 12], [12, np.inf]])
 icm = csr_matrix(icm)
 path = "raw_data/new" + str(randint(1, 100))
 print('starting dataset creation of icm in ' + path)
