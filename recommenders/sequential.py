@@ -21,7 +21,7 @@ class SequentialRecommender(DistanceBasedRecommender):
     Computes the recommendations for a playlsit by looking for the similar sequences in all the dataset
     """
 
-    def __init__(self, h, split_perc):
+    def __init__(self, h):
         """
         h: (int), length of the sequences
         split_perc: (float) validation split percentage, 0 to skip the creation of the validation set
@@ -31,10 +31,10 @@ class SequentialRecommender(DistanceBasedRecommender):
         self.h = h
         
         # build sequences dataset and cache it
-        self.urm_train, self.urm_test, self.sequences, self.target_indices = ps.preprocess(h=h, split_perc=split_perc)
-        target_ids = data.get_target_playlists()[0:data.NUM_SEQUENTIAL]
+        self.sequences, self.target_indices = ps.get_sequences(h=h)
+        target_ids = data.get_target_playlists()[0:data.N_SEQUENTIAL]
         self.target_ids = np.array(target_ids)
-        self.already_liked_indices = (self.urm_train[target_ids]).nonzero()
+        self.already_liked_indices = (data.get_urm_train()[target_ids]).nonzero()
         self.H = seqsim.getH(self.sequences)
 
     def fit(self, k, distance, shrink=0, alpha=None, beta=None, l=None, c=None, verbose=False):
@@ -116,7 +116,7 @@ class SequentialRecommender(DistanceBasedRecommender):
 
         map10 = None
         if len(recs) > 0:
-            map10 = self.evaluate(recs, test_urm=self.urm_test, verbose=verbose)
+            map10 = self.evaluate(recs, test_urm=data.get_urm_test(), verbose=verbose)
         else:
             log.warning('No recommendations available, skip evaluation')
 
@@ -172,7 +172,9 @@ def validate(self, ks, alphas, betas, ls, cs, shrinks, filename='sequential_vali
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    model = SequentialRecommender(h=5, split_perc=0.0)
-    #model.save_r_hat(evaluation=True)
+
+    model = SequentialRecommender(h=5)
+    model.fit(distance=SequentialRecommender.SIM_COSINE, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    model.save_r_hat(evaluation=True)
     #model.test(distance=SequentialRecommender.SIM_COSINE, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
-    sps.save_npz(model.get_r_hat())
+

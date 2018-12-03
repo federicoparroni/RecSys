@@ -264,17 +264,16 @@ class CFW(RecommenderBase):
 
     def _print(self, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6,
             iteration_limit = 30, damp_coeff=1, use_incremental=False):
-        print('{} normalize_similarity: {}, add_zeros_quota: {}, loss_tolerance: {}, iteration_limit: {}, damp_coeff: {}, use_incremental: {}'.format(
+        return '{} normalize_similarity: {}, add_zeros_quota: {}, loss_tolerance: {}, iteration_limit: {}, damp_coeff: {}, use_incremental: {}'.format(
             self.name,
             normalize_similarity,
             add_zeros_quota,
             loss_tolerance,
             iteration_limit,
             damp_coeff,
-            use_incremental
-        ))
+            use_incremental)
 
-    def run(self, ICM, URM_train, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6,
+    def run(self, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6,
             iteration_limit = 30, damp_coeff=1, use_incremental=False, export_results=True, export_r_hat=False):
         self.fit(ICM=d.get_icm(),
                  URM_train=d.get_urm(),
@@ -342,4 +341,4 @@ class CFW(RecommenderBase):
 
 #0.03571
 r = CFW()
-r.validate(log_path='.')
+r.run(export_results=False, export_r_hat=True)

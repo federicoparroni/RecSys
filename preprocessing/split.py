@@ -71,7 +71,7 @@ class SplitRandomNonSequentiasLastSequential(Split):
         df:             the dataframe from which we have removed the picked songs
         """
 
-        seq_l = d.get_target_playlists()[0:5000]
+        seq_l = d.get_target_playlists()[0:d.N_SEQUENTIAL]
         non_seq_l = list(set(d.get_all_playlists()) - set(seq_l))
 
         seq_df = df[df.playlist_id.isin(seq_l)]

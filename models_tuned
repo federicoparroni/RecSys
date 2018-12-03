@@ -11,7 +11,7 @@ Collaborative Item Based --> MAP: 0.0743906113158225
 Collaborative Item Based --> MAP: 0.07402175044091713
  distance: COSINE   knn: 700
 
-Content Based --> MAP: 0.0328
+Content Based --> MAP: 0.03425289118795657
  distance: splus, KNN: 100, shrink: 500, threshold: 0, alpha: 0.5, beta: 1, l: 0.5, c: 0.5
 
 Slim_rmse
