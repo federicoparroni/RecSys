@@ -68,14 +68,14 @@ class SequentialRecommender(DistanceBasedRecommender):
         Return the R^ matrix as: R^ = S•H, ONLY for the target playlists last sequences
         """
         return sim.dot_product(self._sim_matrix, self.H, target_rows=self.target_indices,
-                                k=self.H.shape[0], format_output='csr', verbose=verbose)[self.target_indices]
+                                k=self.H.shape[0], format_output='csr', verbose=verbose)
     
     def recommend_batch(self, N=10, filter_already_liked=True, items_to_exclude=[], verbose=False):
         if not self._has_fit():
             return None
             
         # R^ = S•H
-        R_hat = self.get_r_hat(verbose=verbose)
+        R_hat = self.get_r_hat(verbose=verbose)[self.target_indices]
         #R_hat = (self._sim_matrix.tocsr())[self.target_indices].dot(self.H)
         
         if filter_already_liked:
