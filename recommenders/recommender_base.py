@@ -37,7 +37,7 @@ class RecommenderBase(ABC):
         """
         pass
 
-    def save_r_hat(self, name='', evaluation=False):
+    def save_r_hat(self, evaluation, name=''):
 
         r_hat = self.get_r_hat()
         r_hat = check_matrix(r_hat, format='csr')
@@ -51,6 +51,7 @@ class RecommenderBase(ABC):
             os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         sps.save_npz(filename, r_hat)
+        log.success('R_hat succesfully saved in: {}.npz'.format(filename))
 
 
     @abstractmethod
