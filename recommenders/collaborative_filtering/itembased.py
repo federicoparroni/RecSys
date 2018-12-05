@@ -50,7 +50,7 @@ class CFItemBased(DistanceBasedRecommender):
         return super(CFItemBased, self).fit(urm_train.T, k=k, distance=distance, shrink=shrink, threshold=threshold,
                                             implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, verbose=verbose)
 
-    def get_r_hat(self, only_target=True, verbose=False):
+    def get_r_hat(self, verbose=False):
         """
         Return the r_hat matrix as: R^ = R•S, ONLY for the TARGET USERS
         """

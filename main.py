@@ -48,17 +48,7 @@ recommendations = hybrid_rec.recommend_batch(weights_array=weights)
 
 exportcsv(recommendations, path='submissions', name='hybrid')
 """
-
-"""
-os.environ['OPENBLAS_NUM_THREADS'] = '1'
-os.environ['MKL_NUM_THREADS'] = '1'
-rec = CFUserBased()
-rec.fit(urm_train=data.get_urm_train(), distance=CFUserBased.SIM_SPLUS, k=400, alpha= 0.25,
-        beta= 0.5, l=0.25, c=0.25, shrink= 0)
-rec.save_r_hat(name='', evaluation=True)
-"""
-
-
+#=========== USE THIS PART OF CODE TO EVALUATE HYBRID ===============
 start = time.time()
 
 base_path = 'raw_data/saved_r_hat_evaluation/'
@@ -66,51 +56,17 @@ base_path = 'raw_data/saved_r_hat_evaluation/'
 r_hat_array = []
 
 r_hat_array.append(sps.load_npz(base_path+'_slim_bpr_18-42-00.npz'))
-r_hat_array.append(sps.load_npz(base_path+'_slim_rmse_elasticnet_13-05-23.npz'))
-
-#r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
-r_hat_array.append(sps.load_npz(base_path+'IALS.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'_CFitem_17-59-19.npz'))
-r_hat_array.append(sps.load_npz(base_path+'_content_based_17-58-51.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'_pureSVD_15-00-26.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'_CFuser_15-06-02.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'BM25.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'P3alpha.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'CFuser_22-32-05.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'slim_rmse_elasticnet_01-57-50.npz'))
 
 print('MATRICES LOADED')
 print('{:.2f}'.format(time.time() - start))
 
-#weights = [1]
+hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX, urm_filter_tracks=data.get_urm_train())
 
-#low, high = cluster.cluster_users_by_interactions_count(60)
-
-hybrid_rec = Hybrid(r_hat_array, urm=data.get_urm_train(), normalization_mode=Hybrid.MAX_MATRIX)
+recs = hybrid_rec.recommend_batch(weights_array=[1], target_userids=data.get_target_playlists())
+hybrid_rec.evaluate(recs, test_urm=data.get_urm_test())
 
 #print(hybrid_rec.validate(iterations=100, urm_test=data.get_urm_test()))
 
-# weights_l = [1, 0, 1, 1]
-# weights_h = [1, 1, 1, 1]
-#
-# rec_l = hybrid_rec.recommend_batch(weights_array=weights_l, userids=low)
-# rec_h = hybrid_rec.recommend_batch(weights_array=weights_h, userids=high)
-# recs = np.concatenate((rec_l, rec_h))
-recs = hybrid_rec.recommend_batch(weights_array=[1, 1, 1, 1, 1])#[72, 81, 76, 32, 71])
-hybrid_rec.evaluate(recs, test_urm=data.get_urm_test())
 
-
-"""
-print('test on all')
-recommendations = hybrid_rec.recommend_batch(weights_array=weights)
-hybrid_rec.evaluate(recommendations, test_urm=data.get_urm_test())
-
-
-print('test on low number of interaction')
-recommendations = hybrid_rec.recommend_batch(weights_array=weights, userids=low)
-hybrid_rec.evaluate(recommendations, test_urm=data.get_urm_test())
-
-
-print('test on high number of interaction')
-recommendations = hybrid_rec.recommend_batch(weights_array=weights, userids=high)
-hybrid_rec.evaluate(recommendations, test_urm=data.get_urm_test())
-"""

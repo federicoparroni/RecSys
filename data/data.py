@@ -5,6 +5,7 @@ Provides a quick access to the dataset and saved matrices
 from scipy.sparse import load_npz
 import pandas as pd
 import scipy.sparse as sps
+import numpy as np
 
 """ 
 PATHS 
@@ -31,8 +32,9 @@ _URM_TRAIN_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp
 _URM_TEST_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_urm_masked_sequential_test_MAP.npz'
 
 # sequential dataframes
-_SEQUENTIAL_TRAIN_DF_PATH = 'raw_data/matrices/df_train.csv'
-_SEQUENTIAL_TEST_DF_PATH = 'raw_data/matrices/df_test.csv'
+_SEQUENTIAL_TRAIN_DF_PATH = 'raw_data/matrices/sequential_split/df_train.csv'
+
+_SEQUENTIAL_TEST_DF_PATH = 'raw_data/matrices/sequential_split/df_test.csv'
 
 _ICM_PATH = 'raw_data/matrices/icm.npz'
 
@@ -148,5 +150,5 @@ def get_all_playlists():
     return _all_playlists
 
 def get_empty_urm():
-    empty_urm = sps.csr_matrix(shape=(N_PLAYLISTS, N_TRACKS))
+    empty_urm = sps.csr_matrix((N_PLAYLISTS, N_TRACKS))
     return empty_urm

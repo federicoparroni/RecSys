@@ -39,7 +39,12 @@ class AlternatingLeastSquare(RecommenderBase):
         s_user_vecs = sps.csr_matrix(self.user_vecs)
         s_item_vecs_t = sps.csr_matrix(self.item_vecs.T)
         r_hat = data.get_empty_urm()
-        r_hat[data.get_target_playlists()]= s_user_vecs[data.get_target_playlists()].dot(s_item_vecs_t)
+        count = 0
+        r_estimated = (s_user_vecs[data.get_target_playlists()]).dot(s_item_vecs_t)
+        for index in data.get_target_playlists():
+            print(index)
+            r_hat[index] = r_estimated.getrow(count)
+            count+=1
         return r_hat
 
     def fit(self, urm, factors, regularization, iterations, alpha):
@@ -250,6 +255,5 @@ If this file is executed, test the als
 """
 if __name__ == '__main__':
     rec = AlternatingLeastSquare()
-    rec.fit()
-    recommendations = rec.recommend_batch()
-    rec.evaluate()
+    rec.fit(urm=data.get_urm_train(), factors=500, regularization=0.5, iterations=200, alpha=25)
+    rec.save_r_hat(evaluation=True)

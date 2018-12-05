@@ -211,16 +211,9 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = ContentBasedRecommender()
-    model.validate(d.get_urm_train(),
-                   d.get_icm(),
-                   d.get_urm_test(),
-                   d.get_target_playlists(),
-                   distance=[DistanceBasedRecommender.SIM_SPLUS],
-                   k=[10],
-                   shrink=[100],
-                   l=[0.5],
-                   alpha=[0.25],
-                   beta=[0.25],
-                   c=[0.5]#,
-                   #log_path='validation_results')
-                   )
+    model.fit(urm=data.get_urm_train(), icm=data.get_icm(), k=700, shrink=500, threshold=0, alpha=0.5,
+              beta=1, l=0.5, c=0.5, distance=model.SIM_SPLUS)
+    recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+    recs_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
+    model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+    model.evaluate(recommendations=recs_seq, test_urm=data.get_urm_test())

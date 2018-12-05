@@ -121,6 +121,12 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = CFUserBased()
-    #model.fit(data.get_urm_train(), distance=CFUserBased.SIM_SPLUS,k=400,alpha=0.25,beta=0.5,shrink=0,l=0.25,c=0.25)
+    model.fit(data.get_urm_train(), distance=CFUserBased.SIM_SPLUS, k=400, alpha=0.25, beta=0.5, shrink=0, l=0.25, c=0.25)
     #model.save_r_hat(evaluation=True)
-    model.test(distance=DistanceBasedRecommender.SIM_TVERSKY, k=150, shrink=10, alpha=1, beta=1)
+
+    rec = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+    rec_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
+    rec_non_seq = model.recommend_batch(userids=data.get_all_playlists()[::2113], urm=data.get_urm_train())
+    model.evaluate(recommendations=rec, test_urm=data.get_urm_test())
+    model.evaluate(recommendations=rec_seq, test_urm=data.get_urm_test())
+    model.evaluate(recommendations=rec_non_seq, test_urm=data.get_urm_test())

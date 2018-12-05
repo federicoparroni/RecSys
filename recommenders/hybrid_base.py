@@ -121,7 +121,7 @@ class Hybrid(RecommenderBase):
 
         #filter seen elements
         if filter_already_liked:
-            user_profile = self.urm_filter_tracks[data.get_target_playlists()]
+            user_profile = self.urm_filter_tracks
             hybrid_r_hat[user_profile.nonzero()] = -np.inf
 
         """
