@@ -66,7 +66,7 @@ class ContentBasedRecommender(DistanceBasedRecommender):
             matrix = urm if urm is not None else data.get_urm()
 
         # compute the R^ by multiplying R•S
-        self.r_hat = sim.dot_product(matrix, self._sim_matrix, target_rows=None, k=data.N_TRACKS, format_output='csr', verbose=verbose)
+        self.r_hat = matrix * self._sim_matrix
         
         if filter_already_liked:
             user_profile_batch = matrix

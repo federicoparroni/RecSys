@@ -193,7 +193,7 @@ class CFW(RecommenderBase):
         #                        c=0.5).tocsr()
         # self.W_sparse = ICM_weighted * ICM_weighted.T
 
-        self.W_sparse = sim.dot_product(ICM_weighted).tocsr()
+        self.W_sparse = ICM_weighted * ICM_weighted.T
 
     def fit(self, ICM=None, URM_train=None, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6,
             iteration_limit = 30, damp_coeff=1, use_incremental=False):

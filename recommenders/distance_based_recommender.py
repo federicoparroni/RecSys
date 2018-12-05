@@ -131,22 +131,23 @@ class DistanceBasedRecommender(RecommenderBase):
             log.error('Invalid user id: {}'.format(userid))
             return None
         
-        return self.recommend_batch([userid], N, filter_already_liked, with_scores, items_to_exclude)
+        return self.recommend_batch(userids=[userid], N=N, urm=urm, filter_already_liked=filter_already_liked,
+                                    with_scores=with_scores, items_to_exclude=items_to_exclude)
 
     def recommend_batch(self, userids, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         if not self._has_fit():
             return None
 
-        R = data.get_urm() if urm is None else urm
+        R = data.get_urm_train() if urm is None else urm
 
         if userids is None or not len(userids) > 0:
             print('Recommending for all users...')
             
         # compute the R^ by multiplying: R•S or S•R 
         if self._matrix_mul_order == 'inverse':
-            R_hat = sim.dot_product(self._sim_matrix, R, target_rows=userids, k=R.shape[0], format_output='csr', verbose=verbose)
+            R_hat = self._sim_matrix * R
         else:
-            R_hat = sim.dot_product(R, self._sim_matrix, target_rows=userids, k=R.shape[0], format_output='csr', verbose=verbose)
+            R_hat = R * self._sim_matrix
         
         if filter_already_liked:
             # remove from the R^ the items already in the R
