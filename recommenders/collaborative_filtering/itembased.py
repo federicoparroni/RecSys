@@ -152,5 +152,8 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = CFItemBased()
-    model.fit(urm_train=data.get_urm_train(), k=600, alpha=0.25, beta=0.5, shrink=10, l=0.25, c=0.5, distance=CFItemBased.SIM_SPLUS)
-    model.save_r_hat(evaluation=True, name=model.name)
+    model.fit(urm_train=data.get_urm(), k=600, alpha=0.5, beta=0.5, shrink=10, l=0.25, c=0.5, distance=CFItemBased.SIM_SPLUS)
+    #model.save_r_hat(evaluation=True, name=model.name)
+    recs = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm())
+    exportcsv(recs)
+    #model.evaluate(recommendations=recs, test_urm=data.get_urm_test_random_split())

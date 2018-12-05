@@ -1,0 +1,89 @@
+======= ALS =======
+== parameters ==
+    Factors=500, Regulatization=0.5, max_iter=200, alpha=25
+
+== scores ==
+    performance on all playlists
+    MAP: 0.07663834659234055
+    performance on sequential-playlists
+    MAP: 0.08521741187956633
+    performance on non-sequential-playlists
+    MAP: 0.06805928130511457
+
+
+======= CF_USER =======
+== parameters ==
+    distance=SPLUS, knn=400, a=0.25, b: 0.5, l=0.25, c=0.25, shrink=0
+
+== scores ==
+    performance on all playlists
+    MAP: 0.06455402867535917
+    performance on sequential-playlists
+    MAP: 0.07065303199798435
+    performance on non-sequential-playlists
+    MAP: 0.058455025352733524
+
+
+======= CONTENT_BASED =======
+== parameters ==
+    distance=splus, KNN=100, shrink=500, threshold=0, alpha=0.5, beta=1, l=0.5, c=0.5
+
+== scores ==
+    performance on all playlists
+    MAP: 0.03189235904824884
+    performance on sequential-playlists
+    MAP: 0.03572860597757612
+    performance on non-sequential-playlists
+    MAP: 0.028056112118921617
+
+
+======= PURE_SVD =======
+== parameters ==
+    Factors=700, Iteration=1
+
+== scores ==
+    performance on all playlists
+    MAP: 0.058759163816452464
+    performance on sequential-playlists
+    MAP: 0.06545428366717043
+    performance on non-sequential-playlists
+    MAP: 0.05206404396573436
+
+
+======= SLIM_BPR =======
+== parameters ==
+    epochs=30, batch_size = 1000, validate_every_N_epochs = 1, start_validation_after_N_epochs = 0, lambda_i = 0.0,
+            lambda_j = 0.0, learning_rate = 0.01, topK = 200, sgd_mode='adagrad'
+
+== scores ==
+    performance on all playlists
+    MAP: 0.07180107418430334
+    performance on sequential-playlists
+    MAP: 0.0807423006109848
+    performance on non-sequential-playlists
+    MAP: 0.06285984775762148
+
+
+======= SLIM_RMSE =======
+== parameters ==
+    l1_ratio=0.1, alpha=0.0001, Iterations=100, topK=400
+
+== scores ==
+    performance on all playlists
+    MAP: 0.08121514361300065
+    performance on sequential-playlists
+    MAP: 0.09331018389392767
+    performance on non-sequential-playlists
+    MAP: 0.06912010333207333
+
+
+======= userKNN_mauriziofd =======
+== parameters ==
+    SIMO TELEGRAM
+== scores ==
+    performance on all playlists
+    MAP: 0.07103302261274866
+    performance on sequential-playlists
+    MAP: 0.08016148551272322
+    performance on non-sequential-playlists
+    MAP: 0.061904559712773914

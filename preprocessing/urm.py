@@ -4,7 +4,7 @@ from scipy.sparse import save_npz
 import data.data as d
 import pandas as pd
 from preprocessing.process_interactions import ProcessInteractions
-from preprocessing.process_interactions import GetSequentialPlaylists
+
 from preprocessing.split import SplitRandomNonSequentiasLastSequential
 from preprocessing.split import SplitRandom
 import os
@@ -85,8 +85,8 @@ def _create_urm(df):
 df = d.get_playlists_df()
 
 pi = ProcessInteractions(df)
-s = SplitRandomNonSequentiasLastSequential(0.2)
-
+#s = SplitRandomNonSequentiasLastSequential(0.2)
+s = SplitRandom(0.2)
 """
 pi = GetSequentialPlaylists(df)
 s = SplitRandomNonSequentiasLastSequential(0.2)
