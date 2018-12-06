@@ -217,8 +217,8 @@ class SLIMElasticNetRecommender(RecommenderBase):
         """
         if self.W_sparse == None:
             log.error('the recommender has not been trained, call the fit() method for compute W')
-            r_hat = data.get_empty_urm()
-            r_hat[data.get_target_playlists()] = self.URM_train[data.get_target_playlists()].dot(self.W_sparse)
+        r_hat = data.get_empty_urm()
+        r_hat[data.get_target_playlists()] = self.URM_train[data.get_target_playlists()].dot(self.W_sparse)
         return r_hat
 
     def run(self, urm_train=None, urm=None, urm_test=None, targetids=None,
@@ -313,5 +313,8 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    validate(l1_ratio_array=[0.5, 0.9], alpha_array=[0.5e-4], max_iter_array=[100],
-             topK_array=[100, 400])
+    rec = SLIMElasticNetRecommender()
+    rec.fit(urm=data.get_urm(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
+    #rec.save_r_hat(evaluation=True)
+    recs = rec.recommend_batch(userids=data.get_target_playlists())
+    exportcsv(recs)

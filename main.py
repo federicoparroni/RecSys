@@ -55,15 +55,16 @@ base_path = 'raw_data/saved_r_hat_evaluation/'
 
 r_hat_array = []
 
-r_hat_array.append(sps.load_npz(base_path+'CFitem_22-28-44.npz'))
-r_hat_array.append(sps.load_npz(base_path+'CFuser_22-32-05.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_slim_bpr_18-42-00.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'CFuser_22-32-05.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'slim_rmse_elasticnet_01-57-50.npz'))
 
 print('MATRICES LOADED')
 print('{:.2f}'.format(time.time() - start))
 
 hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX, urm_filter_tracks=data.get_urm_train())
 
-recs = hybrid_rec.recommend_batch(weights_array=[1, 1], target_userids=data.get_target_playlists())
+recs = hybrid_rec.recommend_batch(weights_array=[1], target_userids=data.get_target_playlists())
 hybrid_rec.evaluate(recs, test_urm=data.get_urm_test())
 
 #print(hybrid_rec.validate(iterations=100, urm_test=data.get_urm_test()))

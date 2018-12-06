@@ -32,8 +32,9 @@ _URM_TRAIN_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp
 _URM_TEST_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_urm_masked_sequential_test_MAP.npz'
 
 # sequential dataframes
-_SEQUENTIAL_TRAIN_DF_PATH = 'raw_data/matrices/df_train.csv'
-_SEQUENTIAL_TEST_DF_PATH = 'raw_data/matrices/df_test.csv'
+_SEQUENTIAL_TRAIN_DF_PATH = 'raw_data/matrices/sequential_split/df_train.csv'
+
+_SEQUENTIAL_TEST_DF_PATH = 'raw_data/matrices/sequential_split/df_test.csv'
 
 _ICM_PATH = 'raw_data/matrices/icm.npz'
 

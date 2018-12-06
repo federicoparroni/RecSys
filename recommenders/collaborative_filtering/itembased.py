@@ -7,6 +7,7 @@ import data.data as data
 import utils.log as log
 import similaripy as sim
 import numpy as np
+from bayes_opt import BayesianOptimization
 from inout.importexport import exportcsv
 import time
 import utils.dated_directory as datedir
@@ -56,7 +57,7 @@ class CFItemBased(DistanceBasedRecommender):
         return super(CFItemBased, self).get_r_hat(verbose=verbose)
     
 
-    def run(self, distance, urm_train=None, urm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
+    def run(self, distance, urm_train=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
             implicit=True, alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
         """
         Run the model and export the results to a file
@@ -64,7 +65,7 @@ class CFItemBased(DistanceBasedRecommender):
         Parameters
         ----------
         distance : str, distance metric
-        urm : csr matrix, URM. If None, used: data.get_urm_train(). This should be the
+        urm_train : csr matrix, URM. If None, used: data.get_urm_train(). This should be the
             entire URM for which the targetids corresponds to the row indexes.
         urm_test : csr matrix, urm where to test the model. If None, use: data.get_urm_test()
         targetids : list, target user ids. If None, use: data.get_target_playlists()
@@ -78,21 +79,14 @@ class CFItemBased(DistanceBasedRecommender):
         recs: (list) recommendations
         map10: (float) MAP10 for the provided recommendations
         """
-        _urm = data.get_urm_train()
-        _icm = data.get_icm()
-        _urm_test = data.get_urm_test()
-        _targetids = data.get_target_playlists()
-        #_targetids = data.get_all_playlists()
-
         start = time.time()
 
-        urm_train = _urm if urm_train is None else urm_train
-        urm = _urm if urm is None else urm
-        urm_test = _urm_test if urm_test is None else urm_test
-        targetids = _targetids if targetids is None else targetids
+        urm_train = data.get_urm_train() if urm_train is None else urm_train
+        urm_test = data.get_urm_test() if urm_test is None else urm_test
+        targetids = data.get_target_playlists() if targetids is None else targetids
 
         self.fit(urm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)
-        recs = self.recommend_batch(targetids, urm=urm, with_scores=with_scores, verbose=verbose)
+        recs = self.recommend_batch(targetids, urm=urm_train, with_scores=with_scores, verbose=verbose)
 
         map10 = None
         if len(recs) > 0:
@@ -109,13 +103,88 @@ class CFItemBased(DistanceBasedRecommender):
         return recs, map10
 
 
-    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
-    #def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=600, shrink=10, threshold=0, implicit=True, alpha=0.25, beta=0.5, l=0.25, c=0.5):
+    #def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=600, shrink=10, threshold=0, implicit=True, alpha=0.25, beta=0.5, l=0.25, c=0.5):
         """
         Test the model without saving the results. Default distance: SPLUS
         """
         return self.run(distance=distance, k=k, shrink=shrink, threshold=threshold, implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, export=False)
 
+
+    #def validateStep(self, **dict):
+    def validateStep(self, k, shrink, alpha, beta, l, c, threshold):
+        # gather saved parameters from self
+        distance = self._validation_dict['distance']
+        targetids = self._validation_dict['targetids']
+        urm_train = self._validation_dict['urm_train']
+        urm_test = self._validation_dict['urm_test']
+        N = self._validation_dict['N']
+        filter_already_liked = self._validation_dict['filter_already_liked']
+        items_to_exclude = self._validation_dict['items_to_exclude']
+        with_scores = self._validation_dict['with_scores']
+        implicit = self._validation_dict['implicit']
+        verbose = self._validation_dict['verbose']
+
+        self.fit(urm_train=urm_train, k=int(k), distance=distance, shrink=int(shrink), threshold=int(threshold),
+                alpha=alpha, beta=beta, l=l, c=c, implicit=implicit, verbose=verbose)
+        # evaluate the model with the current weigths
+        recs = self.recommend_batch(userids=targetids, N=N, urm=urm_train, filter_already_liked=filter_already_liked,
+                                    with_scores=with_scores, items_to_exclude=items_to_exclude, verbose=verbose)
+        return self.evaluate(recs, test_urm=urm_test)
+
+    def validate(self, iterations, urm_train, urm_test, distance, targetids,
+                k, shrink, alpha, beta, l, c, threshold=(0,0), N=10, implicit=True,
+                filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
+        """
+        Validate the models, using the specified intervals for the parameters. Example:
+        
+        """
+        # save the params in self to collect them later
+        self._validation_dict = {
+            'distance': distance,
+            'targetids': targetids,
+            'urm_train': urm_train,
+            'urm_test': urm_test,
+            'targetids': targetids,
+            'N': N,
+            'with_scores': with_scores,
+            'filter_already_liked': filter_already_liked,
+            'items_to_exclude': items_to_exclude,
+            'implicit': implicit,
+            'verbose': verbose
+        }
+
+        # k: (10,800),
+        # shrink: (0,100),
+        # alpha: (0,1),
+        # beta: (0,1),
+        # l: (0,1),
+        # c: (0,1),
+        # threshold=(0,5)
+
+        pbounds = {
+            'k': (k,k) if isinstance(k, int) else k,
+            'shrink': (shrink,shrink) if isinstance(shrink, int) else shrink,
+            'alpha': (alpha,alpha) if isinstance(alpha, float) else alpha,
+            'beta': (beta,beta) if isinstance(beta, float) else beta,
+            'l': (l,l) if isinstance(l, float) else l,
+            'c': (c,c) if isinstance(c, float) else c,
+            'threshold': (threshold,threshold) if isinstance(threshold, int) else threshold
+        }
+
+        optimizer = BayesianOptimization(
+            f=self.validateStep,
+            pbounds=pbounds,
+            random_state=1
+        )
+        optimizer.maximize(
+            init_points=2,
+            n_iter=iterations
+        )
+
+        log.warning('Max found: {}'.format(optimizer.max))
+        return optimizer
+        
 
 def validate(self, ks, alphas, betas, ls, cs, shrinks, filename='splus_validation', path='validation_results', verbose=False):
     distance = CFItemBased.SIM_SPLUS
@@ -152,5 +221,8 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = CFItemBased()
-    model.fit(urm_train=data.get_urm_train(), k=600, alpha=0.25, beta=0.5, shrink=10, l=0.25, c=0.5, distance=CFItemBased.SIM_SPLUS)
-    model.save_r_hat(evaluation=True, name=model.name)
+    #model.fit(data.get_urm_train(), distance=CFItemBased.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    #model.save_r_hat(evaluation=True)
+    model.test(distance=CFItemBased.SIM_SPLUS, k=600, alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    #model.validate(iterations=3, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
+    #                distance=CFItemBased.SIM_SPLUS, k=600, alpha=(0,1),beta=0.5,shrink=10,l=0.25,c=0.5)
