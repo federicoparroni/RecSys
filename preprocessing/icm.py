@@ -19,7 +19,7 @@ def create_icm(df, thr):
     """
     icm = np.zeros((d.N_TRACKS, d.N_ALBUMS + d.N_ARTISTS + len(thr)))
     for i in range(df.shape[0]):
-        icm[df.iloc[i, 0], df.iloc[i, 1]] = 3               # weight for album
+        icm[df.iloc[i, 0], df.iloc[i, 1]] = 1               # weight for album
         icm[df.iloc[i, 0], d.N_ALBUMS + df.iloc[i, 2]] = 1  # weight for artist
         for j in range(len(thr)):
             duration = df.iloc[i, 3]/60
@@ -28,13 +28,13 @@ def create_icm(df, thr):
                 break
     return icm
 
-
-icm = create_icm(d.get_tracks_df(), [[0, 0.75], [0.75, 1.5], [8, 12], [12, np.inf]])
-icm = csr_matrix(icm)
-path = "raw_data/new" + str(randint(1, 100))
-print('starting dataset creation of icm in ' + path)
-os.mkdir(path)
-save_npz(path + '/icm', icm)
+if __name__ == "__main__":
+    icm = create_icm(d.get_tracks_df(), [[0, 0.75], [0.75, 1.5], [8, 12], [12, np.inf]])
+    icm = csr_matrix(icm)
+    path = "raw_data/new" + str(randint(1, 100))
+    print('starting dataset creation of icm in ' + path)
+    os.mkdir(path)
+    save_npz(path + '/icm', icm)
 
 # df = d.get_tracks_df()
 # df['duration_sec'] = df['duration_sec']/60
