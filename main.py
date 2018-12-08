@@ -16,7 +16,6 @@ import os
 import time
 import clusterize.cluster as cluster
 
-
 """
 base_path = 'raw_data/saved_r_hat/'
 
@@ -39,15 +38,17 @@ r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
 
 print('matrices loaded')
 
-weights = [72, 81, 76, 32, 71]
+weights = [1,1,1,1.2,1]
 
-hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX)
+hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX, urm_filter_tracks=data.get_urm())
 
 
-recommendations = hybrid_rec.recommend_batch(weights_array=weights)
+recommendations = hybrid_rec.recommend_batch(weights_array=weights, target_userids=data.get_target_playlists())
 
 exportcsv(recommendations, path='submissions', name='hybrid')
 """
+
+
 #=========== USE THIS PART OF CODE TO EVALUATE HYBRID ===============
 start = time.time()
 
@@ -56,17 +57,29 @@ base_path = 'raw_data/saved_r_hat_evaluation/'
 r_hat_array = []
 
 r_hat_array.append(sps.load_npz(base_path+'_slim_bpr_18-42-00.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'CFuser_22-32-05.npz'))
-#r_hat_array.append(sps.load_npz(base_path+'slim_rmse_elasticnet_01-57-50.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_ALS_13-29-41.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_slim_rmse_elasticnet_13-05-23.npz'))
+r_hat_array.append(sps.load_npz(base_path+'_content_based_17-58-51.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'userKNN.npz'))
+r_hat_array.append(sps.load_npz(base_path+'cos+sim_item.npz'))
 
 print('MATRICES LOADED')
 print('{:.2f}'.format(time.time() - start))
+#r_hat_array.append(sps.load_npz(base_path+'Cslim_rmse.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'Cslimbpr.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'Cals.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'Cuserknn.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'cslimbpr_cslimrmse.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'cslimbpr_cslimrmse_cuserknn.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'_CFitem_13-31-58.npz'))
+#r_hat_array.append(sps.load_npz(base_path+'COSINE_CFitem_14-25-51.npz'))
 
 hybrid_rec = Hybrid(r_hat_array, normalization_mode=Hybrid.MAX_MATRIX, urm_filter_tracks=data.get_urm_train())
 
-recs = hybrid_rec.recommend_batch(weights_array=[1], target_userids=data.get_target_playlists())
+recs = hybrid_rec.recommend_batch(weights_array=[1,1,1,1,1], target_userids=data.get_target_playlists())
 hybrid_rec.evaluate(recs, test_urm=data.get_urm_test())
+#sps.save_npz(base_path+'cos+sim_item',hybrid_rec.get_r_hat(weights_array=[ 0.6573, 0.1448]))
 
-#print(hybrid_rec.validate(iterations=100, urm_test=data.get_urm_test()))
+#print(hybrid_rec.validate(iterations=500, urm_test=data.get_urm_test(),userids=data.get_target_playlists()))
 
 

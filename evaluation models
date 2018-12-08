@@ -87,3 +87,17 @@
     MAP: 0.08016148551272322
     performance on non-sequential-playlists
     MAP: 0.061904559712773914
+
+ content user
+ 0.06755  |  0.8976
+
+ content slim bpr
+    1|0.36
+
+ content slim rmse
+    1|0.32
+
+ content als
+    1|0.76
+
+  distance=CFItemBased.SIM_COSINE,k=600,alpha=0.25,beta=0.5,shrink=4,l=0.25,c=0.5

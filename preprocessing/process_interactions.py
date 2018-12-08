@@ -1,5 +1,6 @@
-class ProcessInteractions:
+import data.data as d
 
+class ProcessInteractions:
     """
         pre process the dataframe associated to train.csv.
         e.g. It can be used to eliminate from the dataset the first perc of samples
@@ -24,7 +25,36 @@ class ProcessInteractions:
         return self.df
 
 
+class KeepSequentialPlaylists(ProcessInteractions):
+    """
+        pre process the dataframe associated to train.csv keeping
+        only the sequential playlists in the training set
+    """
+
+    def ___init__(self, df):
+        """
+        Constructor
+
+        @Param
+        df:             dataframe associated to train.csv
+        """
+        self.df = df
+
+    def process(self):
+        """
+        keeps only the sequential playlists
+
+        @Output
+        df:             the unchanged dataframe
+        """
+        p = d.get_sequential_target_playlists()
+        return self.df[self.df.playlist_id.isin(p)]
+
+
 class MaskSequentialPlaylists(ProcessInteractions):
+    """
+        for each sequential target playlist masks the final percentual of the tracks 
+    """
 
     def __init__(self, df, percentual, seq_playlists):
         """

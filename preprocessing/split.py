@@ -41,8 +41,10 @@ class SplitRandom(Split):
         @Output
         df:             the dataframe from which we have removed the picked songs
         """
-        return df.groupby('playlist_id').apply(
-            lambda x: x.iloc[random.sample(range(0, len(x)-1), math.floor(len(x)*(1-self.perc)))].reset_index(drop=True))
+        #return df.groupby('playlist_id').apply(
+        #    lambda x: x.iloc[random.sample(range(0, len(x)-1), math.floor(len(x)*(1-self.perc)))].reset_index(drop=True))
+        return df.groupby('playlist_id').apply(lambda x : x.drop(x.sample(n = math.floor(len(x)*self.perc)).index))
+
 
 
 class SplitRandomNonSequentiasLastSequential(Split):
@@ -70,7 +72,6 @@ class SplitRandomNonSequentiasLastSequential(Split):
         @Output
         df:             the dataframe from which we have removed the picked songs
         """
-
         seq_l = d.get_target_playlists()[0:d.N_SEQUENTIAL]
         non_seq_l = list(set(d.get_all_playlists()) - set(seq_l))
 
@@ -80,6 +81,6 @@ class SplitRandomNonSequentiasLastSequential(Split):
         seq_df_dropped = seq_df.groupby('playlist_id').apply(
             lambda x: x.iloc[:-math.floor(len(x)*self.perc)]).reset_index(drop=True)
         non_seq_df_dropped = non_seq_df.groupby('playlist_id').apply(
-            lambda x: x.iloc[random.sample(range(0, len(x)-1), math.floor(len(x)*(1-self.perc)))].reset_index(drop=True))
-
+            lambda x : x.drop(x.sample(n = math.floor(len(x)*self.perc)).index))
         return pd.concat([seq_df_dropped, non_seq_df_dropped]).sort_values(by='playlist_id', kind='mergesort')
+

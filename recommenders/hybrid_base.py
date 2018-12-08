@@ -5,6 +5,7 @@ import scipy.sparse as sps
 import utils.log as log
 import time
 from bayes_opt import BayesianOptimization
+import sklearn.preprocessing as sk
 
 
 
@@ -14,6 +15,7 @@ class Hybrid(RecommenderBase):
     """
     MAX_MATRIX = 'MAX_MATRIX'
     MAX_ROW = 'MAX_ROW'
+    L2 = 'L2'
 
     def __init__(self, r_hat_array, normalization_mode, urm_filter_tracks):
         self.r_hat_array = r_hat_array
@@ -80,6 +82,13 @@ class Hybrid(RecommenderBase):
             count += 1
         return normalized_r_hat_array
 
+    def normalize_l2(self):
+        normalized_r_hat_array = []
+        for r in self.r_hat_array:
+            r = sk.normalize(r)
+            normalized_r_hat_array.append(r)
+        return normalized_r_hat_array
+
     def _normalization(self, normalization_mode):
         if normalization_mode=='MAX_ROW':
             self.normalized_r_hat_array = self.normalize_max_row()
@@ -87,6 +96,8 @@ class Hybrid(RecommenderBase):
             self.normalized_r_hat_array = self.normalize_max_matrix()
         elif normalization_mode == 'NONE':
             self.normalized_r_hat_array = self.r_hat_array
+        elif normalization_mode == 'L2':
+            self.normalized_r_hat_array = self.normalize_l2()
         else:
             log.error('invalid string for normalization')
             return
@@ -151,8 +162,13 @@ class Hybrid(RecommenderBase):
     def fit(self):
         pass
 
-    def get_r_hat(self, load_from_file=False, path=''):
-        pass
+    def get_r_hat(self, weights_array):
+        hybrid_r_hat = data.get_empty_urm()
+        count = 0
+        for m in self.normalized_r_hat_array:
+            hybrid_r_hat += m*weights_array[count]
+            count += 1
+        return hybrid_r_hat
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         pass
@@ -176,7 +192,7 @@ class Hybrid(RecommenderBase):
             weights.append(w)
         
         # evaluate the model with the current weigths
-        recs = self.recommend_batch(weights, userids=targetids, N=N,
+        recs = self.recommend_batch(weights, target_userids=targetids, N=N,
             filter_already_liked=filter_already_liked, items_to_exclude=items_to_exclude, verbose=False)
         return self.evaluate(recs, test_urm=urm_test)
 

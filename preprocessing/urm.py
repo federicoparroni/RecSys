@@ -1,17 +1,25 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
+<<<<<<< HEAD
+=======
 import data.data as d
 import pandas as pd
 from preprocessing.process_interactions import ProcessInteractions
 
 from preprocessing.split import SplitRandomNonSequentiasLastSequential
 from preprocessing.split import SplitRandom
+>>>>>>> master
 import os
+import time
+import pandas as pd
+import data.data as d
 from random import randint
+from preprocessing.process_interactions import KeepSequentialPlaylists
+from preprocessing.explicate import ExplicateLinearly
+from preprocessing.split import SplitRandom
 
-
-def create_urms(proc_int, split, save_dataframes=False):
+def create_urms(proc_int, explicate, split, save_dataframes=False):
     """
     Creates the full set of files containing sparse matrices needed for the train and test (except for the icm)
     The creation of the urms always starts from the train.csv and is personalized by specifying a ProcessInteractions
@@ -19,6 +27,7 @@ def create_urms(proc_int, split, save_dataframes=False):
 
     @Params
     proc_int        (ProcessInteractions) personalizes the preprocess of the train.csv dataframe
+    explicate       (ExplicateBase) specifies the strategy of assigning ratings to tracks
     split           (Split) personalizes the split into train and test of data coming after ProcessInteractions
     save_dataframes (Bool) whether to save the train and test dataframes or not
     """
@@ -27,10 +36,19 @@ def create_urms(proc_int, split, save_dataframes=False):
     os.mkdir(path)
 
     # preprocess the interactions, gets the base training dataframe
+    start = time.time()
     df = proc_int.process()
+    print('interactions preprocessed in: {}'.format(time.time() - start))
+
+    # assigns ratings to tracks
+    start = time.time()
+    df = explicate.process(df)
+    print('ratings assigned in: {}'.format(time.time() - start))
 
     # perform the split, gets the train dataframe
+    start = time.time()
     df_train = split.process(df)
+    print('split done in: {}'.format(time.time() - start))
 
     # gets the test dataframe
     df_test = pd.concat([df, df_train]).drop_duplicates(keep=False)
@@ -44,6 +62,7 @@ def create_urms(proc_int, split, save_dataframes=False):
     _check_presence_test_samples(df_test, target='all')
 
     # save matrices
+    start = time.time()
     urm = _create_urm(df)
     save_npz(path + '/urm', urm)
 
@@ -52,6 +71,8 @@ def create_urms(proc_int, split, save_dataframes=False):
 
     urm_test = _create_urm(df_test)
     save_npz(path + '/urm_test', urm_test)
+    print('matrices saved in: {}'.format(time.time() - start))
+
 
 
 def _check_presence_test_samples(df_test, target='target'):
@@ -78,17 +99,12 @@ def _create_urm(df):
     :param df: (panda's dataframe) represents a set of playlists and tracks (train.csv-like)
     :return:   (csr matrix) the urm built from the df, in format (number of playlists, number of tracks)
     """
-    return csr_matrix((np.ones(df.shape[0], dtype=int), (df['playlist_id'].values, df['track_id'].values)),
-                       shape=(d.N_PLAYLISTS, d.N_TRACKS))
+    return csr_matrix((df['rating'].values, (df['playlist_id'].values, df['track_id'].values)), 
+                      shape=(d.N_PLAYLISTS, d.N_TRACKS))
 
 
 df = d.get_playlists_df()
-
-pi = ProcessInteractions(df)
-#s = SplitRandomNonSequentiasLastSequential(0.2)
+pi = KeepSequentialPlaylists(df)
+es = ExplicateLinearly(1, 3)
 s = SplitRandom(0.2)
-"""
-pi = GetSequentialPlaylists(df)
-s = SplitRandomNonSequentiasLastSequential(0.2)
-"""
-create_urms(pi, s, save_dataframes=True)
+create_urms(pi, es, s, save_dataframes=False)
