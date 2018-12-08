@@ -251,8 +251,10 @@ class CFW(RecommenderBase):
         return l
 
     def get_r_hat(self):
+        r_hat = d.get_empty_urm()
         user_profile_batch = self.URM_train[d.get_target_playlists()]
-        return user_profile_batch.dot(self.W_sparse)
+        r_hat[d.get_target_playlists()] = user_profile_batch.dot(self.W_sparse)
+        return r_hat
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         return self.recommend_batch([userid],
@@ -273,10 +275,15 @@ class CFW(RecommenderBase):
             damp_coeff,
             use_incremental)
 
-    def run(self, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6,
-            iteration_limit = 30, damp_coeff=1, use_incremental=False, export_results=True, export_r_hat=False):
+    def run(self, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6, iteration_limit = 30, 
+            damp_coeff=1, use_incremental=False, export_results=True, export_r_hat=False, export_for_validation=False):
+        if export_r_hat and export_for_validation:
+            urm = d.get_urm_train()
+        else:
+            urm = d.get_urm()
+        
         self.fit(ICM=d.get_icm(),
-                 URM_train=d.get_urm(),
+                 URM_train=urm,
                  normalize_similarity=normalize_similarity,
                  add_zeros_quota=add_zeros_quota,
                  loss_tolerance=loss_tolerance,
@@ -287,7 +294,7 @@ class CFW(RecommenderBase):
             print('exporting results')
             recs = self.recommend_batch(d.get_target_playlists(),
                                          N=10,
-                                         urm=d.get_urm(),
+                                         urm=urm,
                                          filter_already_liked=True,
                                          with_scores=False,
                                          items_to_exclude=[],
@@ -301,7 +308,7 @@ class CFW(RecommenderBase):
                                                                    ))
         elif export_r_hat:
             print('saving estimated urm')
-            self.save_r_hat()
+            self.save_r_hat(export_for_validation)
 
     def validate(self, user_ids=d.get_target_playlists(), log_path=None, normalize_similarity = [False], damp_coeff=[1],
                  add_zeros_quota = [1], loss_tolerance = [1e-6], iteration_limit = [30], use_incremental=[False]):
@@ -339,6 +346,6 @@ class CFW(RecommenderBase):
             sys.stdout = orig_stdout
             f.close()
 
-#0.03571
+#0.039
 r = CFW()
-r.run(export_results=False, export_r_hat=True)
+r.run(export_results=False, export_r_hat=True, export_for_validation=True)
