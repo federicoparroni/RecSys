@@ -35,6 +35,8 @@ _URM_TRAIN_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp
 
 _URM_TEST_SEQUENTIAL_MASKED_PATH = 'raw_data/masked_sequential_first_entries/sp_urm_masked_sequential_test_MAP.npz'
 
+_UCM_TRAIN_PATH = 'raw_data/matrices/ucm_train.npz'
+
 # sequential dataframes
 _SEQUENTIAL_TRAIN_DF_PATH = 'raw_data/matrices/sequential_split/df_train.csv'
 
@@ -47,6 +49,7 @@ _urm = None
 _urm_train = None
 _urm_test = None
 _icm = None
+_ucm_train = None
 _urm_train_explicit = None
 _urm_test_explicit = None
 
@@ -170,3 +173,9 @@ def get_all_playlists():
 def get_empty_urm():
     empty_urm = sps.csr_matrix((N_PLAYLISTS, N_TRACKS))
     return empty_urm
+
+def get_ucm_train():
+    global _ucm_train
+    if _ucm_train is None:
+        _ucm_train = load_npz(_UCM_TRAIN_PATH)
+    return _ucm_train

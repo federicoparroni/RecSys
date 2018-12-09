@@ -21,6 +21,10 @@ def create_ucm_from_urm(urm_train):
     split           (Split) personalizes the split into train and test of data coming after ProcessInteractions
     save_dataframes (Bool) whether to save the train and test dataframes or not
     """
+    path = "raw_data/ucm" + str(randint(1, 100))
+    print('starting dataset creation of UCM in ' + path)
+
+    # maybe can be better a dense array?
     ICM = csr_matrix(create_icm(d.get_tracks_df(), []))
     UCM = csr_matrix((d.N_PLAYLISTS,ICM.shape[1]), dtype=np.int)
     for p in range(d.N_PLAYLISTS):
@@ -30,11 +34,8 @@ def create_ucm_from_urm(urm_train):
         log.progressbar(p, d.N_PLAYLISTS)
 
     # save matrices
-    path = "raw_data/ucm" + str(randint(1, 100))
-    print('starting dataset creation of UCM in ' + path)
     os.mkdir(path)
-
-    save_npz(path, UCM)
+    save_npz(path + '/ucm', UCM)
 
 
 
