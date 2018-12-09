@@ -10,18 +10,18 @@ import numpy as np
 from inout.importexport import exportcsv
 import time
 
-class CFUserBased(DistanceBasedRecommender):
+class CFContentUserBased(DistanceBasedRecommender):
     """
     Computes the recommendations for a user by looking for the similar users based on the
     item which they rated
     """
 
     def __init__(self):
-        super(CFUserBased, self).__init__()
+        super(CFContentUserBased, self).__init__()
         self._matrix_mul_order = 'inverse'
         self.name = 'CFuser'
 
-    def fit(self, urm_train, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
+    def fit(self, ucm_train, k, distance, shrink=0, threshold=0, implicit=True, alpha=None, beta=None, l=None, c=None, verbose=False):
         """
         Initialize the model and compute the Similarity_MFD matrix S with a distance metric.
         Access the Similarity_MFD matrix using: self._sim_matrix
@@ -45,18 +45,18 @@ class CFUserBased(DistanceBasedRecommender):
         l: float, optional, balance coefficient used in s_plus distance, included in [0,1]
         c: float, optional, cosine coefficient, included in [0,1]
         """
-        self.urm = urm_train
-        return super(CFUserBased, self).fit(urm_train, k=k, distance=distance, shrink=shrink, threshold=threshold,
+        self.urm = ucm_train
+        return super(CFContentUserBased, self).fit(ucm_train, k=k, distance=distance, shrink=shrink, threshold=threshold,
                                             implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, verbose=verbose)
 
     def get_r_hat(self, only_target=True, verbose=False):
         """
         Return the r_hat matrix as: R^ = S•R, ONLY for the TARGET USERS
         """
-        return super(CFUserBased, self).get_r_hat(verbose=verbose)
+        return super(CFContentUserBased, self).get_r_hat(verbose=verbose)
 
 
-    def run(self, distance, urm_train=None, urm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
+    def run(self, distance, ucm_train=None, urm=None, urm_test=None, targetids=None, k=100, shrink=10, threshold=0,
             implicit=True, alpha=None, beta=None, l=None, c=None, with_scores=False, export=True, verbose=True):
         """
         Run the model and export the results to a file
@@ -64,9 +64,6 @@ class CFUserBased(DistanceBasedRecommender):
         Parameters
         ----------
         distance : str, distance metric
-        urm : csr matrix, URM. If None, used: data.get_urm_train(). This should be the
-            entire URM for which the targetids corresponds to the row indexes.
-        urm_test : csr matrix, urm where to test the model. If None, use: data.get_urm_test()
         targetids : list, target user ids. If None, use: data.get_target_playlists()
         k : int, K nearest neighbour to consider
         shrink : float, shrink term used in the normalization
@@ -78,19 +75,19 @@ class CFUserBased(DistanceBasedRecommender):
         recs: (list) recommendations
         map10: (float) MAP10 for the provided recommendations
         """
+        start = time.time()
+        
+        _ucm_train = data.get_ucm_train()
         _urm = data.get_urm_train()
         _urm_test = data.get_urm_test()
         _targetids = data.get_target_playlists()
-        #_targetids = data.get_all_playlists()
 
-        start = time.time()
-
-        urm_train = _urm if urm_train is None else urm_train
+        ucm_train = _ucm_train if ucm_train is None else ucm_train
         urm = _urm if urm is None else urm
         urm_test = _urm_test if urm_test is None else urm_test
         targetids = _targetids if targetids is None else targetids
 
-        self.fit(urm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)
+        self.fit(ucm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)
         recs = self.recommend_batch(targetids, urm=urm, with_scores=with_scores, verbose=verbose)
 
         map10 = None
@@ -108,7 +105,7 @@ class CFUserBased(DistanceBasedRecommender):
         return recs, map10
 
 
-    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=True, alpha=0.5, beta=0.5, l=0.5, c=0.5):
+    def test(self, distance=DistanceBasedRecommender.SIM_SPLUS, k=200, shrink=0, threshold=0, implicit=False, alpha=0.5, beta=0.5, l=0.5, c=0.5):
         """
         Test the model without saving the results. Default distance: SPLUS
         """
@@ -119,13 +116,7 @@ class CFUserBased(DistanceBasedRecommender):
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
-    model = CFUserBased()
-    model.fit(data.get_urm_train(), distance=CFUserBased.SIM_SPLUS, k=400, alpha=0.25, beta=0.5, shrink=0, l=0.25, c=0.25)
+    model = CFContentUserBased()
+    #model.fit(data.get_urm_train(), distance=CFContentUserBased.SIM_SPLUS, k=400, alpha=0.25, beta=0.5, shrink=0, l=0.25, c=0.25)
     #model.save_r_hat(evaluation=True)
-
-    rec = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
-    rec_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
-    rec_non_seq = model.recommend_batch(userids=data.get_all_playlists()[::2113], urm=data.get_urm_train())
-    model.evaluate(recommendations=rec, test_urm=data.get_urm_test())
-    model.evaluate(recommendations=rec_seq, test_urm=data.get_urm_test())
-    model.evaluate(recommendations=rec_non_seq, test_urm=data.get_urm_test())
+    model.test(k=60, distance=model.SIM_SPLUS, shrink=10, alpha=0.25, beta=0.75, l=0.25, c=0.25)
