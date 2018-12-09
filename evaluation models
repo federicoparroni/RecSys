@@ -26,11 +26,11 @@
 
 ======= CONTENT_BASED =======
 == parameters ==
-    distance=splus, KNN=100, shrink=500, threshold=0, alpha=0.5, beta=1, l=0.5, c=0.5
+    splus, KNN: 500, shrink: 500, threshold: 0, alpha: 0.75, beta: 1, l: 0.5, c: 0.5.
 
 == scores ==
     performance on all playlists
-    MAP: 0.03189235904824884
+    MAP: 0.03435772645817579
     performance on sequential-playlists
     MAP: 0.03572860597757612
     performance on non-sequential-playlists
