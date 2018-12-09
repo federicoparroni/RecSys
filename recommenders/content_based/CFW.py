@@ -53,10 +53,10 @@ class CFW(RecommenderBase):
         content = ContentBasedRecommender()
         sim_content = content.fit(d.get_urm(),
                                   d.get_icm(),
-                                  k=100,
+                                  k=500,
                                   distance=DistanceBasedRecommender.SIM_SPLUS,
                                   shrink=500,
-                                  alpha=0.5,
+                                  alpha=0.75,
                                   beta=1,
                                   l=0.5,
                                   c=0.5).tocsr()
@@ -176,22 +176,10 @@ class CFW(RecommenderBase):
         else:
             feature_weights = self.D_best
 
-        feature_weights = np.sqrt(feature_weights)
+        feature_weights = np.sqrt(np.absolute(feature_weights))
         ICM_weighted = self.ICM * csr_matrix((feature_weights,
                                               (np.arange(len(feature_weights), dtype=np.int32),
                                                np.arange(len(feature_weights), dtype=np.int32))))
-
-        # TODO: insert here the optimal content based params
-        # db = DistanceBasedRecommender()
-        # self.W_sparse = db.fit(ICM_weighted,
-        #                        distance=DistanceBasedRecommender.SIM_JACCARD,
-        #                        k=1000,
-        #                        shrink=1000,
-        #                        alpha=0.5,
-        #                        beta=0.5,
-        #                        l=0.5,
-        #                        c=0.5).tocsr()
-        # self.W_sparse = ICM_weighted * ICM_weighted.T
 
         self.W_sparse = ICM_weighted * ICM_weighted.T
 
@@ -247,7 +235,6 @@ class CFW(RecommenderBase):
             if verbose:
                  i += 1
                  log.progressbar(i, scores_array.shape[0], prefix='Building recommendations ')
-
         return l
 
     def get_r_hat(self):
@@ -348,4 +335,10 @@ class CFW(RecommenderBase):
 
 #0.039
 r = CFW()
-r.run(export_results=False, export_r_hat=True, export_for_validation=True)
+# r.validate(normalize_similarity=[True],
+#            damp_coeff=[0.1, 1, 10, 100],
+#            add_zeros_quota=[0.1, 1, 10, 100],
+#            loss_tolerance=[1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1],
+#            iteration_limit=[5, 10, 30, 50, 100, 200, 350, 500],
+#            use_incremental=[False, True])
+r.run(export_results=False, export_r_hat=True, export_for_validation=False)
