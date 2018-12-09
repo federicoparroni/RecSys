@@ -53,7 +53,6 @@ class RecommenderBase(ABC):
         sps.save_npz(filename, r_hat)
         log.success('R_hat succesfully saved in: {}.npz'.format(filename))
 
-
     @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         """

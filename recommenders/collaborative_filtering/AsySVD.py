@@ -22,9 +22,9 @@ class AsySVD(object):
 
     # TODO: add global effects
     def __init__(self,
-                 num_factors=100,
-                 lrate=0.01,
-                 reg=0.015,
+                 num_factors=150,
+                 lrate=0.1,
+                 reg=0.0015,
                  iters=1,
                  init_mean=0.0,
                  init_std=0.1,
@@ -67,7 +67,7 @@ class AsySVD(object):
         # compute the scores using the dot product
         user_profile_batch = self.dataset[userids]
 
-        scores_array = np.dot(self.X, self.U[userids].T)
+        scores_array = np.dot(self.U[userids], self.X.T)
 
         """
         To exclude already_liked items perform a boolean indexing and replace their score with -inf

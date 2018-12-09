@@ -26,11 +26,11 @@ class FunkSVD(object):
     def fit(self, urm,
                 num_factors=100,
                  learning_rate=0.2,
-                 reg=0.1,
+                 reg=0.01,
                  epochs=10,
                  init_mean=0.1,
                  init_std=0.0,
-                 lrate_decay=1.0,
+                 lrate_decay=0,
                  rnd_seed=42):
         """
         Initialize the model

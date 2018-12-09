@@ -34,11 +34,14 @@ def AsySVD_sgd(R, num_factors=50, lrate=0.01, reg=0.015, iters=10, init_mean=0.0
     cdef np.ndarray[np.int64_t, ndim=1] shuffled_idx = np.random.permutation(nnz).astype(np.int64)
 
     # here we define some auxiliary variables
-    cdef int i, j, it, n, idx, n_rated, start, end
+    cdef int i, j, it, n, idx, n_rated, start, end, perc
     cdef float rij, rij_pred, err, loss
     cdef np.ndarray[np.float32_t, ndim=1] X_j = np.zeros(num_factors, dtype=np.float32)
     cdef np.ndarray[np.float32_t, ndim=1] Y_acc = np.zeros(num_factors, dtype=np.float32)
     cdef np.ndarray[np.float32_t, ndim=2] Y_copy = np.zeros_like(Y, dtype=np.float32)
+
+    cdef np.ndarray[np.float32_t, ndim=1] R_i = np.zeros(N, dtype=np.float32)
+    cdef np.ndarray[np.float32_t, ndim=2] temp = np.zeros((N, N), dtype=np.float32)
 
     #
     # Stochastic Gradient Descent starts here
@@ -46,8 +49,13 @@ def AsySVD_sgd(R, num_factors=50, lrate=0.01, reg=0.015, iters=10, init_mean=0.0
 
     for it in range(iters):     # for each iteration
         loss = 0.0
+        perc = 0
         for n in range(nnz):    # iterate over non-zero values in R only
-            print(n)
+
+            if n*100/nnz > perc:
+                perc = n*100/nnz
+                print(perc)
+
             idx = shuffled_idx[n]
             rij = data[idx]
             # get the row and col indices of x_ij
@@ -57,6 +65,9 @@ def AsySVD_sgd(R, num_factors=50, lrate=0.01, reg=0.015, iters=10, init_mean=0.0
             X_j = X[j].copy()
             # accumulate the item latent factors over the other items rated by i
             Y_acc = np.zeros(num_factors, dtype=np.float32)
+
+            #start = time.time()
+
             n_rated = 0
             start, end = indptr[i], indptr[i+1]
             for l in col_indices[start:end]:
@@ -65,6 +76,15 @@ def AsySVD_sgd(R, num_factors=50, lrate=0.01, reg=0.015, iters=10, init_mean=0.0
                 n_rated += 1
             if n_rated > 0:
                 Y_acc /= np.sqrt(n_rated)
+
+
+
+#            R_i = R.getrow(i).todense()[0]
+#            temp = np.repeat(R_i, N, axis=1)
+#            Y_acc = (Y.dot(temp)).sum(axis=1)/np.sqrt(len(R_i.nonzero()[0]))
+
+            #print('{} s'.format((time.time()-start)))
+
             # compute the predicted rating
             rij_pred = np.dot(X_j, Y_acc)
             # compute the prediction error

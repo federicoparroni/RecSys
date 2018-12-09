@@ -123,6 +123,11 @@ class DistanceBasedRecommender(RecommenderBase):
         else:
             return sim.dot_product(R, self._sim_matrix, target_rows=targetids, k=R.shape[0],
                                     format_output='csr', verbose=verbose)
+    def get_sim_matrix(self):
+        if self._sim_matrix is not None:
+            return self._sim_matrix
+        else:
+            print('NOT TRAINED')
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):
         if not self._has_fit():

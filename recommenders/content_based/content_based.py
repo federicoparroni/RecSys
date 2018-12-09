@@ -11,6 +11,7 @@ from inout.importexport import exportcsv
 import time
 import data.data as d
 import sys
+import scipy.sparse as sps
 
 class ContentBasedRecommender(DistanceBasedRecommender):
     """
@@ -200,11 +201,11 @@ class ContentBasedRecommender(DistanceBasedRecommender):
         if log_path != None:
             sys.stdout = orig_stdout
             f.close()
-
-    def get_r_hat(self):
-        r_hat = sim.dot_product(self.urm, self._sim_matrix, target_rows=data.get_target_playlists(),
-                                k=data.N_TRACKS, format_output='csr')
-        return r_hat[data.get_target_playlists()]
+    #
+    # def get_r_hat(self):
+    #     r_hat = sim.dot_product(self.urm, self._sim_matrix, target_rows=data.get_target_playlists(),
+    #                             k=data.N_TRACKS, format_output='csr')
+    #     return r_hat[data.get_target_playlists()]
 
 """
 If this file is executed, test the SPLUS distance metric
@@ -213,7 +214,8 @@ if __name__ == '__main__':
     model = ContentBasedRecommender()
     model.fit(urm=data.get_urm_train(), icm=data.get_icm(), k=700, shrink=500, threshold=0, alpha=0.5,
               beta=1, l=0.5, c=0.5, distance=model.SIM_SPLUS)
-    recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
-    recs_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
-    model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
-    model.evaluate(recommendations=recs_seq, test_urm=data.get_urm_test())
+    sps.save_npz('raw_data/saved_sim_matrix_evaluation/content_based', model.get_sim_matrix())
+    # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+    # recs_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
+    # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+    # model.evaluate(recommendations=recs_seq, test_urm=data.get_urm_test())
