@@ -1,23 +1,14 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
-<<<<<<< HEAD
-=======
-import data.data as d
-import pandas as pd
-from preprocessing.process_interactions import ProcessInteractions
-
-from preprocessing.split import SplitRandomNonSequentiasLastSequential
-from preprocessing.split import SplitRandom
->>>>>>> master
 import os
 import time
 import pandas as pd
 import data.data as d
 from random import randint
 from preprocessing.process_interactions import KeepSequentialPlaylists
-from preprocessing.explicate import ExplicateLinearly
-from preprocessing.split import SplitRandom
+from preprocessing.explicate import ExplicateLinearly, ExplicateBase
+from preprocessing.split import SplitRandomNonSequentiasLastSequential, SplitRandom
 
 def create_urms(proc_int, explicate, split, save_dataframes=False):
     """
@@ -40,11 +31,6 @@ def create_urms(proc_int, explicate, split, save_dataframes=False):
     df = proc_int.process()
     print('interactions preprocessed in: {}'.format(time.time() - start))
 
-    # assigns ratings to tracks
-    start = time.time()
-    df = explicate.process(df)
-    print('ratings assigned in: {}'.format(time.time() - start))
-
     # perform the split, gets the train dataframe
     start = time.time()
     df_train = split.process(df)
@@ -52,6 +38,14 @@ def create_urms(proc_int, explicate, split, save_dataframes=False):
 
     # gets the test dataframe
     df_test = pd.concat([df, df_train]).drop_duplicates(keep=False)
+
+    # assigns ratings to tracks
+    start = time.time()
+    df_train = explicate.process(df_train)
+    b = ExplicateBase()
+    df_test = b.process(df_test)
+    df = explicate.process(df)
+    print('ratings assigned in: {}'.format(time.time() - start))
 
     if save_dataframes:
         df_train.to_csv('{}/df_train.csv'.format(path), index=False)
@@ -102,9 +96,8 @@ def _create_urm(df):
     return csr_matrix((df['rating'].values, (df['playlist_id'].values, df['track_id'].values)), 
                       shape=(d.N_PLAYLISTS, d.N_TRACKS))
 
-
 df = d.get_playlists_df()
 pi = KeepSequentialPlaylists(df)
-es = ExplicateLinearly(1, 3)
+es = ExplicateLinearly(1, 10)
 s = SplitRandom(0.2)
 create_urms(pi, es, s, save_dataframes=False)

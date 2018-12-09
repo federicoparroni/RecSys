@@ -41,10 +41,7 @@ class SplitRandom(Split):
         @Output
         df:             the dataframe from which we have removed the picked songs
         """
-        #return df.groupby('playlist_id').apply(
-        #    lambda x: x.iloc[random.sample(range(0, len(x)-1), math.floor(len(x)*(1-self.perc)))].reset_index(drop=True))
         return df.groupby('playlist_id').apply(lambda x : x.drop(x.sample(n = math.floor(len(x)*self.perc)).index))
-
 
 
 class SplitRandomNonSequentiasLastSequential(Split):

@@ -11,8 +11,8 @@ Collaborative Item Based --> MAP: 0.0743906113158225
 Collaborative Item Based --> MAP: 0.07402175044091713
  distance: COSINE   knn: 700
 
-Content Based --> MAP: 0.03425289118795657
- distance: splus, KNN: 100, shrink: 500, threshold: 0, alpha: 0.5, beta: 1, l: 0.5, c: 0.5
+Content Based --> MAP: 0.03435772645817579
+ splus, KNN: 500, shrink: 500, threshold: 0, alpha: 0.75, beta: 1, l: 0.5, c: 0.5.
 
 Slim_rmse
  l1_ratio: 0.1
@@ -39,6 +39,7 @@ Collaborative User Based --> MAP: 0.06981850385802475
                  init_mean=0.0,
                  init_std=0.1,
                  rnd_seed=42):
+
                
 UCM:  MAP: 0.06808270494771988 implicit = True
 model.test(k=60, distance=model.SIM_SPLUS, shrink=10, alpha=0.25, beta=0.75, l=0.25, c=0.25)
