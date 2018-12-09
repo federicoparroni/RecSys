@@ -5,7 +5,7 @@ from Cython.Distutils import build_ext
 import numpy
 
 setup(
-    ext_modules=cythonize('FunkSVD_sgd.pyx'),
+    ext_modules=cythonize('AsySVD_sgd.pyx'),
     include_dirs=[numpy.get_include()]
 )
 

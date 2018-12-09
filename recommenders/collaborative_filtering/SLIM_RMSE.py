@@ -221,6 +221,12 @@ class SLIMElasticNetRecommender(RecommenderBase):
         r_hat[data.get_target_playlists()] = self.URM_train[data.get_target_playlists()].dot(self.W_sparse)
         return r_hat
 
+    def get_sim_matrix(self):
+        if self.W_sparse is not None:
+            return self.W_sparse
+        else:
+            print('NOT TRAINED')
+
     def run(self, urm_train=None, urm=None, urm_test=None, targetids=None,
             factors=100, regularization=0.01, iterations=100, alpha=25, with_scores=False, export=True, verbose=True):
         """
@@ -263,14 +269,10 @@ class SLIMElasticNetRecommender(RecommenderBase):
 
         return recs, map10
 
+"""
 def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=data.get_target_playlists(),
                  urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), filter_already_liked=True,
                  items_to_exclude=[], N=10, verbose=True, write_on_file=True):
-
-    """
-    -----------
-    :return: _
-    """
 
 
     #create the initial model
@@ -310,11 +312,11 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
                                       'topK: {}\n evaluation map@10: {}'.format(l, a, m, k, map10))
 
 """
-If this file is executed, test the SPLUS distance metric
-"""
+
 if __name__ == '__main__':
     rec = SLIMElasticNetRecommender()
-    rec.fit(urm=data.get_urm(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
+    rec.fit(urm=data.get_urm_train(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
     #rec.save_r_hat(evaluation=True)
-    recs = rec.recommend_batch(userids=data.get_target_playlists())
-    exportcsv(recs)
+    #recs = rec.recommend_batch(userids=data.get_target_playlists())
+    #exportcsv(recs)
+    sps.save_npz('raw_data/saved_sim_matrix_evaluation/slim_rmse', rec.get_sim_matrix())

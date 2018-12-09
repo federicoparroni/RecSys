@@ -19,7 +19,7 @@ class P3alphaRecommender():
         self.URM_train = URM_train
         self.sparse_weights = True
 
-    def fit(self, topK=400, alpha=1.7, min_rating=0, implicit=True, normalize_similarity=True):
+    def fit(self, topK=500, alpha=1.7, min_rating=1, implicit=True, normalize_similarity=True):
 
         self.topK = topK
         self.alpha = alpha

@@ -6,6 +6,7 @@ import time
 import sys
 import utils.log as log
 from scipy.sparse import load_npz
+import scipy.sparse as sps
 import data.data as data
 from inout import importexport
 pyximport.install(setup_args={"script_args":[],
@@ -72,59 +73,59 @@ class SLIM_BPR(RecommenderBase):
         elif export_r_hat:
             print('saving estimated urm')
             self.save_r_hat()
-
-    def validate(self, epochs=200, user_ids=d.get_target_playlists(),
-            batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0],
-            lambda_j = [0], learning_rate = [0.01], topK = [1500], sgd_mode='adagrad', log_path=None):
-        """
-        train the model finding matrix W
-        :param epochs(int)
-        :param batch_size(list) after how many items the params should be updated
-        :param lambda_i(list) first regularization term
-        :param lambda_j(list) second regularization term
-        :param learning_rate(list) algorithm learning rate
-        :param topK(list) how many elements should be taken into account while computing URM*W
-        :param sgd_mode(string) optimization algorithm
-        :param user_ids(list) needed if we'd like to perform validation
-        :param validate_every_N_epochs(int) how often the MAP evaluation should be displayed
-        :param start_validation_after_N_epochs(int)
-        :param log_path(string) folder to which the validation results should be saved
-        """
-        if log_path != None:
-            orig_stdout = sys.stdout
-            f = open(log_path + '/' + self.name + ' ' + time.strftime('_%H-%M-%S') + ' ' +
-                     time.strftime('%d-%m-%Y') + '.txt', 'w')
-            sys.stdout = f
-
-        for li in lambda_i:
-            for lj in lambda_j:
-                for tk in topK:
-                    for lr in learning_rate:
-                        for b in batch_size:
-                            print(self._print(epochs=epochs,
-                                              batch_size=b,
-                                              lambda_i=li,
-                                              lambda_j=lj,
-                                              learning_rate=lr,
-                                              topK=tk,
-                                              sgd_mode=sgd_mode))
-                            s.fit(URM_train=d.get_urm_train(),
-                                  epochs=epochs,
-                                  URM_test=d.get_urm_test(),
-                                  user_ids=user_ids,
-                                  batch_size=b,
-                                  validate_every_N_epochs=validate_every_N_epochs,
-                                  start_validation_after_N_epochs=start_validation_after_N_epochs,
-                                  lambda_i = li,
-                                  lambda_j = lj,
-                                  learning_rate = lr,
-                                  topK=tk,
-                                  sgd_mode=sgd_mode
-                                  )
-
-        if log_path != None:
-            sys.stdout = orig_stdout
-            f.close()
+    #
+    # def validate(self, epochs=200, user_ids=d.get_target_playlists(),
+    #         batch_size = [1000], validate_every_N_epochs = 5, start_validation_after_N_epochs = 0, lambda_i = [0],
+    #         lambda_j = [0], learning_rate = [0.01], topK = [1500], sgd_mode='adagrad', log_path=None):
+    #     """
+    #     train the model finding matrix W
+    #     :param epochs(int)
+    #     :param batch_size(list) after how many items the params should be updated
+    #     :param lambda_i(list) first regularization term
+    #     :param lambda_j(list) second regularization term
+    #     :param learning_rate(list) algorithm learning rate
+    #     :param topK(list) how many elements should be taken into account while computing URM*W
+    #     :param sgd_mode(string) optimization algorithm
+    #     :param user_ids(list) needed if we'd like to perform validation
+    #     :param validate_every_N_epochs(int) how often the MAP evaluation should be displayed
+    #     :param start_validation_after_N_epochs(int)
+    #     :param log_path(string) folder to which the validation results should be saved
+    #     """
+    #     if log_path != None:
+    #         orig_stdout = sys.stdout
+    #         f = open(log_path + '/' + self.name + ' ' + time.strftime('_%H-%M-%S') + ' ' +
+    #                  time.strftime('%d-%m-%Y') + '.txt', 'w')
+    #         sys.stdout = f
+    #
+    #     for li in lambda_i:
+    #         for lj in lambda_j:
+    #             for tk in topK:
+    #                 for lr in learning_rate:
+    #                     for b in batch_size:
+    #                         print(self._print(epochs=epochs,
+    #                                           batch_size=b,
+    #                                           lambda_i=li,
+    #                                           lambda_j=lj,
+    #                                           learning_rate=lr,
+    #                                           topK=tk,
+    #                                           sgd_mode=sgd_mode))
+    #                         s.fit(URM_train=d.get_urm_train(),
+    #                               epochs=epochs,
+    #                               URM_test=d.get_urm_test(),
+    #                               user_ids=user_ids,
+    #                               batch_size=b,
+    #                               validate_every_N_epochs=validate_every_N_epochs,
+    #                               start_validation_after_N_epochs=start_validation_after_N_epochs,
+    #                               lambda_i = li,
+    #                               lambda_j = lj,
+    #                               learning_rate = lr,
+    #                               topK=tk,
+    #                               sgd_mode=sgd_mode
+    #                               )
+    #
+    #     if log_path != None:
+    #         sys.stdout = orig_stdout
+    #         f.close()
 
     def _print(self, epochs=30, batch_size=1000, lambda_i=0.0, lambda_j=0.0, learning_rate=0.01, topK=200,
                sgd_mode = 'adagrad'):
@@ -297,6 +298,13 @@ class SLIM_BPR(RecommenderBase):
         r_hat[data.get_target_playlists()] = self.URM_train[d.get_target_playlists()].dot(self.W_sparse)
         return r_hat
 
+    def get_sim_matrix(self):
+        if self.W_sparse is not None:
+            return self.W_sparse
+        else:
+            print('NOT TRAINED')
+
 # test
 s = SLIM_BPR()
-s.run()
+s.fit()
+sps.save_npz('raw_data/saved_sim_matrix_evaluation/slim_rmse', s.get_sim_matrix())

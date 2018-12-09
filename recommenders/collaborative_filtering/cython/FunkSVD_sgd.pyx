@@ -51,7 +51,7 @@ def FunkSVD_sgd(R, int num_factors=50, double lrate=0.01,
         loss = 0.0
 
         for numSample in range(nnz):    # iterate over non-zero values in R only
-            #idx = shuffled_idx[numSample]
+            idx = shuffled_idx[numSample]
             idx = numSample
             rij = data[idx]
 
