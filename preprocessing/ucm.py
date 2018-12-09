@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, lil_matrix
 from scipy.sparse import save_npz
 import data.data as d
 import pandas as pd
@@ -26,7 +26,7 @@ def create_ucm_from_urm(urm_train):
 
     # maybe can be better a dense array?
     ICM = csr_matrix(create_icm(d.get_tracks_df(), []))
-    UCM = csr_matrix((d.N_PLAYLISTS,ICM.shape[1]), dtype=np.int)
+    UCM = lil_matrix((d.N_PLAYLISTS,ICM.shape[1]), dtype=np.int)
     for p in range(d.N_PLAYLISTS):
         track_indices = urm_train[p].nonzero()[1]
         for track_id in track_indices:
@@ -35,11 +35,12 @@ def create_ucm_from_urm(urm_train):
 
     # save matrices
     os.mkdir(path)
+<<<<<<< Updated upstream
     save_npz(path + '/ucm', UCM)
-
-
+=======
+    save_npz(path, UCM)
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":    
     urm = d.get_urm_train()
-
     create_ucm_from_urm(urm_train=urm)
