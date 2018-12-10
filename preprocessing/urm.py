@@ -6,25 +6,25 @@ import time
 import pandas as pd
 import data.data as d
 from random import randint
-from preprocessing.process_interactions import ProcessInteractions
+from preprocessing.process_interactions import ProcessInteractions, KeepSequentialPlaylists
 from preprocessing.explicate import ExplicateLinearly, ExplicateBase
 from preprocessing.split import SplitRandomNonSequentiasLastSequential, SplitRandom
 
-def create_urms(proc_int, explicate, split, save_dataframes=False):
+def create_urms(proc_int, split, explicate=None, save_matrices=True, save_dataframes=False):
     """
     Creates the full set of files containing sparse matrices needed for the train and test (except for the icm)
     The creation of the urms always starts from the train.csv and is personalized by specifying a ProcessInteractions
     object and a Split object
 
     @Params
-    proc_int        (ProcessInteractions) personalizes the preprocess of the train.csv dataframe
-    explicate       (ExplicateBase) specifies the strategy of assigning ratings to tracks
-    split           (Split) personalizes the split into train and test of data coming after ProcessInteractions
-    save_dataframes (Bool) whether to save the train and test dataframes or not
+    proc_int            (ProcessInteractions) personalizes the preprocess of the train.csv dataframe
+    explicate           (ExplicateBase) specifies the strategy of assigning ratings to tracks
+    split               (Split) personalizes the split into train and test of data coming after ProcessInteractions
+    save_matrices       (Bool) whether to save the train and test npz matrices or not
+    save_dataframes     (Bool) whether to save the train and test dataframes or not
     """
     path = "raw_data/new" + str(randint(1, 100))
     print('starting dataset creation of urms in ' + path)
-    os.mkdir(path)
 
     # preprocess the interactions, gets the base training dataframe
     start = time.time()
@@ -55,16 +55,18 @@ def create_urms(proc_int, explicate, split, save_dataframes=False):
     _check_presence_test_samples(df_test, target='target')
     _check_presence_test_samples(df_test, target='all')
 
-    # save matrices
     start = time.time()
+    
     urm = _create_urm(df)
-    save_npz(path + '/urm', urm)
-
     urm_train = _create_urm(df_train)
-    save_npz(path + '/urm_train', urm_train)
-
     urm_test = _create_urm(df_test)
-    save_npz(path + '/urm_test', urm_test)
+    # save matrices
+    if save_matrices:
+        os.mkdir(path)
+        save_npz(path + '/urm', urm)
+        save_npz(path + '/urm_train', urm_train)
+        save_npz(path + '/urm_test', urm_test)
+
     print('matrices saved in: {}'.format(time.time() - start))
 
 
@@ -96,8 +98,10 @@ def _create_urm(df):
     return csr_matrix((df['rating'].values, (df['playlist_id'].values, df['track_id'].values)), 
                       shape=(d.N_PLAYLISTS, d.N_TRACKS))
 
-df = d.get_playlists_df()
-pi = ProcessInteractions(df)
-s = SplitRandom(0.2)
-es = ExplicateBase()
-create_urms(pi, es, s, save_dataframes=False)
+
+if __name__ == "__main__":
+    df = d.get_playlists_df()
+    pi = ProcessInteractions(df)
+    es = ExplicateBase()
+    s = SplitRandom(0.2)
+    create_urms(pi, es, s)

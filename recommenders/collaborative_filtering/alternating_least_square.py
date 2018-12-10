@@ -253,8 +253,34 @@ class AlternatingLeastSquare(RecommenderBase):
 If this file is executed, test the als
 """
 if __name__ == '__main__':
-    rec = AlternatingLeastSquare()
-    rec.fit(urm=data.get_urm_train_explicit(), factors=1500, regularization=0.05, iterations=10, alpha=25)
-    recs = rec.recommend_batch(userids=data.get_target_playlists())
-    rec.evaluate(recommendations=recs, test_urm=data.get_urm_test_explicit())
+    print()
+    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    #log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
+    model = AlternatingLeastSquare()
+    if arg == 't':
+        model.fit(urm=data.get_urm_train_explicit(), factors=1500, regularization=0.05, iterations=10, alpha=25)
+        recs = model.recommend_batch(userids=data.get_target_playlists())
+        model.evaluate(recommendations=recs, test_urm=data.get_urm_test_explicit())
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(urm=data.get_urm_train_explicit(), factors=1500, regularization=0.05, iterations=10, alpha=25)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    # elif arg == 'v':
+    #     model.validate(....)
+    elif arg == 'e':
+        print('Grazie Edo...')
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')
+
+
 

@@ -121,7 +121,7 @@ class RecommenderBase(ABC):
                 log.progressbar(i, L, prefix='Building recommendations ')
         return result
 
-    def evaluate(self, recommendations, test_urm, at_k=10, verbose=True):
+    def evaluate(self, recommendations, test_urm, at_k=10, single_ap=False, verbose=True):
         """
         Return the MAP@k evaluation for the provided recommendations
         computed with respect to the test_urm
@@ -138,6 +138,8 @@ class RecommenderBase(ABC):
             A sparse matrix
         at_k : int, optional
             The number of items to compute the precision at
+        single_ap: bool, optional
+            If True, return also the array of AP for each user
 
         Returns
         -------
@@ -150,6 +152,7 @@ class RecommenderBase(ABC):
 
         start = time.time()
         aps = 0.0
+        ap_array = []
         for r in recommendations:
             row = test_urm.getrow(r[0]).indices
             m = min(at_k, len(row))
@@ -162,15 +165,19 @@ class RecommenderBase(ABC):
                     ap = ap + n_elems_found/j
             if m > 0:
                 ap = ap/m
-                aps = aps + ap
+                aps += ap
+            if single_ap:
+                ap_array.append(ap)
 
         result = aps/len(recommendations)
         print('MAP computed in {:.2f} s'.format(time.time() - start))
         if verbose:
             log.warning('MAP: {}'.format(result))
-
-
-        return result
+        
+        if single_ap:
+            return result, ap_array
+        else:
+            return result
 
     def _insert_userids_as_first_col(self, userids, recommendations):
         """

@@ -198,7 +198,7 @@ class CFW(RecommenderBase):
 
         common_features = self.ICM[self.row_list].multiply(self.ICM[self.col_list])
 
-        linalg_result = linalg.lsqr(common_features, self.data_list, show = True, atol=loss_tolerance,
+        linalg_result = linalg.lsqr(common_features, self.data_list, show = False, atol=loss_tolerance,
                                     btol=loss_tolerance, iter_lim = iteration_limit, damp=damp_coeff)
 
         self.D_incremental = linalg_result[0].copy()
@@ -299,7 +299,6 @@ class CFW(RecommenderBase):
 
     def validate(self, user_ids=d.get_target_playlists(), log_path=None, normalize_similarity = [False], damp_coeff=[1],
                  add_zeros_quota = [1], loss_tolerance = [1e-6], iteration_limit = [30], use_incremental=[False]):
-
         if log_path != None:
             orig_stdout = sys.stdout
             f = open(log_path + '/' + self.name + ' ' + time.strftime('_%H-%M-%S') + ' ' +
@@ -335,10 +334,11 @@ class CFW(RecommenderBase):
 
 #0.039
 r = CFW()
-# r.validate(normalize_similarity=[True],
-#            damp_coeff=[0.1, 1, 10, 100],
-#            add_zeros_quota=[0.1, 1, 10, 100],
-#            loss_tolerance=[1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1],
-#            iteration_limit=[5, 10, 30, 50, 100, 200, 350, 500],
-#            use_incremental=[False, True])
-r.run(export_results=False, export_r_hat=True, export_for_validation=False)
+r.validate(log_path='.',
+           normalize_similarity=[True],
+           damp_coeff=[0.1, 1, 10, 100],
+           add_zeros_quota=[0.1, 1, 10, 100],
+           loss_tolerance=[1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
+           iteration_limit=[5, 10, 30, 50, 100, 200, 350, 500],
+           use_incremental=[False, True])
+# r.run(export_results=False, export_r_hat=True, export_for_validation=False)
