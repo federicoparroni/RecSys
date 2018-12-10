@@ -18,7 +18,7 @@ import os
 import time
 import clusterize.cluster as cluster
 
-base_path = 'raw_data/saved_sim_matrix/'
+base_path = 'raw_data/saved_sim_matrix_evaluation/'
 
 start = time.time()
 
@@ -37,7 +37,7 @@ normalization_mode = HybridSimilarity.L2
 hybrid_rec = HybridSimilarity(sim_matrices_array, normalization_mode=normalization_mode, urm_filter_tracks=data.get_urm_train_1())
 #sps.save_npz('raw_data/saved_r_hat/4collaborative_2',hybrid_rec.get_r_hat(weights_array=weights))
 
-recs = hybrid_rec.recommend_batch(weights_array=weights, target_userids=data.get_target_playlists())
-hybrid_rec.evaluate(recommendations=recs, test_urm=data.get_urm_test_1())
+#recs = hybrid_rec.recommend_batch(weights_array=weights, target_userids=data.get_target_playlists())
+#hybrid_rec.evaluate(recommendations=recs, test_urm=data.get_urm_test_1())
 
-#hybrid_rec.validate(iterations=100, urm_test=data.get_urm_test(), userids=data.get_target_playlists())
+hybrid_rec.validate(iterations=100, urm_test=data.get_urm_test_1(), userids=data.get_target_playlists())

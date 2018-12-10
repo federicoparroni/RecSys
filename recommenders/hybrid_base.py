@@ -7,6 +7,8 @@ import time
 from bayes_opt import BayesianOptimization
 import sklearn.preprocessing as sk
 import utils.check_matrix_format as cm
+from tkinter import *
+from tkinter import filedialog
 
 
 
@@ -32,7 +34,6 @@ class Hybrid(RecommenderBase):
         self._normalization(normalization_mode=self.normalization_mode)
 
         print('matrices_normalized')
-
 
     def normalize_max_row(self):
         """
@@ -259,5 +260,13 @@ class Hybrid(RecommenderBase):
     def run(self):
         pass
 
+def create_matrices_array(path, base_path='.'):
+    matrices_array = []
+    root = Tk()
+    root.filename = filedialog.askopenfilenames(initialdir=base_path+path, title='select files')
+    for f in root.filename:
+        path = sps.load_npz(f.split('RecSys/')[1])
 
+
+create_matrices_array(path='')
 
