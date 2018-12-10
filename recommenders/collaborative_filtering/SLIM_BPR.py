@@ -304,7 +304,34 @@ class SLIM_BPR(RecommenderBase):
         else:
             print('NOT TRAINED')
 
-# test
-s = SLIM_BPR()
-s.fit()
-sps.save_npz('raw_data/saved_sim_matrix_evaluation/slim_rmse', s.get_sim_matrix())
+if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    #log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
+    model = SLIM_BPR()
+    if arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit()
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 's':
+        model.fit()
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+    # elif arg == 'v':
+    #     model.validate(....)
+    elif arg == 'e':
+        print('Grazie Edo...')
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')
+

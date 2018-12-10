@@ -9,6 +9,7 @@ import similaripy as sim
 import numpy as np
 from inout.importexport import exportcsv
 import time
+import scipy.sparse as sps
 
 class CFUserBased(DistanceBasedRecommender):
     """
@@ -119,13 +120,45 @@ class CFUserBased(DistanceBasedRecommender):
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    #log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
     model = CFUserBased()
-    model.fit(data.get_urm_train(), distance=CFUserBased.SIM_SPLUS, k=400, alpha=0.25, beta=0.5, shrink=0, l=0.25, c=0.25)
-    #model.save_r_hat(evaluation=True)
+    if arg == 't':
+        # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+        # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+        model.test(distance=CFUserBased.SIM_SPLUS, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(data.get_urm_train(), distance=model.SIM_SPLUS,k=400,alpha=0.25,beta=0.5,shrink=0,l=0.25,c=0.25)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 's':
+        model.fit(data.get_urm_train(), distance=model.SIM_SPLUS,k=400,alpha=0.25,beta=0.5,shrink=0,l=0.25,c=0.25)
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+    # elif arg == 'v':
+    #     model.validate(iterations=50, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
+    #         distance=model.SIM_P3ALPHA, k=(100, 600), alpha=(0,1), beta=(0, 1),shrink=(0,100),l=(0,1),c=(0,1))
+    elif arg == 'e':
+        print('Grazie Edo...')
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')
 
-    rec = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
-    rec_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
-    rec_non_seq = model.recommend_batch(userids=data.get_all_playlists()[::2113], urm=data.get_urm_train())
-    model.evaluate(recommendations=rec, test_urm=data.get_urm_test())
-    model.evaluate(recommendations=rec_seq, test_urm=data.get_urm_test())
-    model.evaluate(recommendations=rec_non_seq, test_urm=data.get_urm_test())
+
+    # rec = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+    # rec_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
+    # rec_non_seq = model.recommend_batch(userids=data.get_all_playlists()[::2113], urm=data.get_urm_train())
+    # model.evaluate(recommendations=rec, test_urm=data.get_urm_test())
+    # model.evaluate(recommendations=rec_seq, test_urm=data.get_urm_test())
+    # model.evaluate(recommendations=rec_non_seq, test_urm=data.get_urm_test())

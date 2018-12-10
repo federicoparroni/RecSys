@@ -314,9 +314,36 @@ def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=da
 """
 
 if __name__ == '__main__':
-    rec = SLIMElasticNetRecommender()
-    rec.fit(urm=data.get_urm_train(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
-    #rec.save_r_hat(evaluation=True)
-    #recs = rec.recommend_batch(userids=data.get_target_playlists())
-    #exportcsv(recs)
-    sps.save_npz('raw_data/saved_sim_matrix_evaluation/slim_rmse', rec.get_sim_matrix())
+    print()
+    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    #log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
+    model = SLIMElasticNetRecommender()
+    if arg == 't':
+        # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+        # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+        log.error('Not implemented')
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(urm=data.get_urm_train(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 's':
+        model.fit(urm=data.get_urm_train(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+    # elif arg == 'v':
+    #     model.validate(....)
+    elif arg == 'e':
+        print('Grazie Edo...')
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')

@@ -138,7 +138,13 @@ class CFItemBased(DistanceBasedRecommender):
                 filter_already_liked=True, with_scores=False, items_to_exclude=[], verbose=False):
         """
         Validate the models, using the specified intervals for the parameters. Example:
-        
+            k: (10,800),
+            shrink: (0,100),
+            alpha: (0,1),
+            beta: (0,1),
+            l: (0,1),
+            c: (0,1),
+            threshold=(0,5)
         """
         # save the params in self to collect them later
         self._validation_dict = {
@@ -154,14 +160,6 @@ class CFItemBased(DistanceBasedRecommender):
             'implicit': implicit,
             'verbose': verbose
         }
-
-        # k: (10,800),
-        # shrink: (0,100),
-        # alpha: (0,1),
-        # beta: (0,1),
-        # l: (0,1),
-        # c: (0,1),
-        # threshold=(0,5)
 
         pbounds = {
             'k': (k,k) if isinstance(k, int) else k,
@@ -186,7 +184,7 @@ class CFItemBased(DistanceBasedRecommender):
         log.warning('Max found: {}'.format(optimizer.max))
         return optimizer
         
-
+"""
 def validate(self, ks, alphas, betas, ls, cs, shrinks, filename='splus_validation', path='validation_results', verbose=False):
     distance = CFItemBased.SIM_SPLUS
 
@@ -216,17 +214,44 @@ def validate(self, ks, alphas, betas, ls, cs, shrinks, filename='splus_validatio
                                 
                                 i+=1
                                 log.progressbar(i,tot, prefix='Validation: ')
+"""
 
 """
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
     model = CFItemBased()
-    model.fit(data.get_urm_train(), distance=CFItemBased.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
-    #recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
-    #model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
-    #model.save_r_hat(evaluation=False)
-    sps.save_npz('raw_data/saved_sim_matrix_evaluation/CF_SIM_SPLUS', model.get_sim_matrix())
-    #model.test(distance=CFItemBased.SIM_SPLUS, k=600, alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
-    #model.validate(iterations=100, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
-    #              distance=CFItemBased.SIM_P3ALPHA, k=(100, 600), alpha=(0,1), beta=(0, 1),shrink=(0,100),l=(0,1),c=(0,1))
+    if arg == 't':
+        # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+        # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+        model.test(distance=CFItemBased.SIM_SPLUS, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(data.get_urm_train(), distance=model.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 's':
+        model.fit(data.get_urm_train(), distance=model.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+    elif arg == 'v':
+        model.validate(iterations=50, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
+                 distance=model.SIM_P3ALPHA, k=(100, 600), alpha=(0,1), beta=(0, 1),shrink=(0,100),l=(0,1),c=(0,1))
+    elif arg == 'e':
+        print('Grazie Edo...')
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')
+
