@@ -265,7 +265,7 @@ class CFW(RecommenderBase):
     def run(self, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6, iteration_limit = 30, 
             damp_coeff=1, use_incremental=False, export_results=True, export_r_hat=False, export_for_validation=False):
         if export_r_hat and export_for_validation:
-            urm = d.get_urm_train()
+            urm = d.get_urm_train_1()
         else:
             urm = d.get_urm()
         
@@ -319,7 +319,7 @@ class CFW(RecommenderBase):
                                                   damp_coeff=dc,
                                                   use_incremental=ui))
                                 self.fit(ICM=d.get_icm(),
-                                         URM_train=d.get_urm_train(),
+                                         URM_train=d.get_urm_train_1(),
                                          normalize_similarity=ns,
                                          add_zeros_quota=adq,
                                          loss_tolerance=lt,
@@ -327,8 +327,8 @@ class CFW(RecommenderBase):
                                          damp_coeff=dc,
                                          use_incremental=ui)
 
-                                recs = self.recommend_batch(user_ids, urm=d.get_urm_train())
-                                r.evaluate(recs, d.get_urm_test())
+                                recs = self.recommend_batch(user_ids, urm=d.get_urm_train_1())
+                                r.evaluate(recs, d.get_urm_test_1())
         if log_path != None:
             sys.stdout = orig_stdout
             f.close()

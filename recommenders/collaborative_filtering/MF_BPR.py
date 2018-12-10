@@ -140,6 +140,6 @@ class MFBPR(RecommenderBase):
 
 import data.data as d
 r = MFBPR()
-r.fit(d.get_urm_train(), epochs=10, n_factors=10)
+r.fit(d.get_urm_train_1(), epochs=10, n_factors=10)
 recs = r.recommend_batch(userids=d.get_target_playlists())
-r.evaluate(recs, d.get_urm_test())
+r.evaluate(recs, d.get_urm_test_1())

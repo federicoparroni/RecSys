@@ -211,10 +211,40 @@ class ContentBasedRecommender(DistanceBasedRecommender):
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    #log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
     model = ContentBasedRecommender()
-    model.fit(urm=data.get_urm_train(), icm=data.get_icm(), k=700, shrink=500, threshold=0, alpha=0.5,
-              beta=1, l=0.5, c=0.5, distance=model.SIM_SPLUS)
-    sps.save_npz('raw_data/saved_sim_matrix_evaluation/content_based', model.get_sim_matrix())
+    if arg == 't':
+        # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+        # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+        model.test(distance=model.SIM_SPLUS, k=500,alpha=0.75,beta=1,shrink=500,l=0.5,c=0.5)
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(urm=data.get_urm_train(),icm=data.get_icm(), distance=model.SIM_SPLUS,k=500,shrink=500,alpha=0.75,beta=1,l=0.5,c=0.5)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 's':
+        model.fit(urm=data.get_urm_train(),icm=data.get_icm(), distance=model.SIM_SPLUS,k=500,shrink=500,alpha=0.75,beta=1,l=0.5,c=0.5)
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+    # elif arg == 'v':
+    #     model.validate(....)
+    elif arg == 'e':
+        print('Grazie Edo...')
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')
+
     # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
     # recs_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
     # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())

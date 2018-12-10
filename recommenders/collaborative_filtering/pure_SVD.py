@@ -99,9 +99,9 @@ class Pure_SVD(RecommenderBase):
         recs: (list) recommendations
         map10: (float) MAP10 for the provided recommendations
         """
-        _urm = data.get_urm_train()
+        _urm = data.get_urm_train_1()
         _icm = data.get_icm()
-        _urm_test = data.get_urm_test()
+        _urm_test = data.get_urm_test_1()
         _targetids = data.get_target_playlists()
         #_targetids = data.get_all_playlists()
 
@@ -135,7 +135,7 @@ class Pure_SVD(RecommenderBase):
         """
         return self.run(num_factors=num_factors, export=False)
 
-    def validate(self, factors_array, iteration_array, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), verbose=True,
+    def validate(self, factors_array, iteration_array, urm_train=data.get_urm_train_1(), urm_test=data.get_urm_test_1(), verbose=True,
                  write_on_file=True, userids=data.get_target_playlists(), N=10, filter_already_liked=True, items_to_exclude=[]):
 
         #create the initial model

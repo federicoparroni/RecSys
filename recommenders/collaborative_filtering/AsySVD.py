@@ -145,6 +145,6 @@ class AsySVD(object):
 
 
 rec = AsySVD()
-rec.fit(data.get_urm_train())
+rec.fit(data.get_urm_train_1())
 recs = rec.recommend_batch(data.get_target_playlists())
-rec.evaluate(recs, data.get_urm_test())
+rec.evaluate(recs, data.get_urm_test_1())

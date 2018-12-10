@@ -21,9 +21,13 @@ _TARGET_PLAYLISTS_PATH = 'raw_data/original_csv/target_playlists.csv'
 
 _URM_PATH = 'raw_data/matrices/urm.npz'
 
-_URM_TRAIN_PATH = 'raw_data/matrices/urm_train_1.npz'
+_URM_TRAIN_PATH_1 = 'raw_data/matrices/urm_train_1.npz'
 
-_URM_TEST_PATH = 'raw_data/matrices/urm_test_1.npz'
+_URM_TEST_PATH_1 = 'raw_data/matrices/urm_test_1.npz'
+
+_URM_TRAIN_PATH_2 = 'raw_data/matrices/urm_train_2.npz'
+
+_URM_TEST_PATH_2 = 'raw_data/matrices/urm_test_2.npz'
 
 _URM_TRAIN_EXPLICIT_PATH = 'raw_data/explicit/urm_train.npz'
 
@@ -46,8 +50,10 @@ _ICM_PATH = 'raw_data/matrices/icm.npz'
 
 #sparse_matrices CSR format
 _urm = None
-_urm_train = None
-_urm_test = None
+_urm_train_1 = None
+_urm_test_1 = None
+_urm_train_2 = None
+_urm_test_2 = None
 _icm = None
 _ucm_train = None
 _urm_train_explicit = None
@@ -82,17 +88,29 @@ def get_urm():
         _urm = load_npz(_URM_PATH)
     return _urm
 
-def get_urm_train():
-    global _urm_train
-    if _urm_train is None:
-        _urm_train = load_npz(_URM_TRAIN_PATH)
-    return _urm_train
+def get_urm_train_1():
+    global _urm_train_1
+    if _urm_train_1 is None:
+        _urm_train_1 = load_npz(_URM_TRAIN_PATH_1)
+    return _urm_train_1
 
-def get_urm_test():
-    global _urm_test
-    if _urm_test is None:
-        _urm_test = load_npz(_URM_TEST_PATH)
-    return _urm_test
+def get_urm_test_1():
+    global _urm_test_1
+    if _urm_test_1 is None:
+        _urm_test_1 = load_npz(_URM_TEST_PATH_1)
+    return _urm_test_1
+
+def get_urm_train_2():
+    global _urm_train_2
+    if _urm_train_2 is None:
+        _urm_train_2 = load_npz(_URM_TRAIN_PATH_2)
+    return _urm_train_2
+
+def get_urm_test_2():
+    global _urm_test_2
+    if _urm_test_2 is None:
+        _urm_test_2 = load_npz(_URM_TEST_PATH_2)
+    return _urm_test_2
 
 def get_urm_train_explicit():
     global _urm_train_explicit
@@ -113,16 +131,16 @@ def get_urm_sequential_masked():
     return _urm
 
 def get_urm_train_sequential_masked():
-    global _urm_train
-    if _urm_train is None:
-        _urm_train = load_npz(_URM_TRAIN_SEQUENTIAL_MASKED_PATH)
-    return _urm_train
+    global _urm_train_1
+    if _urm_train_1 is None:
+        _urm_train_1 = load_npz(_URM_TRAIN_SEQUENTIAL_MASKED_PATH)
+    return _urm_train_1
 
 def get_urm_test_sequential_masked():
-    global _urm_test
-    if _urm_test is None:
-        _urm_test = load_npz(_URM_TEST_SEQUENTIAL_MASKED_PATH)
-    return _urm_test
+    global _urm_test_1
+    if _urm_test_1 is None:
+        _urm_test_1 = load_npz(_URM_TEST_SEQUENTIAL_MASKED_PATH)
+    return _urm_test_1
 
 def get_icm():
     global _icm

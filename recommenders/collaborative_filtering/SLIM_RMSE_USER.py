@@ -233,10 +233,10 @@ class SLIMElasticNetRecommender(RecommenderBase):
         :return: recs: (list) recommendations
         :return: map10: (float) MAP10 for the provided recommendations
         """
-        _urm_train = data.get_urm_train()
+        _urm_train = data.get_urm_train_1()
         _urm = data.get_urm()
         _icm = data.get_icm()
-        _urm_test = data.get_urm_test()
+        _urm_test = data.get_urm_test_1()
         _targetids = data.get_target_playlists()
         # _targetids = data.get_all_playlists()
 
@@ -266,8 +266,8 @@ class SLIMElasticNetRecommender(RecommenderBase):
         return recs, map10
 
 def validate(l1_ratio_array, alpha_array, max_iter_array, topK_array, userids=data.get_target_playlists(),
-                 urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), filter_already_liked=True,
-                 items_to_exclude=[], N=10, verbose=True, write_on_file=True):
+             urm_train=data.get_urm_train_1(), urm_test=data.get_urm_test_1(), filter_already_liked=True,
+             items_to_exclude=[], N=10, verbose=True, write_on_file=True):
 
     """
     -----------
@@ -316,6 +316,6 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     rec = SLIMElasticNetRecommender()
-    rec.fit(urm=data.get_urm_train(), max_iter=1, topK=400, alpha=1e-4, l1_ratio=0.5)
+    rec.fit(urm=data.get_urm_train_1(), max_iter=1, topK=400, alpha=1e-4, l1_ratio=0.5)
     recs = rec.recommend_batch(userids=data.get_target_playlists())
-    rec.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+    rec.evaluate(recommendations=recs, test_urm=data.get_urm_test_1())
