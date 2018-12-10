@@ -54,7 +54,7 @@ class ItemKNNCBFRecommender(SimilarityMatrixRecommender):
             self.W = similarity.compute_similarity()
             self.W = self.W.toarray()
 
-rec = ItemKNNCBFRecommender(ICM=data.get_icm(), URM_train=data.get_urm_train())
+rec = ItemKNNCBFRecommender(ICM=data.get_icm(), URM_train=data.get_urm_train_1())
 rec.fit(feature_weighting='TF-IDF')
 recs = rec.recommend_batch(userids=data.get_target_playlists(), type='ITEM')
-rec.evaluate(recs, test_urm=data.get_urm_test())
+rec.evaluate(recs, test_urm=data.get_urm_test_1())

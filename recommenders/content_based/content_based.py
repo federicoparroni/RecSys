@@ -245,10 +245,7 @@ if __name__ == '__main__':
     else:
         log.error('Wrong option!')
 
-
-    
     # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
     # recs_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
     # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
     # model.evaluate(recommendations=recs_seq, test_urm=data.get_urm_test())
-    model.save_r_hat(evaluation=True)

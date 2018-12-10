@@ -244,8 +244,8 @@ class ProductRecommender(object):
 
 if __name__ == '__main__':
     rec = ProductRecommender()
-    rec.fit(user_x_product=data.get_urm_train(), latent_features_guess=10, learning_rate=0.01, steps=2,
+    rec.fit(user_x_product=data.get_urm_train_1(), latent_features_guess=10, learning_rate=0.01, steps=2,
             regularization_penalty=0.2, convergeance_threshold=0.01)
     recs = rec.recommend_batch(data.get_target_playlists())
-    rec.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+    rec.evaluate(recommendations=recs, test_urm=data.get_urm_test_1())
 

@@ -6,6 +6,8 @@ import scipy.sparse as sps
 import time
 from utils.check_matrix_format import check_matrix
 import os
+import data.data as data
+import utils.sparse_matrices_equality_check as eq
 
 class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
@@ -143,10 +145,12 @@ class RecommenderBase(ABC):
         -------
         MAP@k: (float) MAP for the provided recommendations
         """
+
         if not at_k > 0:
             log.error('Invalid value of k {}'.format(at_k))
             return
 
+        start = time.time()
         aps = 0.0
         ap_array = []
         for r in recommendations:
@@ -166,6 +170,7 @@ class RecommenderBase(ABC):
                 ap_array.append(ap)
 
         result = aps/len(recommendations)
+        print('MAP computed in {:.2f} s'.format(time.time() - start))
         if verbose:
             log.warning('MAP: {}'.format(result))
         

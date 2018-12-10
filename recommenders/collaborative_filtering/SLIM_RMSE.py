@@ -237,10 +237,10 @@ class SLIMElasticNetRecommender(RecommenderBase):
         :return: recs: (list) recommendations
         :return: map10: (float) MAP10 for the provided recommendations
         """
-        _urm_train = data.get_urm_train()
+        _urm_train = data.get_urm_train_1()
         _urm = data.get_urm()
         _icm = data.get_icm()
-        _urm_test = data.get_urm_test()
+        _urm_test = data.get_urm_test_1()
         _targetids = data.get_target_playlists()
         # _targetids = data.get_all_playlists()
 

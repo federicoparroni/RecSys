@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import data.data as d
+from pandas import Series
 
 class ExplicateBase:
 
@@ -14,10 +15,8 @@ class ExplicateBase:
         @Output
         df:             the same df with a third column for all the tracks set to 1   
         """
-        d = {'rating': np.ones((len(df.index)), dtype=np.int32)}
-        ratings = pd.DataFrame(data=d)
-        return df.join(ratings)    
-
+        df['rating'] = Series(np.ones(len(df.index)), index=df.index)
+        return df
 
 class ExplicateLinearly(ExplicateBase):
     

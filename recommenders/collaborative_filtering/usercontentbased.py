@@ -78,8 +78,8 @@ class CFContentUserBased(DistanceBasedRecommender):
         start = time.time()
         
         _ucm_train = data.get_ucm_train()
-        _urm = data.get_urm_train()
-        _urm_test = data.get_urm_test()
+        _urm = data.get_urm_train_1()
+        _urm_test = data.get_urm_test_1()
         _targetids = data.get_target_playlists()
 
         ucm_train = _ucm_train if ucm_train is None else ucm_train

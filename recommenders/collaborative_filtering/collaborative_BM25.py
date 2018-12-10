@@ -9,7 +9,7 @@ import scipy.sparse as sps
 targetUsersIds = data.get_target_playlists()
 
 # get item_user matrix by transposing the URM matrix
-URM = data.get_urm_train()
+URM = data.get_urm_train_1()
 item_user_data = URM.transpose()
 print('> data loaded')
 

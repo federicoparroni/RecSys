@@ -239,7 +239,7 @@ def evaluate(recommendations, test_urm, at_k=10, verbose=True):
         log.warning('MAP: {}'.format(result))
     return result
 
-rec = P3alphaRecommender(data.get_urm_train())
+rec = P3alphaRecommender(data.get_urm_train_1())
 rec.fit()
 
 r_hat = sps.csr_matrix(np.dot(rec.URM_train[data.get_target_playlists()], rec.W_sparse))

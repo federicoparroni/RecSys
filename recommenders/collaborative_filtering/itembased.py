@@ -82,8 +82,8 @@ class CFItemBased(DistanceBasedRecommender):
         """
         start = time.time()
 
-        urm_train = data.get_urm_train() if urm_train is None else urm_train
-        urm_test = data.get_urm_test() if urm_test is None else urm_test
+        urm_train = data.get_urm_train_1() if urm_train is None else urm_train
+        urm_test = data.get_urm_test_1() if urm_test is None else urm_test
         targetids = data.get_target_playlists() if targetids is None else targetids
 
         self.fit(urm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)

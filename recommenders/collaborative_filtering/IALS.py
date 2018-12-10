@@ -216,7 +216,7 @@ class IALS_numpy(object):
         return result
 
 rec = IALS_numpy()
-rec.fit(R=data.get_urm_train())
+rec.fit(R=data.get_urm_train_1())
 r_hat = sps.csr_matrix(np.dot(rec.X[data.get_target_playlists()], rec.Y.T))
 sps.save_npz('raw_data/saved_r_hat_evaluation/IALS', r_hat)
 #recs = rec.recommend_batch(userids=data.get_target_playlists())
