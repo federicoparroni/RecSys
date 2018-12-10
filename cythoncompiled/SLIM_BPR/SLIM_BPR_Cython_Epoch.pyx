@@ -42,6 +42,7 @@ cdef class SLIM_BPR_Cython_Epoch:
     cdef int topK
     cdef int symmetric, sparse_weights
     cdef int useAdaGrad, useRmsprop
+    
 
     cdef float learning_rate, li_reg, lj_reg
 
@@ -180,7 +181,7 @@ cdef class SLIM_BPR_Cython_Epoch:
             sgd_cache = np.zeros((self.n_items), dtype=float)
             gamma = 0.001
 
-
+        n_wrong_bpr_samplings = 0
 
         # Uniform user sampling without replacement
         for numCurrentBatch in range(totalNumberOfBatch):
@@ -209,6 +210,9 @@ cdef class SLIM_BPR_Cython_Epoch:
                 else:
                     x_uij += self.S_dense[i, seenItem] - self.S_dense[j, seenItem]
 
+
+            if x_uij < 0:
+                n_wrong_bpr_samplings += 1
 
             gradient = 1 / (1 + exp(x_uij))
             loss += x_uij**2
@@ -294,6 +298,8 @@ cdef class SLIM_BPR_Cython_Epoch:
                 sys.stderr.flush()
 
                 start_time_batch = time.time()
+        
+        print('perc of wrong bpr estimates: {}'.format(n_wrong_bpr_samplings/totalNumberOfBatch))
 
 
 
