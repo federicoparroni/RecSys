@@ -37,7 +37,7 @@ class RecommenderBase(ABC):
         """
         pass
 
-    def save_r_hat(self, evaluation, name=''):
+    def save_r_hat(self, evaluation):
 
         r_hat = self.get_r_hat()
         r_hat = check_matrix(r_hat, format='csr')
@@ -52,7 +52,6 @@ class RecommenderBase(ABC):
 
         sps.save_npz(filename, r_hat)
         log.success('R_hat succesfully saved in: {}.npz'.format(filename))
-
 
     @abstractmethod
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):

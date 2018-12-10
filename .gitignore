@@ -27,3 +27,7 @@ validation_results/
 submission/
 
 cythoncompiled/build
+
+raw_data/saved_sim_matrix/
+
+raw_data/saved_sim_matrix_evaluation/

@@ -101,3 +101,4 @@
     1|0.76
 
   distance=CFItemBased.SIM_COSINE,k=600,alpha=0.25,beta=0.5,shrink=4,l=0.25,c=0.5
+  'cos+sim_item',hybrid_rec.get_r_hat(weights_array=[ 0.6573, 0.1448]))
