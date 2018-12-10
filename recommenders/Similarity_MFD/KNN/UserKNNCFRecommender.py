@@ -43,14 +43,14 @@ class UserKNNCFRecommender(SimilarityMatrixRecommender):
 
 
 
-rec = UserKNNCFRecommender(URM_train=data.get_urm_train())
+rec = UserKNNCFRecommender(URM_train=data.get_urm_train_1())
 rec.fit()
 
-r_hat = rec.W_sparse.dot(data.get_urm_train())
+r_hat = rec.W_sparse.dot(data.get_urm_train_1())
 rec2 = ItemKNNCFRecommender(r_hat)
 rec2.fit()
-recs = rec2.recommend_batch(userids=data.get_target_playlists(), type='ITEM', filter_seen_matrix=data.get_urm_train())
-rec2.evaluate(recs, data.get_urm_test())
+recs = rec2.recommend_batch(userids=data.get_target_playlists(), type='ITEM', filter_seen_matrix=data.get_urm_train_1())
+rec2.evaluate(recs, data.get_urm_test_1())
 
 #recs = rec.recommend_batch(userids=data.get_target_playlists(), type='USER')
 #rec.evaluate(recs, test_urm=data.get_urm_test())

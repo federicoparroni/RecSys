@@ -154,9 +154,9 @@ class AlternatingLeastSquare(RecommenderBase):
         recs: (list) recommendations
         map10: (float) MAP10 for the provided recommendations
         """
-        _urm = data.get_urm_train()
+        _urm = data.get_urm_train_1()
         _icm = data.get_icm()
-        _urm_test = data.get_urm_test()
+        _urm_test = data.get_urm_test_1()
         _targetids = data.get_target_playlists()
         #_targetids = data.get_all_playlists()
 

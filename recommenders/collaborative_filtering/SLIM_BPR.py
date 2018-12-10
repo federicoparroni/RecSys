@@ -133,9 +133,9 @@ class SLIM_BPR(RecommenderBase):
                ' lambda_i: ' + str(lambda_i) + ' lamnda_j: ' + str(lambda_j) + ' learing_rate: ' + str(learning_rate) +\
                ' top_K: ' + str(topK) + ' opt method: ' + sgd_mode
 
-    def fit(self, URM_train=d.get_urm_train(), epochs=30, URM_test=d.get_urm_test(), user_ids=d.get_target_playlists(),
-            batch_size = 1000, validate_every_N_epochs = 1, start_validation_after_N_epochs = 0, lambda_i = 0.0,
-            lambda_j = 0.0, learning_rate = 0.01, topK = 200, sgd_mode='adagrad'):
+    def fit(self, URM_train=d.get_urm(), epochs=70, URM_test=d.get_urm_test_1(), user_ids=d.get_target_playlists(),
+            batch_size = 1000, validate_every_N_epochs = 2, start_validation_after_N_epochs = 71, lambda_i = 0.0,
+            lambda_j = 0.0, learning_rate = 0.01, topK = 1500, sgd_mode='adagrad'):
 
         """
         train the model finding matrix W
@@ -307,4 +307,4 @@ class SLIM_BPR(RecommenderBase):
 # test
 s = SLIM_BPR()
 s.fit()
-sps.save_npz('raw_data/saved_sim_matrix_evaluation/slim_rmse', s.get_sim_matrix())
+sps.save_npz('raw_data/saved_sim_matrix/slim_bpr', s.get_sim_matrix())

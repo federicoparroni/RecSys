@@ -212,9 +212,9 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = ContentBasedRecommender()
-    model.fit(urm=data.get_urm_train(), icm=data.get_icm(), k=700, shrink=500, threshold=0, alpha=0.5,
+    model.fit(urm=data.get_urm(), icm=data.get_icm(), k=700, shrink=500, threshold=0, alpha=0.5,
               beta=1, l=0.5, c=0.5, distance=model.SIM_SPLUS)
-    sps.save_npz('raw_data/saved_sim_matrix_evaluation/content_based', model.get_sim_matrix())
+    sps.save_npz('raw_data/saved_sim_matrix/content_based', model.get_sim_matrix())
     # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
     # recs_seq = model.recommend_batch(userids=data.get_sequential_target_playlists(), urm=data.get_urm_train())
     # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())

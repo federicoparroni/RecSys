@@ -201,4 +201,4 @@ class MF_MSE_PyTorch(RecommenderBase):
 
 
 m = MF_MSE_PyTorch()
-m.fit(d.get_urm_train(), user_ids=d.get_target_playlists(), URM_test=d.get_urm_test())
+m.fit(d.get_urm_train_1(), user_ids=d.get_target_playlists(), URM_test=d.get_urm_test_1())

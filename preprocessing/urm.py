@@ -6,7 +6,7 @@ import time
 import pandas as pd
 import data.data as d
 from random import randint
-from preprocessing.process_interactions import KeepSequentialPlaylists
+from preprocessing.process_interactions import ProcessInteractions
 from preprocessing.explicate import ExplicateLinearly, ExplicateBase
 from preprocessing.split import SplitRandomNonSequentiasLastSequential, SplitRandom
 
@@ -97,7 +97,7 @@ def _create_urm(df):
                       shape=(d.N_PLAYLISTS, d.N_TRACKS))
 
 df = d.get_playlists_df()
-pi = KeepSequentialPlaylists(df)
-es = ExplicateLinearly(1, 10)
+pi = ProcessInteractions(df)
 s = SplitRandom(0.2)
+es = ExplicateBase()
 create_urms(pi, es, s, save_dataframes=False)

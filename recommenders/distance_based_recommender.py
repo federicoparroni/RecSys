@@ -143,7 +143,7 @@ class DistanceBasedRecommender(RecommenderBase):
         if not self._has_fit():
             return None
 
-        R = data.get_urm_train() if urm is None else urm
+        R = data.get_urm_train_1() if urm is None else urm
 
         if userids is None or not len(userids) > 0:
             print('Recommending for all users...')

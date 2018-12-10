@@ -42,5 +42,5 @@ def create_ucm_from_urm(urm_train):
 >>>>>>> Stashed changes
 
 if __name__ == "__main__":    
-    urm = d.get_urm_train()
+    urm = d.get_urm_train_1()
     create_ucm_from_urm(urm_train=urm)

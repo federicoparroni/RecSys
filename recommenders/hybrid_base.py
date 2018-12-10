@@ -19,6 +19,7 @@ class Hybrid(RecommenderBase):
     L2 = 'L2'
     NONE = 'NONE'
 
+
     def __init__(self, urm_filter_tracks):
 
         self.urm_filter_tracks = urm_filter_tracks
@@ -31,6 +32,7 @@ class Hybrid(RecommenderBase):
         self._normalization(normalization_mode=self.normalization_mode)
 
         print('matrices_normalized')
+
 
     def normalize_max_row(self):
         """
@@ -186,11 +188,22 @@ class Hybrid(RecommenderBase):
         pass
 
     def get_r_hat(self, weights_array):
-        hybrid_matrix = data.get_empty_urm()
+        hybrid_matrix = sps.csr_matrix(self.normalized_matrices_array[0].shape)
         count = 0
         for m in self.normalized_matrices_array:
             hybrid_matrix += m*weights_array[count]
             count += 1
+
+        if self.name == 'HybridSimilarity':
+            #compute the r_hat if we have the similarity
+            if self.INVERSE == False:
+                hybrid_matrix = self.urm_filter_tracks[data.get_target_playlists()].dot(hybrid_matrix)
+            else:
+                hybrid_matrix = hybrid_matrix[data.get_target_playlists()].dot(self.urm_filter_tracks)
+            r_hat = data.get_empty_urm()
+            r_hat[data.get_target_playlists()] = hybrid_matrix
+            hybrid_matrix = r_hat
+
         return hybrid_matrix
 
     def recommend(self, userid, N=10, urm=None, filter_already_liked=True, with_scores=False, items_to_exclude=[]):

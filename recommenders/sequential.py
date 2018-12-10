@@ -34,7 +34,7 @@ class SequentialRecommender(DistanceBasedRecommender):
         self.sequences, self.target_indices = ps.get_sequences(h=h)
         target_ids = data.get_target_playlists()[0:data.N_SEQUENTIAL]
         self.target_ids = np.array(target_ids)
-        self.already_liked_indices = (data.get_urm_train()[target_ids]).nonzero()
+        self.already_liked_indices = (data.get_urm_train_1()[target_ids]).nonzero()
         self.H = seqsim.getH(self.sequences)
 
     def fit(self, k, distance, shrink=0, alpha=None, beta=None, l=None, c=None, verbose=False):
@@ -116,7 +116,7 @@ class SequentialRecommender(DistanceBasedRecommender):
 
         map10 = None
         if len(recs) > 0:
-            map10 = self.evaluate(recs, test_urm=data.get_urm_test(), verbose=verbose)
+            map10 = self.evaluate(recs, test_urm=data.get_urm_test_1(), verbose=verbose)
         else:
             log.warning('No recommendations available, skip evaluation')
 

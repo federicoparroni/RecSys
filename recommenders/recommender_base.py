@@ -6,6 +6,7 @@ import scipy.sparse as sps
 import time
 from utils.check_matrix_format import check_matrix
 import os
+import data.data as data
 
 class RecommenderBase(ABC):
     """ Defines the interface that all recommendations models expose """
@@ -141,6 +142,11 @@ class RecommenderBase(ABC):
         -------
         MAP@k: (float) MAP for the provided recommendations
         """
+        if test_urm == data.get_urm_test_2():
+            second_test_urm = data.get_urm_test_1()
+        else:
+            second_test_urm = data.get_urm_test_2()
+
         if not at_k > 0:
             log.error('Invalid value of k {}'.format(at_k))
             return
@@ -163,6 +169,26 @@ class RecommenderBase(ABC):
         result = aps/len(recommendations)
         if verbose:
             log.warning('MAP: {}'.format(result))
+
+        aps = 0.0
+        for r in recommendations:
+            row = second_test_urm.getrow(r[0]).indices
+            m = min(at_k, len(row))
+
+            ap = 0.0
+            n_elems_found = 0.0
+            for j in range(1, m+1):
+                if r[j] in row:
+                    n_elems_found += 1
+                    ap = ap + n_elems_found/j
+            if m > 0:
+                ap = ap/m
+                aps = aps + ap
+
+        result_2 = aps/len(recommendations)
+        if verbose:
+            log.warning('MAP_second_test_urm: {}'.format(result_2))
+            log.warning('MAP_AVERAGE: {}'.format((result_2+result)/2))
         return result
 
     def _insert_userids_as_first_col(self, userids, recommendations):

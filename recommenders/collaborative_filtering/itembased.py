@@ -82,8 +82,8 @@ class CFItemBased(DistanceBasedRecommender):
         """
         start = time.time()
 
-        urm_train = data.get_urm_train() if urm_train is None else urm_train
-        urm_test = data.get_urm_test() if urm_test is None else urm_test
+        urm_train = data.get_urm_train_1() if urm_train is None else urm_train
+        urm_test = data.get_urm_test_1() if urm_test is None else urm_test
         targetids = data.get_target_playlists() if targetids is None else targetids
 
         self.fit(urm_train, k=k, distance=distance, alpha=alpha, beta=beta, c=c, l=l, shrink=shrink, threshold=threshold, implicit=implicit)
@@ -222,11 +222,11 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     model = CFItemBased()
-    model.fit(data.get_urm_train(), distance=CFItemBased.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+    model.fit(data.get_urm(), distance=CFItemBased.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
     #recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
     #model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
     #model.save_r_hat(evaluation=False)
-    sps.save_npz('raw_data/saved_sim_matrix_evaluation/CF_SIM_SPLUS', model.get_sim_matrix())
+    sps.save_npz('raw_data/saved_sim_matrix/CF_SIM_SPLUS', model.get_sim_matrix())
     #model.test(distance=CFItemBased.SIM_SPLUS, k=600, alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
     #model.validate(iterations=100, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
     #              distance=CFItemBased.SIM_P3ALPHA, k=(100, 600), alpha=(0,1), beta=(0, 1),shrink=(0,100),l=(0,1),c=(0,1))

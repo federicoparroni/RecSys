@@ -139,6 +139,6 @@ class FunkSVD(object):
         return result
 
 rec = FunkSVD()
-rec.fit(urm=data.get_urm_train())
+rec.fit(urm=data.get_urm_train_1())
 recs = rec.recommend_batch(userids=data.get_target_playlists())
-rec.evaluate(recs, data.get_urm_test())
+rec.evaluate(recs, data.get_urm_test_1())
