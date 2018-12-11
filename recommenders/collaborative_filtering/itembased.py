@@ -242,9 +242,9 @@ if __name__ == '__main__':
         print('Saving the R^...')
         model.save_r_hat(evaluation=choice)
     elif arg == 's':
-        model.fit(data.get_urm_train(), distance=model.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+        model.fit(data.get_urm_train_2(), distance=model.SIM_SPLUS,k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
         print('Saving the similarity matrix...')
-        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation_2/{}'.format(model.name), model.get_sim_matrix())
     elif arg == 'v':
         model.validate(iterations=50, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
                  distance=model.SIM_P3ALPHA, k=(100, 600), alpha=(0,1), beta=(0, 1),shrink=(0,100),l=(0,1),c=(0,1))

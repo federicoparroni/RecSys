@@ -233,9 +233,9 @@ if __name__ == '__main__':
         print('Saving the R^...')
         model.save_r_hat(evaluation=choice)
     elif arg == 's':
-        model.fit(urm=data.get_urm_train(),icm=data.get_icm(), distance=model.SIM_SPLUS,k=500,shrink=500,alpha=0.75,beta=1,l=0.5,c=0.5)
+        model.fit(urm=data.get_urm_train_2(),icm=data.get_icm(), distance=model.SIM_SPLUS,k=500,shrink=500,alpha=0.75,beta=1,l=0.5,c=0.5)
         print('Saving the similarity matrix...')
-        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation_2/{}'.format(model.name), model.get_sim_matrix())
     # elif arg == 'v':
     #     model.validate(....)
     elif arg == 'e':
