@@ -26,6 +26,7 @@ class AlternatingLeastSquare(RecommenderBase):
     """
     def __init__(self):
         self.name = 'ALS'
+        os.environ['MKL_NUM_THREADS'] = '1'
 
     def get_r_hat(self):
         """
@@ -256,7 +257,7 @@ if __name__ == '__main__':
     sps.save_npz('raw_data/saved_r_hat_evaluation_2/als', model.get_r_hat())
 """
     print()
-    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.success('++ What do you want to do? ++')
     log.warning('(t) Test the model with some default params')
     log.warning('(r) Save the R^')
     #log.warning('(v) Validate the model')
@@ -266,7 +267,7 @@ if __name__ == '__main__':
     
     model = AlternatingLeastSquare()
     if arg == 't':
-        model.fit(urm=data.get_urm_train_explicit(), factors=1500, regularization=0.05, iterations=10, alpha=25)
+        model.fit(urm=data.get_urm_train_2(), factors=1500, regularization=0.05, iterations=10, alpha=25)
         recs = model.recommend_batch(userids=data.get_target_playlists())
         model.evaluate(recommendations=recs, test_urm=data.get_urm_test_explicit())
     elif arg == 'r':
@@ -274,6 +275,13 @@ if __name__ == '__main__':
         sps.save_npz('raw_data/saved_r_hat_evaluation_2/als', model.get_r_hat())
     elif arg == 'e':
         print('Grazie Edo...')
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(urm=data.get_urm_train_2(), factors=1500, regularization=0.05, iterations=10, alpha=25)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    # elif arg == 'v':
+    #     model.validate(....)
     elif arg == 'x':
         pass
     else:

@@ -306,7 +306,7 @@ class SLIM_BPR(RecommenderBase):
 
 if __name__ == '__main__':
     print()
-    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.success('++ What do you want to do? ++')
     log.warning('(t) Test the model with some default params')
     log.warning('(r) Save the R^')
     log.warning('(s) Save the similarity matrix')
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     if arg == 'r':
         log.info('Wanna save for evaluation (y/n)?')
         choice = input()[0] == 'y'
-        model.fit()
+        model.fit(URM_train=data.get_urm_train_2(), URM_test=data.get_urm_test_2())
         print('Saving the R^...')
         model.save_r_hat(evaluation=choice)
     elif arg == 's':
@@ -328,10 +328,7 @@ if __name__ == '__main__':
         sps.save_npz('raw_data/saved_sim_matrix_evaluation_2/{}'.format(model.name), model.get_sim_matrix())
     # elif arg == 'v':
     #     model.validate(....)
-    elif arg == 'e':
-        print('Grazie Edo...')
     elif arg == 'x':
         pass
     else:
         log.error('Wrong option!')
-

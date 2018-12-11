@@ -212,7 +212,7 @@ If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
     print()
-    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.success('++ What do you want to do? ++')
     log.warning('(t) Test the model with some default params')
     log.warning('(r) Save the R^')
     log.warning('(s) Save the similarity matrix')
@@ -229,7 +229,7 @@ if __name__ == '__main__':
     elif arg == 'r':
         log.info('Wanna save for evaluation (y/n)?')
         choice = input()[0] == 'y'
-        model.fit(urm=data.get_urm_train(),icm=data.get_icm(), distance=model.SIM_SPLUS,k=500,shrink=500,alpha=0.75,beta=1,l=0.5,c=0.5)
+        model.fit(urm=data.get_urm_train_2(),icm=data.get_icm(), distance=model.SIM_SPLUS,k=500,shrink=500,alpha=0.75,beta=1,l=0.5,c=0.5)
         print('Saving the R^...')
         model.save_r_hat(evaluation=choice)
     elif arg == 's':
@@ -238,8 +238,6 @@ if __name__ == '__main__':
         sps.save_npz('raw_data/saved_sim_matrix_evaluation_2/{}'.format(model.name), model.get_sim_matrix())
     # elif arg == 'v':
     #     model.validate(....)
-    elif arg == 'e':
-        print('Grazie Edo...')
     elif arg == 'x':
         pass
     else:

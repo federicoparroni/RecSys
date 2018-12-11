@@ -175,5 +175,25 @@ class Pure_SVD(RecommenderBase):
 If this file is executed, test the SPLUS distance metric
 """
 if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
     model = Pure_SVD()
-    model.validate(factors_array=[600, 640, 700, 730, 800, 860, 1000], iteration_array=[1, 2, 5])
+    if arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model.fit(urm_train=data.get_urm_train_2(), num_factors=700, iteration=1)
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 'v':
+        model.validate(factors_array=[600, 640, 700, 730, 800, 860, 1000], iteration_array=[1, 2, 5])
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')

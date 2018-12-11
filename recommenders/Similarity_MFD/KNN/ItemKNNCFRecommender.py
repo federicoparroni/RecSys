@@ -36,18 +36,18 @@ class ItemKNNCFRecommender(SimilarityMatrixRecommender):
             self.W = similarity.compute_similarity()
             self.W = self.W.toarray()
 
-from scipy.sparse import load_npz
-train = load_npz('raw_data/explicit/urm_train.npz')
-test = load_npz('raw_data/explicit/urm_test.npz')
-rec = ItemKNNCFRecommender(URM_train=train)
+# from scipy.sparse import load_npz
+# train = load_npz('raw_data/explicit/urm_train.npz')
+# test = load_npz('raw_data/explicit/urm_test.npz')
+# rec = ItemKNNCFRecommender(URM_train=train)
 
-for k in [2200, 2500, 2800, 3000]:
-    for s in [10, 25, 50, 75, 100]:
-        for sim in ["cosine", "adjusted", "pearson", "jaccard", "tanimoto"]:
-            print('knn: {} shrink: {} similarity: {}'.format(k, s, sim))
-            rec.fit(shrink=s, topK=k, similarity=sim)
-            recs = rec.recommend_batch(userids=data.get_sequential_target_playlists(), type='ITEM')
-            rec.evaluate(recs, test_urm=test)
+# for k in [2200, 2500, 2800, 3000]:
+#     for s in [10, 25, 50, 75, 100]:
+#         for sim in ["cosine", "adjusted", "pearson", "jaccard", "tanimoto"]:
+#             print('knn: {} shrink: {} similarity: {}'.format(k, s, sim))
+#             rec.fit(shrink=s, topK=k, similarity=sim)
+#             recs = rec.recommend_batch(userids=data.get_sequential_target_playlists(), type='ITEM')
+#             rec.evaluate(recs, test_urm=test)
 
 # rec = ItemKNNCFRecommender(URM_train=data.get_urm_train())
 # rec.fit()
