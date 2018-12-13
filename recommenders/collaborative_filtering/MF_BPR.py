@@ -125,10 +125,10 @@ class MFBPR(RecommenderBase):
 import data.data as d
 r = MFBPR()
 r.fit(d.get_urm_train_1(),
-      epochs=30,
-      n_factors=150,
-      learning_rate=1e-2,
-      user_regularization=1e-2,
-      positive_item_regularization=1e-2,
-      negative_item_regularization=1e-2,
+      epochs=300,
+      n_factors=300,
+      learning_rate=1e-1,
+      user_regularization=1e-3,
+      positive_item_regularization=1e-3,
+      negative_item_regularization=1e-3,
       evaluate_every=1)

@@ -36,8 +36,8 @@ cdef class MFBPR_Epoch:
 
         self.n_users = URM.shape[0]
         self.n_items = URM.shape[1]
-        self.user_factors = np.random.normal(0, math.sqrt(self.user_regularization), size=(self.n_users, n_factors))
-        self.item_factors = np.random.normal(0, math.sqrt(self.user_regularization), size=(self.n_items, n_factors))
+        self.user_factors = np.random.normal(0, self.user_regularization, size=(self.n_users, n_factors))
+        self.item_factors = np.random.normal(0, self.user_regularization, size=(self.n_items, n_factors))
 
     def get_user_item_factors(self):
         return np.array(self.user_factors), np.array(self.item_factors)
