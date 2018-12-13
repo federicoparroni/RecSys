@@ -8,6 +8,7 @@ import utils.log as log
 import similaripy as sim
 import numpy as np
 from inout.importexport import exportcsv
+import scipy.sparse as sps
 import time
 
 class CFContentUserBased(DistanceBasedRecommender):

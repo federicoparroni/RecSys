@@ -338,7 +338,7 @@ if __name__ == '__main__':
     elif arg == 's':
         model.fit(urm=data.get_urm_train_2(), l1_ratio=0.1, alpha=0.0001, max_iter=100, topK=400)
         print('Saving the similarity matrix...')
-        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.get_sim_matrix())
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation_2/{}'.format(model.name), model.get_sim_matrix())
     # elif arg == 'v':
     #     model.validate(....)
     elif arg == 'x':
