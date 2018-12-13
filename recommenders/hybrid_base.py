@@ -260,13 +260,17 @@ class Hybrid(RecommenderBase):
     def run(self):
         pass
 
-def create_matrices_array(path, base_path='.'):
+def create_matrices_array(base_path='./raw_data'):
     matrices_array = []
-    root = Tk()
-    root.filename = filedialog.askopenfilenames(initialdir=base_path+path, title='select files')
-    for f in root.filename:
-        path = sps.load_npz(f.split('RecSys/')[1])
+    models = []
+    files = filedialog.askopenfilenames(initialdir=base_path, title='select files')
+    for f in files:
+        rel_path = f.split('RecSys/')[1]
+        matrices_array.append(sps.load_npz(rel_path))
+        type=rel_path.split('/')[1]
+        models.append(rel_path.split('/')[2])
+
+    return matrices_array, type, models
 
 
-create_matrices_array(path='')
 

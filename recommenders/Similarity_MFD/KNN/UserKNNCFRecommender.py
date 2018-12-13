@@ -7,6 +7,9 @@ from recommenders.Similarity_MFD.KNN.ItemKNNCFRecommender import ItemKNNCFRecomm
 import numpy as np
 import utils.log as log
 import scipy.sparse as sps
+from utils.check_matrix_format import check_matrix
+import time
+import os
 
 class UserKNNCFRecommender(SimilarityMatrixRecommender):
     """ UserKNN recommender"""
@@ -15,7 +18,7 @@ class UserKNNCFRecommender(SimilarityMatrixRecommender):
 
     def __init__(self, URM_train, sparse_weights=True):
         super(UserKNNCFRecommender, self).__init__()
-
+        self.name = 'UserKNN'
         # Not sure if CSR here is faster
         self.URM_train = cm.check_matrix(URM_train, 'csr')
 
@@ -41,16 +44,55 @@ class UserKNNCFRecommender(SimilarityMatrixRecommender):
             self.W = similarity.compute_similarity()
             self.W = self.W.toarray()
 
+    def save_r_hat(self, evaluation):
 
+        r_hat = self.W_sparse
+        r_hat = check_matrix(r_hat, format='csr')
 
-rec = UserKNNCFRecommender(URM_train=data.get_urm_train_1())
-rec.fit()
+        # create dir if not exists
+        if evaluation:
+            filename = 'raw_data/saved_r_hat_evaluation/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+        else:
+            filename = 'raw_data/saved_r_hat/{}_{}'.format(self.name, time.strftime('%H-%M-%S'))
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-r_hat = rec.W_sparse.dot(data.get_urm_train_1())
-rec2 = ItemKNNCFRecommender(r_hat)
-rec2.fit()
-recs = rec2.recommend_batch(userids=data.get_target_playlists(), type='ITEM', filter_seen_matrix=data.get_urm_train_1())
-rec2.evaluate(recs, data.get_urm_test_1())
+        sps.save_npz(filename, r_hat)
+        log.success('R_hat succesfully saved in: {}.npz'.format(filename))
+        
 
-#recs = rec.recommend_batch(userids=data.get_target_playlists(), type='USER')
-#rec.evaluate(recs, test_urm=data.get_urm_test())
+if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    #log.warning('(v) Validate the model')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
+    if arg == 't':
+        # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
+        # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
+        model = UserKNNCFRecommender(URM_train=data.get_urm_train_2())
+        recs = model.recommend_batch(userids=data.get_target_playlists(), type='USER')
+        model.evaluate(recs, test_urm=data.get_urm_test_2())
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        choice = input()[0] == 'y'
+        model = UserKNNCFRecommender(URM_train=data.get_urm_train_2())
+        model.fit()
+        print('Saving the R^...')
+        model.save_r_hat(evaluation=choice)
+    elif arg == 's':
+        model = UserKNNCFRecommender(URM_train=data.get_urm_train_2())
+        model.fit()
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation/{}'.format(model.name), model.W_sparse)
+    # elif arg == 'v':
+    #     model.validate(....)
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')

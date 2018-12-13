@@ -26,6 +26,7 @@ class AlternatingLeastSquare(RecommenderBase):
     """
     def __init__(self):
         self.name = 'ALS'
+        os.environ['MKL_NUM_THREADS'] = '1'
 
     def get_r_hat(self):
         """
@@ -36,15 +37,12 @@ class AlternatingLeastSquare(RecommenderBase):
         if self.user_vecs is None:
             log.error('the recommender has not been trained, call the fit() method')
 
-        s_user_vecs = sps.csr_matrix(self.user_vecs)
-        s_item_vecs_t = sps.csr_matrix(self.item_vecs.T)
         r_hat = data.get_empty_urm()
-        count = 0
-        r_estimated = (s_user_vecs[data.get_target_playlists()]).dot(s_item_vecs_t)
-        for index in data.get_target_playlists():
-            print(index)
-            r_hat[index] = r_estimated.getrow(count)
-            count+=1
+        r_hat = r_hat.todense()
+        r_estimated = np.dot(self.user_vecs[data.get_target_playlists()], self.item_vecs.T)
+        r_hat[data.get_target_playlists()] = r_estimated
+        r_hat = sps.csr_matrix(r_hat)
+        print('saving matrix')
         return r_hat
 
     def fit(self, urm, factors, regularization, iterations, alpha):
@@ -252,9 +250,14 @@ class AlternatingLeastSquare(RecommenderBase):
 """
 If this file is executed, test the als
 """
+
 if __name__ == '__main__':
+    model = AlternatingLeastSquare()
+    model.fit(urm=data.get_urm_train_2(), factors=500, regularization=0.5, iterations=200, alpha=25)
+    sps.save_npz('raw_data/saved_r_hat_evaluation_2/als', model.get_r_hat())
+"""
     print()
-    log.success('++ What do you want to do? ++ \t\t\t\t\t e')
+    log.success('++ What do you want to do? ++')
     log.warning('(t) Test the model with some default params')
     log.warning('(r) Save the R^')
     #log.warning('(v) Validate the model')
@@ -264,23 +267,25 @@ if __name__ == '__main__':
     
     model = AlternatingLeastSquare()
     if arg == 't':
-        model.fit(urm=data.get_urm_train_explicit(), factors=1500, regularization=0.05, iterations=10, alpha=25)
+        model.fit(urm=data.get_urm_train_2(), factors=1500, regularization=0.05, iterations=10, alpha=25)
         recs = model.recommend_batch(userids=data.get_target_playlists())
         model.evaluate(recommendations=recs, test_urm=data.get_urm_test_explicit())
     elif arg == 'r':
+        model.fit(urm=data.get_urm_train_2(), factors=500, regularization=0.5, iterations=200, alpha=25)
+        sps.save_npz('raw_data/saved_r_hat_evaluation_2/als', model.get_r_hat())
+    elif arg == 'e':
+        print('Grazie Edo...')
         log.info('Wanna save for evaluation (y/n)?')
         choice = input()[0] == 'y'
-        model.fit(urm=data.get_urm_train_explicit(), factors=1500, regularization=0.05, iterations=10, alpha=25)
+        model.fit(urm=data.get_urm_train_2(), factors=1500, regularization=0.05, iterations=10, alpha=25)
         print('Saving the R^...')
         model.save_r_hat(evaluation=choice)
     # elif arg == 'v':
     #     model.validate(....)
-    elif arg == 'e':
-        print('Grazie Edo...')
     elif arg == 'x':
         pass
     else:
         log.error('Wrong option!')
-
+"""
 
 
