@@ -31,3 +31,5 @@ cythoncompiled/build
 raw_data/saved_sim_matrix/
 
 raw_data/saved_sim_matrix_evaluation/
+
+raw_data/matrices_new/
