@@ -147,10 +147,3 @@ if __name__ == '__main__':
         pass
     else:
         log.error('Wrong option!')
-
-if __name__ == '__main__':
-    
-    #model.fit(data.get_urm_train(), distance=CFContentUserBased.SIM_SPLUS, k=400, alpha=0.25, beta=0.5, shrink=0, l=0.25, c=0.25)
-    #model.save_r_hat(evaluation=True)
-    
-    model.run(ucm_train=data.get_urm, k=60, distance=model.SIM_SPLUS, shrink=10, alpha=0.55, beta=0.75, l=0.25, c=0.25)

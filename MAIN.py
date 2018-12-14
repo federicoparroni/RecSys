@@ -204,7 +204,7 @@ if __name__ == '__main__':
                 N = number_recommendations()
                 recommendations = hybrid_rec.recommend_batch(weights_array=WEIGHTS,
                                                              target_userids=data.get_target_playlists(), N=N)
-                exportcsv(recommendations, path='submissions', name=name)
+                exportcsv(recommendations, path='submission', name=name)
             else:
                 sps.save_npz('raw_data/' + rel_path + name, hybrid_rec.get_r_hat(weights_array=WEIGHTS))
 
