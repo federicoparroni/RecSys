@@ -145,8 +145,13 @@ to_concat_test.insert(0, test)
 train = pd.concat(to_concat_train, axis=1)
 test = pd.concat(to_concat_test, axis=1)
 
+print('data are ready!')
 
 #%%
+label_train = train.label
+train = train.drop(['label'], axis=1)
+label_test = test.label
+test = test.drop(['label'], axis=1)
 dtrain = xgb.DMatrix(train, label=label_train, missing=0)
 test = xgb.DMatrix(test, label=label_test, missing=0)
 
