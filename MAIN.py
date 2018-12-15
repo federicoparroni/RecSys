@@ -19,6 +19,7 @@ import time
 import clusterize.cluster as cluster
 import recommenders.hybrid_base as hb
 import utils.log as log
+import utils.menu as menu
 
 def symmetric_recommender_creator(models, type, normalization_mode, urm_filter_tracks):
     symmetric_matrices_array = []
@@ -181,8 +182,7 @@ def export_csv_wizard(recommendations):
     log.success('CSV saved!')
 
 
-if __name__ == '__main__':
-
+def wizard_hybrid():
     SIM_MATRIX = ['saved_sim_matrix', 'saved_sim_matrix_evaluation']
     R_HAT = ['saved_r_hat', 'saved_r_hat_evaluation']
     SAVE = ['saved_sim_matrix', 'saved_r_hat']
@@ -193,6 +193,8 @@ if __name__ == '__main__':
     matrices_array, folder, models = hb.create_matrices_array()
 
     print('matrices loaded in {:.2f} s'.format(time.time() - start))
+    log.success('You have loaded: {}'.format(models))
+
     NORMALIZATION_MODE = normalization_mode_selection()
 
     if folder in SAVE:
@@ -292,4 +294,25 @@ if __name__ == '__main__':
                     log.error('not implemented yet')
     else:
         log.error('WRONG FOLDER')
+
+def wizard_CF():
+    print('Wizard soon...')
+
+def wizard_CB():
+    print('Wizard soon...')
+
+def wizard_misc():
+    print('Wizard soon...')
+
+if __name__ == '__main__':
+    print()
+    log.error('(¯`·.¸¸.·´¯`·.¸¸.->  GabDamPar ® - The AIO Recommender System  <-.¸¸.·´¯`·.¸¸.·´¯)')
+    print()
+
+    menu.show('Which model do you want to run?', {
+        '1': ('Collaborative Filtering', wizard_CF),
+        '2': ('Content Based', wizard_CB),
+        '3': ('Miscellaneous', wizard_misc),
+        '4': ('Hybrid', wizard_hybrid),
+    }, main_menu=True)
 
