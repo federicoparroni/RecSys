@@ -112,7 +112,6 @@ class CFItemBased(DistanceBasedRecommender):
         return self.run(distance=distance, k=k, shrink=shrink, threshold=threshold, implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, export=False)
 
 
-    #def validateStep(self, **dict):
     def validateStep(self, k, shrink, alpha, beta, l, c, threshold):
         # gather saved parameters from self
         distance = self._validation_dict['distance']
@@ -233,7 +232,7 @@ if __name__ == '__main__':
     if arg == 't':
         # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
         # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
-        model.test(distance=CFItemBased.SIM_P3ALPHA, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+        model.test(distance=CFItemBased.SIM_P3ALPHA, k=500,alpha=1.7,beta=0.5,shrink=0,l=0.25,c=0.5)
     elif arg == 'r':
         log.info('Wanna save for evaluation (y/n)?')
         choice = input()[0] == 'y'

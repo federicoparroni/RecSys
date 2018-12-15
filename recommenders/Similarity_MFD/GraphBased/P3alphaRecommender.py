@@ -1,19 +1,18 @@
 
 import numpy as np
 import scipy.sparse as sps
-
 from sklearn.preprocessing import normalize
 import time, sys
 import data.data as data
 import utils.log as log
-
-
+import inout.importexport as export
+from bayes_opt import BayesianOptimization
 
 
 class P3alphaRecommender():
     """ P3alpha recommender """
 
-    RECOMMENDER_NAME = "P3alphaRecommender"
+    RECOMMENDER_NAME = "P3alpha"
 
     def __init__(self, URM_train):
         self.URM_train = URM_train
@@ -158,9 +157,54 @@ class P3alphaRecommender():
         """
         np_target_id = np.array(userids)
         target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
-        recommendations = np.concatenate((target_id_t, ranking), axis=1)
+        return np.concatenate((target_id_t, ranking), axis=1)
 
-        return recommendations
+
+    def validateStep(self, k, min_rating, alpha):
+        # gather saved parameters from self
+        targetids = self._validation_dict['targetids']
+        urm_test = self._validation_dict['urm_test']
+        N = self._validation_dict['N']
+        normalize_similarity = self._validation_dict['normalize_similarity']
+        implicit = self._validation_dict['implicit']
+        verbose = self._validation_dict['verbose']
+
+        self.fit(topK=int(k), alpha=alpha, min_rating=int(min_rating), implicit=implicit, normalize_similarity=normalize_similarity)
+        # evaluate the model with the current weigths
+        recs = self.recommend_batch(userids=targetids, N=N, verbose=verbose)
+        return evaluate(recs, test_urm=urm_test)
+
+    def validate(self, iterations, urm_test, targetids, normalize_similarity=True,
+                k=(50,900), min_rating=(0,2), alpha=(0,2), N=10, implicit=True, verbose=False):
+        
+        # save the params in self to collect them later
+        self._validation_dict = {
+            'urm_test': urm_test,
+            'targetids': targetids,
+            'normalize_similarity': normalize_similarity,
+            'N': N,
+            'implicit': implicit,
+            'verbose': verbose
+        }
+
+        pbounds = {
+            'k': k if isinstance(k, tuple) else (int(k),int(k)),
+            'min_rating': min_rating if isinstance(min_rating, tuple) else (int(min_rating),int(min_rating)),
+            'alpha': alpha if isinstance(alpha, tuple) else (float(alpha),float(alpha))
+        }
+
+        optimizer = BayesianOptimization(
+            f=self.validateStep,
+            pbounds=pbounds,
+            random_state=1
+        )
+        optimizer.maximize(
+            init_points=2,
+            n_iter=iterations
+        )
+
+        log.warning('Max found: {}'.format(optimizer.max))
+        return optimizer
 
 
 def similarityMatrixTopK(item_weights, k=100, verbose=False, inplace=True):
@@ -194,27 +238,6 @@ def similarityMatrixTopK(item_weights, k=100, verbose=False, inplace=True):
     return W_sparse
 
 def evaluate(recommendations, test_urm, at_k=10, verbose=True):
-    """
-    Return the MAP@k evaluation for the provided recommendations
-    computed with respect to the test_urm
-
-    Parameters
-    ----------
-    recommendations : list
-        List of recommendations, where a recommendation
-        is a list (of length N+1) of playlist_id and N items_id:
-            [   [7,   18,11,76, ...] ,
-                [13,  65,83,32, ...] ,
-                [25,  30,49,65, ...] , ... ]
-    test_urm : csr_matrix
-        A sparse matrix
-    at_k : int, optional
-        The number of items to compute the precision at
-
-    Returns
-    -------
-    MAP@k: (float) MAP for the provided recommendations
-    """
     if not at_k > 0:
         log.error('Invalid value of k {}'.format(at_k))
         return
@@ -239,11 +262,54 @@ def evaluate(recommendations, test_urm, at_k=10, verbose=True):
         log.warning('MAP: {}'.format(result))
     return result
 
-rec = P3alphaRecommender(data.get_urm_train_1())
-rec.fit()
+"""
+If this file is executed, test the P3alpha recommender
+"""
+if __name__ == '__main__':
+    print()
+    log.success('++ What do you want to do? ++')
+    log.warning('(t) Test the model with some default params')
+    log.warning('(r) Save the R^')
+    log.warning('(s) Save the similarity matrix')
+    log.warning('(v) Validate the model')
+    log.warning('(e) Export the submission')
+    log.warning('(x) Exit')
+    arg = input()[0]
+    print()
+    
+    if arg == 't':
+        model = P3alphaRecommender(data.get_urm_train_1())
+        model.fit(topK=900, alpha=1.2, min_rating=0, implicit=True, normalize_similarity=False)
+        recs = model.recommend_batch(data.get_target_playlists())
+        evaluate(recs, test_urm=data.get_urm_test_1())
+    elif arg == 'r':
+        log.info('Wanna save for evaluation (y/n)?')
+        if input()[0] == 'y':
+            model = P3alphaRecommender(data.get_urm())
+            path = 'raw_data/saved_r_hat_evaluation/'
+        else:
+            model = P3alphaRecommender(data.get_urm_train_1())
+            path = 'raw_data/saved_r_hat/'
 
-r_hat = sps.csr_matrix(np.dot(rec.URM_train[data.get_target_playlists()], rec.W_sparse))
-sps.save_npz('raw_data/saved_r_hat_evaluation/P3alpha', r_hat)
+        model.fit(topK=500, alpha=1.7, min_rating=1, normalize_similarity=True)
 
-#recs = rec.recommend_batch(data.get_target_playlists())
-#evaluate(recs, test_urm=data.get_urm_test())
+        print('Saving the R^...')
+        r_hat = sps.csr_matrix(np.dot(model.URM_train[data.get_target_playlists()], model.W_sparse))
+        sps.save_npz(path + model.RECOMMENDER_NAME, r_hat)
+    elif arg == 's':
+        model.fit(topK=500, alpha=1.7, min_rating=1, normalize_similarity=True)
+        print('Saving the similarity matrix...')
+        sps.save_npz('raw_data/saved_sim_matrix_evaluation_1/{}'.format(model.RECOMMENDER_NAME), model.W_sparse)
+    elif arg == 'v':
+        model = P3alphaRecommender(data.get_urm_train_1())
+        model.validate(iterations=15, urm_test=data.get_urm_test_1(), targetids=data.get_target_playlists(),
+                    normalize_similarity=True, k=(50,900), min_rating=(0,2), alpha=(0,2), verbose=False)
+    elif arg == 'e':
+        model = P3alphaRecommender(data.get_urm())
+        model.fit(topK=900, alpha=1.2, min_rating=0, implicit=True, normalize_similarity=False)
+        recs = model.recommend_batch(data.get_target_playlists())
+        export.exportcsv(recs, name=model.RECOMMENDER_NAME)
+    elif arg == 'x':
+        pass
+    else:
+        log.error('Wrong option!')
