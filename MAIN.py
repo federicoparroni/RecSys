@@ -45,7 +45,7 @@ def weights_selection(models):
         WEIGHTS.append(float(input()))
     return WEIGHTS
 
-def number_recommendations():
+def ask_number_recommendations():
     log.success('Select the number of recommendations to export (default: 10)')
     N = int(input())
     return N
@@ -165,13 +165,20 @@ def option_selection_evaluation_2():
     log.success('|EVALUATE OR SAVE THE MATRIX?|')
     log.warning('\'s\' save the matrix')
     log.warning('\'e\' evaluate the matrix')
+    log.warning('\'c\' create the CSV')
 
     selection = input()[0]
-    if selection in ['s', 'e']:
+    if selection in ['s', 'e', 'c']:
         return selection
     else:
         log.info('wrong mode')
         exit(0)
+
+def export_csv_wizard(recommendations):
+    log.info('Choose a name for the CSV:')
+    name = input()
+    exportcsv(recommendations, name=name)
+    log.success('CSV saved!')
 
 
 if __name__ == '__main__':
@@ -201,7 +208,7 @@ if __name__ == '__main__':
             hybrid_rec = HybridRHat(matrices_array, normalization_mode=NORMALIZATION_MODE,
                                     urm_filter_tracks=urm_filter_tracks)
             if EXPORT:
-                N = number_recommendations()
+                N = ask_number_recommendations()
                 recommendations = hybrid_rec.recommend_batch(weights_array=WEIGHTS,
                                                              target_userids=data.get_target_playlists(), N=N)
                 exportcsv(recommendations, path='submission', name=name)
@@ -231,7 +238,7 @@ if __name__ == '__main__':
         elif mode == '2':
             WEIGHTS = weights_selection(models)
             urm_filter_tracks = data.get_urm_train_1()
-            chose = option_selection_evaluation_2()
+            chose = option_selection_evaluation_2()     # save, evaluate or csv
             if chose == 's':
                 log.success('|CHOSE A NAME FOR THE MATRIX...|')
                 name = input()
@@ -258,7 +265,7 @@ if __name__ == '__main__':
                     type = 'R_HAT'
                     hybrid_rec = HybridRHat(matrices_array, normalization_mode=NORMALIZATION_MODE,
                                                   urm_filter_tracks=urm_filter_tracks)
-                N = number_recommendations()
+                N = ask_number_recommendations()
                 print('Recommending...')
                 recs = hybrid_rec.recommend_batch(weights_array=WEIGHTS, target_userids=data.get_target_playlists(), N=N)
                 hybrid_rec.evaluate(recommendations=recs, test_urm=data.get_urm_test_1())
@@ -266,15 +273,23 @@ if __name__ == '__main__':
                 # export the recommendations
                 log.success('Do you want to save the CSV with these recomendations? (y/n)')
                 if input()[0] == 'y':
-                    log.info('Choose a name for the CSV:')
-                    name = input()
-                    exportcsv(recs, name=name)
-                    log.success('CSV saved!')
+                    export_csv_wizard(recs)
 
                 sym_rec = symmetric_recommender_creator(models, type, NORMALIZATION_MODE, urm_filter_tracks=data.get_urm_train_2())
                 recs2 = sym_rec.recommend_batch(weights_array=WEIGHTS, target_userids=data.get_target_playlists())
                 sym_rec.evaluate(recommendations=recs2, test_urm=data.get_urm_test_2())
 
+            elif chose == 'c':
+                if folder in R_HAT:
+                    hybrid_rec = HybridRHat(matrices_array, normalization_mode=NORMALIZATION_MODE,
+                                                  urm_filter_tracks=urm_filter_tracks)
+                    N = ask_number_recommendations()
+                    print('Recommending...')
+                    recs = hybrid_rec.recommend_batch(weights_array=WEIGHTS, target_userids=data.get_target_playlists(), N=N)
+                    
+                    export_csv_wizard(recs)
+                else:
+                    log.error('not implemented yet')
     else:
         log.error('WRONG FOLDER')
 
