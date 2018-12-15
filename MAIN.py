@@ -46,7 +46,7 @@ def weights_selection(models):
     return WEIGHTS
 
 def ask_number_recommendations():
-    log.success('Select the number of recommendations to export (default: 10)')
+    log.success('Select the number of recommendations (default: 10)')
     N = int(input())
     return N
 
