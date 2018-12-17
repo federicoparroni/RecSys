@@ -1,0 +1,174 @@
+|SELECT A NUMBER OF |||ITERATIONS||| FOR THE ALGORITHM|
+50
+matrices_normalized
+|   iter    |  target   |    w0     |    w1     |
+-------------------------------------------------
+hybrid matrix created in 22.27 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 10.09 s
+recommendations created in 4.08 s
+MAP computed in 0.89 s
+MAP: 0.08634738657407406
+|  1        |  0.08635  |  0.417    |  0.7203   |
+hybrid matrix created in 23.00 s
+seen elements filtered in 8.10 s
+recommendations created in 3.86 s
+MAP computed in 0.84 s
+MAP: 0.07666542739040051
+|  2        |  0.07667  |  0.000114 |  0.3023   |
+hybrid matrix created in 13.16 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 3.13 s
+recommendations created in 3.30 s
+MAP computed in 0.76 s
+MAP: 0.08585044302721075
+|  3        |  0.08585  |  1.0      |  0.0      |
+hybrid matrix created in 8.07 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 8.17 s
+recommendations created in 4.06 s
+MAP computed in 0.91 s
+MAP: 0.08717995592403623
+|  4        |  0.08718  |  1.0      |  1.0      |
+hybrid matrix created in 18.77 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.34 s
+recommendations created in 3.87 s
+MAP computed in 0.78 s
+MAP: 0.07663834659234055
+|  5        |  0.07664  |  0.0      |  1.0      |
+hybrid matrix created in 7.10 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.22 s
+recommendations created in 3.94 s
+MAP computed in 0.77 s
+MAP: 0.08725631525573194
+|  6        |  0.08726  |  1.0      |  0.5274   |
+hybrid matrix created in 38.90 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.69 s
+recommendations created in 3.80 s
+MAP computed in 0.80 s
+MAP: 0.08742329987087429
+|  7        |  0.08742  |  0.7633   |  0.5849   |
+hybrid matrix created in 14.53 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.94 s
+recommendations created in 3.98 s
+MAP computed in 0.80 s
+MAP: 0.08700655479969772
+|  8        |  0.08701  |  0.8023   |  0.9996   |
+hybrid matrix created in 21.53 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 8.16 s
+recommendations created in 3.88 s
+MAP computed in 0.82 s
+MAP: 0.08754295285336355
+|  9        |  0.08754  |  1.0      |  0.6084   |
+hybrid matrix created in 11.87 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 6.88 s
+recommendations created in 3.79 s
+MAP computed in 0.74 s
+MAP: 0.08745716293461821
+|  10       |  0.08746  |  1.0      |  0.5963   |
+hybrid matrix created in 20.29 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.31 s
+recommendations created in 3.92 s
+MAP computed in 0.80 s
+MAP: 0.08756599526014104
+|  11       |  0.08757  |  0.7738   |  0.5508   |
+hybrid matrix created in 14.57 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.59 s
+recommendations created in 3.82 s
+MAP computed in 0.80 s
+MAP: 0.08720203925736957
+|  12       |  0.0872   |  0.9997   |  0.999    |
+hybrid matrix created in 20.10 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 8.41 s
+recommendations created in 3.83 s
+MAP computed in 0.87 s
+MAP: 0.08744460341080872
+|  13       |  0.08744  |  0.9994   |  0.5935   |
+hybrid matrix created in 14.17 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.07 s
+recommendations created in 3.75 s
+MAP computed in 0.75 s
+MAP: 0.08740507939657345
+|  14       |  0.08741  |  0.7792   |  0.5988   |
+hybrid matrix created in 20.83 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.08 s
+recommendations created in 3.77 s
+MAP computed in 0.80 s
+MAP: 0.08710990849395324
+|  15       |  0.08711  |  0.844    |  0.9999   |
+hybrid matrix created in 14.51 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.93 s
+recommendations created in 3.86 s
+MAP computed in 0.81 s
+MAP: 0.08758700588939279
+|  16       |  0.08759  |  1.0      |  0.6245   |
+hybrid matrix created in 19.38 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 8.29 s
+recommendations created in 3.88 s
+MAP computed in 0.82 s
+MAP: 0.08742978322625344
+|  17       |  0.08743  |  0.7993   |  0.5919   |
+hybrid matrix created in 14.59 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 6.95 s
+recommendations created in 3.81 s
+MAP computed in 0.75 s
+MAP: 0.08755029777651803
+|  18       |  0.08755  |  0.9997   |  0.6265   |
+hybrid matrix created in 20.77 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.30 s
+recommendations created in 3.82 s
+MAP computed in 0.75 s
+MAP: 0.08743732971151422
+|  19       |  0.08744  |  0.8023   |  0.6116   |
+hybrid matrix created in 14.44 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 7.64 s
+recommendations created in 3.86 s
+MAP computed in 0.87 s
+MAP: 0.08719697973356004
+|  20       |  0.0872   |  0.9999   |  0.997    |
+hybrid matrix created in 20.51 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 8.15 s
+recommendations created in 3.87 s
+MAP computed in 0.84 s
+MAP: 0.08754811183547494
+|  21       |  0.08755  |  0.9986   |  0.6283   |
+
+
+': 0.08591026190476178, 'params': {'w0': 0.8461340752888551, 'w1': 0.001570341086283178}}
