@@ -11,7 +11,7 @@ import os
 import utils.dated_directory as datedir
 
 def exportcsv(recs, path='submission', name='', with_scores=False, check_len=10, add_time_suffix=True,
-              fieldnames=['playlist_id', 'track_ids'], verbose=False):
+              fieldnames=['playlist_id', 'track_ids'], length_check=True, verbose=False):
     """
     Save a list of recommendations into a csv file ready for submission
 
@@ -36,8 +36,9 @@ def exportcsv(recs, path='submission', name='', with_scores=False, check_len=10,
         for row in recs:
             playlist_id = row[0]
             tracks_array = row[1:]
-            # check correct number of recommendations
-            _check_len(len(tracks_array), check_len)
+            if length_check:
+                # check correct number of recommendations
+                _check_len(len(tracks_array), check_len)
             
             if with_scores:     # export including the scores
                 # build list of str 'track_id:score'
@@ -58,7 +59,7 @@ def exportcsv(recs, path='submission', name='', with_scores=False, check_len=10,
 
 def _check_len(n, check_len):
     if check_len > 0 and n != check_len:
-        print('*** WARNING: exporting line with number of recommendations {} instead of {}'.format(n, check_len))
+        print('*** WARNING: line with {} recommendations instead of {}'.format(n, check_len))
 
 
 def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
@@ -90,8 +91,10 @@ def importcsv(filename, skip_first_row=True, with_scores=False, check_len=10):
             if skip_first_row and j != 0:
                 playlist_id = int(row[0])
                 tracks_array = row[1].split(' ')
-                # check correct number of recommendations
-                _check_len(len(tracks_array), check_len)
+
+                if check_len > 0:
+                    # check correct number of recommendations
+                    _check_len(len(tracks_array), check_len)
 
                 if with_scores:
                     r = []

@@ -7,7 +7,7 @@ import data.data as d
 from tqdm import tqdm
 from scipy import sparse
 from recommenders.recommender_base import RecommenderBase
-
+from cythoncompiled.MF_BPR.MF_BPR import MFBPR_Epoch
 
 """
 Matrix Factorization with a Bayesian Personalized Ranking approach.
@@ -16,99 +16,33 @@ taken from https://github.com/tmscarla/recsys-toolbox
 
 class MFBPR(RecommenderBase):
 
-    def sampleTriplet(self):
-        user_id = np.random.choice(self.n_users)
-
-        self.user_list.append(user_id)
-
-        # Get user seen items and choose one
-        userSeenItems = self.URM[user_id, :].indices
-        pos_item_id = np.random.choice(userSeenItems)
-
-        negItemSelected = False
-        while (not negItemSelected):
-            neg_item_id = np.random.randint(0, self.n_items)
-
-            if (neg_item_id not in userSeenItems):
-                negItemSelected = True
-
-        return user_id, pos_item_id, neg_item_id
-
-    def epochIteration(self):
-        # numPositiveIteractions = int(self.URM.nnz * 0.1)
-        numPositiveIteractions = 1211791
-
-        self.loss = 0
-        self.user_list = []
-        self.countwrong = 0
-
-        # Uniform user sampling without replacement
-        for _ in tqdm(range(numPositiveIteractions)):
-            u, i, j = self.sampleTriplet()
-            self.update_factors(u, i, j)
-        
-        print('loss: {}'.format(self.loss / numPositiveIteractions))
-        print('perc of wrong bpr estimates: {}'.format(self.countwrong / numPositiveIteractions))
-
-    def update_factors(self, u, i, j):
-        # SGD update
-        xui = np.dot(self.user_factors[u, :], self.item_factors[i, :])
-        xuj = np.dot(self.user_factors[u, :], self.item_factors[j, :])
-        xuij = xui - xuj
-        self.loss += xuij
-        z = np.exp(-xuij)/(1 + np.exp(-xuij))
-        
-        if xuij < 0:
-            self.countwrong += 1
-
-        user_factor_c = self.user_factors[u, :].copy()
-        item_factors_c_i = self.item_factors[i, :].copy()
-        item_factors_c_j = self.item_factors[j, :].copy()
-
-        self.user_factors[u, :] += self.learning_rate * (
-            z * (item_factors_c_i - item_factors_c_j)+ self.user_regularization * user_factor_c)
-        
-        self.item_factors[i, :] += self.learning_rate * (
-            z * user_factor_c + self.positive_item_regularization * item_factors_c_i)
-
-        self.item_factors[j, :] += self.learning_rate * (
-            z * (-user_factor_c) + self.negative_item_regularization * item_factors_c_j)
-
-    def fit(self, URM, n_factors=10, learning_rate=1e-4, epochs=10, user_regularization=0.001, positive_item_regularization=0.001, 
-            negative_item_regularization=0.001, evaluate_every=1):
+    def fit(self, URM, n_factors=10, learning_rate=1e-4, epochs=10, user_regularization=0.001, positive_item_regularization=0.001, negative_item_regularization=0.001, evaluate_every=1):
         self.URM = URM
-        self.n_factors = n_factors
-        self.learning_rate = learning_rate
         self.epochs = epochs
-
-        self.user_regularization = user_regularization
-        self.positive_item_regularization = positive_item_regularization
-        self.negative_item_regularization = negative_item_regularization
-
         self.n_users = self.URM.shape[0]
         self.n_items = self.URM.shape[1]
-        self.user_factors = np.random.normal(0, math.sqrt(self.user_regularization), size=(self.n_users, n_factors))
-        self.item_factors = np.random.normal(0, math.sqrt(self.user_regularization), size=(self.n_items, n_factors))
 
+        e = MFBPR_Epoch(URM, n_factors=n_factors, learning_rate=learning_rate, user_regularization=user_regularization, 
+                        positive_item_regularization=positive_item_regularization, negative_item_regularization=negative_item_regularization)
         print('Fitting MFBPR...')
 
         for numEpoch in range(self.epochs):
             print('Epoch:', numEpoch)
-            self.epochIteration()
+            e.epochIteration()
             if (numEpoch + 1) % evaluate_every == 0:
-                recs = r.recommend_batch(userids=d.get_target_playlists())
-                r.evaluate(recs, d.get_urm_test())
+                self.user_factors, self.item_factors = e.get_user_item_factors()
+                recs = self.recommend_batch(userids=d.get_target_playlists())
+                self.evaluate(recs, d.get_urm_test_1())
+
+        self.user_factors, self.item_factors = e.get_user_item_factors()
 
         # let's see how fine it performs in the test set:
         # getting as positive sample a semple in the test set but not in the training
         trials = 10000
         count_wrong = 0
         for _ in range(trials):
-            test = d.get_urm_test()
+            test = d.get_urm_test_1()
             user_id = np.random.choice(self.n_users)
-            if user_id in self.user_list:
-                a = 1
-                # print('user seen during training')
             user_seen_items = d.get_urm()[user_id, :].indices
             test_items = test[user_id, :].indices
             pos_item_id = np.random.choice(test_items)
@@ -190,10 +124,11 @@ class MFBPR(RecommenderBase):
 
 import data.data as d
 r = MFBPR()
-r.fit(d.get_urm_train(),
-      epochs=50,
-      n_factors=150,
-      learning_rate=1e-1, 
-      user_regularization=0,
-      positive_item_regularization=0,
-      negative_item_regularization=0)
+r.fit(d.get_urm_train_1(),
+      epochs=300,
+      n_factors=300,
+      learning_rate=1e-1,
+      user_regularization=1e-3,
+      positive_item_regularization=1e-3,
+      negative_item_regularization=1e-3,
+      evaluate_every=1)

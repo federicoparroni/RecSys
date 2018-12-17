@@ -112,7 +112,6 @@ class CFItemBased(DistanceBasedRecommender):
         return self.run(distance=distance, k=k, shrink=shrink, threshold=threshold, implicit=implicit, alpha=alpha, beta=beta, l=l, c=c, export=False)
 
 
-    #def validateStep(self, **dict):
     def validateStep(self, k, shrink, alpha, beta, l, c, threshold):
         # gather saved parameters from self
         distance = self._validation_dict['distance']
@@ -152,7 +151,6 @@ class CFItemBased(DistanceBasedRecommender):
             'targetids': targetids,
             'urm_train': urm_train,
             'urm_test': urm_test,
-            'targetids': targetids,
             'N': N,
             'with_scores': with_scores,
             'filter_already_liked': filter_already_liked,
@@ -162,13 +160,13 @@ class CFItemBased(DistanceBasedRecommender):
         }
 
         pbounds = {
-            'k': (k,k) if isinstance(k, int) else k,
-            'shrink': (shrink,shrink) if isinstance(shrink, int) else shrink,
-            'alpha': (alpha,alpha) if isinstance(alpha, float) else alpha,
-            'beta': (beta,beta) if isinstance(beta, float) else beta,
-            'l': (l,l) if isinstance(l, float) else l,
-            'c': (c,c) if isinstance(c, float) else c,
-            'threshold': (threshold,threshold) if isinstance(threshold, int) else threshold
+            'k': k if isinstance(k, tuple) else (int(k),int(k)),
+            'shrink': shrink if isinstance(shrink, tuple) else (int(shrink),int(shrink)),
+            'alpha': alpha if isinstance(alpha, tuple) else (float(alpha),float(alpha)),
+            'beta': beta if isinstance(beta, tuple) else (float(beta),float(beta)),
+            'l': l if isinstance(l, tuple) else (float(l),float(l)),
+            'c': c if isinstance(c, tuple) else (float(c),float(c)),
+            'threshold': threshold if isinstance(threshold, tuple) else (int(threshold),int(threshold))
         }
 
         optimizer = BayesianOptimization(
@@ -234,7 +232,7 @@ if __name__ == '__main__':
     if arg == 't':
         # recs = model.recommend_batch(userids=data.get_target_playlists(), urm=data.get_urm_train())
         # model.evaluate(recommendations=recs, test_urm=data.get_urm_test())
-        model.test(distance=CFItemBased.SIM_SPLUS, k=600,alpha=0.25,beta=0.5,shrink=10,l=0.25,c=0.5)
+        model.test(distance=CFItemBased.SIM_P3ALPHA, k=500,alpha=1.7,beta=0.5,shrink=0,l=0.25,c=0.5)
     elif arg == 'r':
         log.info('Wanna save for evaluation (y/n)?')
         choice = input()[0] == 'y'
@@ -246,8 +244,11 @@ if __name__ == '__main__':
         print('Saving the similarity matrix...')
         sps.save_npz('raw_data/saved_sim_matrix_evaluation_2/{}'.format(model.name), model.get_sim_matrix())
     elif arg == 'v':
-        model.validate(iterations=50, urm_train=data.get_urm_train(), urm_test=data.get_urm_test(), targetids=data.get_target_playlists(),
-                 distance=model.SIM_P3ALPHA, k=(100, 600), alpha=(0,1), beta=(0, 1),shrink=(0,100),l=(0,1),c=(0,1))
+        # model.validate(iterations=10, urm_train=data.get_urm_train_1(), urm_test=data.get_urm_test_1(), targetids=data.get_target_playlists(),
+        #          distance=model.SIM_SPLUS, k=(100, 600), alpha=(0,2), beta=(0,2),shrink=(0,100),l=(0,1),c=(0,1))
+        model.validate(iterations=10, urm_train=data.get_urm_train_1(), urm_test=data.get_urm_test_1(), targetids=data.get_target_playlists(),
+                 distance=model.SIM_RP3BETA, k=(100, 600), alpha=(0,2), beta=(0,2),shrink=(0,100),l=1,c=1)
+        #model.test(distance=CFItemBased.SIM_P3ALPHA, k=300,alpha=(0,2),shrink=(0,100))
     elif arg == 'x':
         pass
     else:
