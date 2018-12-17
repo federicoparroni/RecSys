@@ -1,0 +1,296 @@
+hybrid matrix created in 14.53 s
+seen elements filtered in 4.25 s
+recommendations created in 3.34 s
+MAP computed in 0.72 s
+MAP: 0.07481154481607438
+|  1        |  0.07481  |  0.417    |  0.7203   |  0.000114 |  0.3023   |
+hybrid matrix created in 14.48 s
+seen elements filtered in 4.24 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08437549321302584
+|  2        |  0.08438  |  0.1468   |  0.09234  |  0.1863   |  0.3456   |
+hybrid matrix created in 14.48 s
+seen elements filtered in 4.24 s
+recommendations created in 3.33 s
+MAP computed in 0.73 s
+MAP: 0.082129165580121
+|  3        |  0.08213  |  1.0      |  0.0      |  1.0      |  1.0      |
+hybrid matrix created in 14.32 s
+seen elements filtered in 4.16 s
+recommendations created in 3.30 s
+MAP computed in 0.72 s
+MAP: 0.07409318672839506
+|  4        |  0.07409  |  9.061e-1 |  0.0      |  1.0      |  0.0      |
+hybrid matrix created in 4.68 s
+/home/edoardo/miniconda3/envs/recsys/lib/python3.7/site-packages/scipy/sparse/compressed.py:746: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  SparseEfficiencyWarning)
+seen elements filtered in 3.05 s
+recommendations created in 2.80 s
+MAP computed in 0.73 s
+MAP: 0.07927950996787614
+|  5        |  0.07928  |  0.0      |  0.0      |  0.0      |  1.0      |
+hybrid matrix created in 14.55 s
+seen elements filtered in 4.20 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.0758883292705971
+|  6        |  0.07589  |  0.9834   |  0.0      |  3.162e-0 |  3.162e-0 |
+hybrid matrix created in 14.34 s
+seen elements filtered in 4.22 s
+recommendations created in 3.34 s
+MAP computed in 0.72 s
+MAP: 0.08437630281557046
+|  7        |  0.08438  |  0.0      |  1.0      |  1.0      |  1.0      |
+hybrid matrix created in 14.59 s
+seen elements filtered in 4.23 s
+recommendations created in 3.33 s
+MAP computed in 0.74 s
+MAP: 0.08530828445452256
+|  8        |  0.08531  |  1.0      |  1.0      |  1.0      |  1.0      |
+hybrid matrix created in 14.52 s
+seen elements filtered in 4.21 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08106888221214407
+|  9        |  0.08107  |  2.437e-1 |  0.0      |  1.036e-0 |  2.784e-0 |
+hybrid matrix created in 14.58 s
+seen elements filtered in 4.26 s
+recommendations created in 3.31 s
+MAP computed in 0.73 s
+MAP: 0.07995110566263552
+|  10       |  0.07995  |  1.0      |  1.0      |  1.0      |  6.048e-1 |
+hybrid matrix created in 14.61 s
+seen elements filtered in 4.27 s
+recommendations created in 3.34 s
+MAP computed in 0.72 s
+MAP: 0.08177342661879555
+|  11       |  0.08177  |  0.03241  |  0.01351  |  0.9949   |  0.9653   |
+hybrid matrix created in 14.61 s
+seen elements filtered in 4.25 s
+recommendations created in 3.32 s
+MAP computed in 0.73 s
+MAP: 0.08531919138951864
+|  12       |  0.08532  |  0.5637   |  0.563    |  0.9962   |  0.799    |
+hybrid matrix created in 14.54 s
+seen elements filtered in 4.24 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.0807076954207607
+|  13       |  0.08071  |  0.03137  |  0.9891   |  0.9899   |  0.3885   |
+hybrid matrix created in 14.61 s
+seen elements filtered in 4.22 s
+recommendations created in 3.35 s
+MAP computed in 0.72 s
+MAP: 0.08497646713592838
+|  14       |  0.08498  |  0.5262   |  0.9776   |  0.9767   |  0.9647   |
+hybrid matrix created in 14.55 s
+seen elements filtered in 4.21 s
+recommendations created in 3.31 s
+MAP computed in 0.72 s
+MAP: 0.08499422146636423
+|  15       |  0.08499  |  0.9973   |  0.4211   |  0.9951   |  0.5924   |
+hybrid matrix created in 14.63 s
+seen elements filtered in 4.24 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08521142847694622
+|  16       |  0.08521  |  0.9811   |  0.9801   |  0.9946   |  0.7991   |
+hybrid matrix created in 14.58 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08546337810216685
+|  17       |  0.08546  |  0.01536  |  0.496    |  0.7126   |  0.9755   |
+hybrid matrix created in 14.54 s
+seen elements filtered in 4.23 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08546468072877283
+|  18       |  0.08546  |  0.9665   |  0.6541   |  0.9886   |  0.9664   |
+hybrid matrix created in 14.57 s
+seen elements filtered in 4.23 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08573689937641722
+|  19       |  0.08574  |  0.5371   |  0.5854   |  0.9866   |  0.9862   |
+hybrid matrix created in 14.59 s
+seen elements filtered in 4.22 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08504724409486016
+|  20       |  0.08505  |  0.4312   |  0.2946   |  0.6603   |  0.6996   |
+hybrid matrix created in 14.54 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.0856826187011841
+|  21       |  0.08568  |  0.5033   |  0.7064   |  0.9886   |  0.9859   |
+hybrid matrix created in 14.56 s
+seen elements filtered in 4.22 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08561381131897185
+|  22       |  0.08561  |  0.9813   |  0.6149   |  0.9966   |  0.6847   |
+hybrid matrix created in 14.56 s
+seen elements filtered in 4.21 s
+recommendations created in 3.38 s
+MAP computed in 0.72 s
+MAP: 0.08560088440098264
+|  23       |  0.0856   |  0.000867 |  0.4116   |  0.606    |  0.7285   |
+hybrid matrix created in 14.56 s
+seen elements filtered in 4.23 s
+recommendations created in 3.33 s
+MAP computed in 0.74 s
+MAP: 0.08563800933799433
+|  24       |  0.08564  |  0.9593   |  0.7213   |  0.9771   |  0.9826   |
+hybrid matrix created in 14.57 s
+seen elements filtered in 4.26 s
+recommendations created in 3.31 s
+MAP computed in 0.71 s
+MAP: 0.08560151387314179
+|  25       |  0.0856   |  0.5488   |  0.586    |  0.9999   |  0.9597   |
+hybrid matrix created in 14.62 s
+seen elements filtered in 4.20 s
+recommendations created in 3.38 s
+MAP computed in 0.72 s
+MAP: 0.08547936665406904
+|  26       |  0.08548  |  0.01382  |  0.5547   |  0.6937   |  0.9759   |
+hybrid matrix created in 14.58 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08562112120496335
+|  27       |  0.08562  |  0.9915   |  0.6615   |  0.9952   |  0.9361   |
+hybrid matrix created in 14.54 s
+seen elements filtered in 4.22 s
+recommendations created in 3.34 s
+MAP computed in 0.72 s
+MAP: 0.08567250085034007
+|  28       |  0.08567  |  0.9803   |  0.6695   |  0.9999   |  0.7941   |
+hybrid matrix created in 14.59 s
+seen elements filtered in 4.24 s
+recommendations created in 3.33 s
+MAP computed in 0.73 s
+MAP: 0.08554316449357528
+|  29       |  0.08554  |  0.001389 |  0.5609   |  0.996    |  0.9973   |
+hybrid matrix created in 14.54 s
+seen elements filtered in 4.23 s
+recommendations created in 3.32 s
+MAP computed in 0.73 s
+MAP: 0.08581127642353244
+|  30       |  0.08581  |  0.3788   |  0.6117   |  0.9962   |  0.9971   |
+hybrid matrix created in 14.58 s
+seen elements filtered in 4.22 s
+recommendations created in 3.34 s
+MAP computed in 0.72 s
+MAP: 0.08567421819098002
+|  31       |  0.08567  |  0.6451   |  0.7059   |  0.9997   |  0.8029   |
+hybrid matrix created in 14.72 s
+seen elements filtered in 4.23 s
+recommendations created in 3.41 s
+MAP computed in 0.74 s
+MAP: 0.08540760799319737
+|  32       |  0.08541  |  0.000467 |  0.2758   |  0.5354   |  0.6884   |
+hybrid matrix created in 14.73 s
+seen elements filtered in 4.22 s
+recommendations created in 3.31 s
+MAP computed in 0.73 s
+MAP: 0.08581500770030226
+|  33       |  0.08582  |  0.6077   |  0.7192   |  0.999    |  0.9898   |
+hybrid matrix created in 14.73 s
+seen elements filtered in 4.22 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08565444280675223
+|  34       |  0.08565  |  0.978    |  0.7251   |  0.992    |  0.9872   |
+hybrid matrix created in 14.74 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08555193863378686
+|  35       |  0.08555  |  0.9964   |  0.7679   |  0.9939   |  0.7668   |
+hybrid matrix created in 14.74 s
+seen elements filtered in 4.23 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08551444795603429
+|  36       |  0.08551  |  0.008409 |  0.6272   |  0.7574   |  0.9963   |
+hybrid matrix created in 14.70 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08587529223355997
+|  37       |  0.08588  |  0.5617   |  0.7139   |  0.9991   |  0.9805   |
+hybrid matrix created in 14.71 s
+seen elements filtered in 4.24 s
+recommendations created in 3.36 s
+MAP computed in 0.72 s
+MAP: 0.08553940493512212
+|  38       |  0.08554  |  0.4653   |  0.5417   |  0.8015   |  0.9909   |
+hybrid matrix created in 14.70 s
+seen elements filtered in 4.24 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08563548973293
+|  39       |  0.08564  |  0.9784   |  0.6994   |  0.9951   |  0.9695   |
+hybrid matrix created in 14.75 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.0857637991150164
+|  40       |  0.08576  |  0.4157   |  0.6939   |  0.9996   |  0.9728   |
+hybrid matrix created in 14.69 s
+seen elements filtered in 4.22 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08547498615835221
+|  41       |  0.08547  |  0.001482 |  0.5395   |  0.7367   |  0.9855   |
+hybrid matrix created in 14.75 s
+seen elements filtered in 4.24 s
+recommendations created in 3.31 s
+MAP computed in 0.72 s
+MAP: 0.08549530788611734
+|  42       |  0.0855   |  0.9865   |  0.5852   |  0.9986   |  0.9958   |
+hybrid matrix created in 14.67 s
+seen elements filtered in 4.24 s
+recommendations created in 3.31 s
+MAP computed in 0.72 s
+MAP: 0.085363867850844
+|  43       |  0.08536  |  0.5047   |  0.9057   |  0.9918   |  0.9977   |
+hybrid matrix created in 14.73 s
+seen elements filtered in 4.21 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08541999146510447
+|  44       |  0.08542  |  0.6034   |  0.567    |  0.9999   |  0.8069   |
+hybrid matrix created in 14.80 s
+seen elements filtered in 4.21 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08541732944381461
+|  45       |  0.08542  |  0.002699 |  0.3663   |  0.6041   |  0.7355   |
+hybrid matrix created in 14.83 s
+seen elements filtered in 4.23 s
+recommendations created in 3.32 s
+MAP computed in 0.72 s
+MAP: 0.08569187773998478
+|  46       |  0.08569  |  0.9943   |  0.646    |  0.9987   |  0.7636   |
+hybrid matrix created in 14.79 s
+seen elements filtered in 4.24 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08561984412005536
+|  47       |  0.08562  |  0.9986   |  0.6913   |  0.9988   |  0.7598   |
+hybrid matrix created in 14.83 s
+seen elements filtered in 4.21 s
+recommendations created in 3.33 s
+MAP computed in 0.72 s
+MAP: 0.08522969794028716
+|  48       |  0.08523  |  0.9915   |  0.9847   |  0.9976   |  0.883    |
+hybrid matrix created in 14.75 s
+seen elements filtered in 4.23 s
+recommendations created in 3.34 s
+MAP computed in 0.74 s
+MAP: 0.08580207805807522
+|  49       |  0.0858   |  0.01478  |  0.6198   |  0.9792   |  0.9777   |

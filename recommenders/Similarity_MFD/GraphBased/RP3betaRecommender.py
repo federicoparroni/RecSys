@@ -3,14 +3,13 @@ import numpy as np
 import scipy.sparse as sps
 
 from sklearn.preprocessing import normalize
-from Base.Recommender import Recommender
-from Base.Recommender_utils import check_matrix, similarityMatrixTopK
-
-from Base.SimilarityMatrixRecommender import SimilarityMatrixRecommender
+import utils.check_matrix_format as cm
+import utils.log as log
 import time, sys
+import data.data as data
 
 
-class RP3betaRecommender(SimilarityMatrixRecommender, Recommender):
+class RP3betaRecommender():
     """ RP3beta recommender """
 
     RECOMMENDER_NAME = "RP3betaRecommender"
@@ -18,16 +17,10 @@ class RP3betaRecommender(SimilarityMatrixRecommender, Recommender):
     def __init__(self, URM_train):
         super(RP3betaRecommender, self).__init__()
 
-        self.URM_train = check_matrix(URM_train, format='csr', dtype=np.float32)
+        self.URM_train = cm.check_matrix(URM_train, format='csr', dtype=np.float32)
         self.sparse_weights = True
 
-    def __str__(self):
-        return "RP3beta(alpha={}, beta={}, min_rating={}, topk={}, implicit={}, normalize_similarity={})".format(
-            self.alpha,
-            self.beta, self.min_rating, self.topK,
-            self.implicit, self.normalize_similarity)
-
-    def fit(self, alpha=1., beta=0.6, min_rating=0, topK=100, implicit=False, normalize_similarity=True):
+    def fit(self, alpha=0.9, beta=0.18, min_rating=0, topK=500, implicit=True, normalize_similarity=True):
 
         self.alpha = alpha
         self.beta = beta
@@ -136,8 +129,126 @@ class RP3betaRecommender(SimilarityMatrixRecommender, Recommender):
                                 shape=(Pui.shape[1], Pui.shape[1]))
 
         if self.normalize_similarity:
-            self.W = normalize(self.W, norm='l1', axis=1)
+            self.W = normalize(self.W, norm='l2', axis=1)
 
         if self.topK != False:
-            self.W_sparse = similarityMatrixTopK(self.W, forceSparseOutput=True, k=self.topK)
+            self.W_sparse = self.similarityMatrixTopK(self.W, k=self.topK)
             self.sparse_weights = True
+
+    def recommend_batch(self, userids, N=10, filter_already_liked=True, verbose=False):
+        """
+        look for comment on superclass method
+        """
+        # compute the scores using the dot product
+        user_profile_batch = self.URM_train[userids]
+
+        scores_array = np.dot(user_profile_batch, self.W_sparse)
+
+        """
+        To exclude already_liked items perform a boolean indexing and replace their score with -inf
+        Seen items will be at the bottom of the list but there is no guarantee they'll NOT be
+        recommended
+        """
+        if filter_already_liked:
+            scores_array[user_profile_batch.nonzero()] = -np.inf
+
+        # magic code 🔮 to take the top N recommendations
+        ranking = np.zeros((scores_array.shape[0], N), dtype=np.int)
+        for row_index in range(scores_array.shape[0]):
+            scores = scores_array[row_index]
+            scores = scores.todense()
+            relevant_items_partition = (-scores).argpartition(N)[0, 0:N]
+            relevant_items_partition_sorting = np.argsort(-scores[0, relevant_items_partition])
+            ranking[row_index] = relevant_items_partition[0, relevant_items_partition_sorting[0, 0:N]]
+
+        """
+        add target id in a way that recommendations is a list as follows
+        [ [playlist1_id, id1, id2, ....., id10], ...., [playlist_id2, id1, id2, ...] ]
+        """
+        np_target_id = np.array(userids)
+        target_id_t = np.reshape(np_target_id, (len(np_target_id), 1))
+        recommendations = np.concatenate((target_id_t, ranking), axis=1)
+
+        return recommendations
+
+    def similarityMatrixTopK(self, item_weights, k=100, verbose=False, inplace=True):
+        """
+        The function selects the TopK most similar elements, column-wise
+        :param item_weights:
+        :param forceSparseOutput:
+        :param k:
+        :param verbose:
+        :param inplace: Default True, WARNING matrix will be modified
+        :return:
+        """
+
+        assert (item_weights.shape[0] == item_weights.shape[1]), "selectTopK: ItemWeights is not a square matrix"
+
+        start_time = time.time()
+
+        if verbose:
+            print("Generating topK matrix")
+
+        nitems = item_weights.shape[1]
+        k = min(k, nitems)
+
+        # for each column, keep only the top-k scored items
+        sparse_weights = not isinstance(item_weights, np.ndarray)
+
+        W = item_weights
+
+        W_sparse = sps.csr_matrix(W, shape=(nitems, nitems))
+
+        return W_sparse
+
+    def evaluate(self, recommendations, test_urm, at_k=10, verbose=True):
+        """
+        Return the MAP@k evaluation for the provided recommendations
+        computed with respect to the test_urm
+
+        Parameters
+        ----------
+        recommendations : list
+            List of recommendations, where a recommendation
+            is a list (of length N+1) of playlist_id and N items_id:
+                [   [7,   18,11,76, ...] ,
+                    [13,  65,83,32, ...] ,
+                    [25,  30,49,65, ...] , ... ]
+        test_urm : csr_matrix
+            A sparse matrix
+        at_k : int, optional
+            The number of items to compute the precision at
+
+        Returns
+        -------
+        MAP@k: (float) MAP for the provided recommendations
+        """
+        if not at_k > 0:
+            log.error('Invalid value of k {}'.format(at_k))
+            return
+
+        aps = 0.0
+        for r in recommendations:
+            row = test_urm.getrow(r[0]).indices
+            m = min(at_k, len(row))
+
+            ap = 0.0
+            n_elems_found = 0.0
+            for j in range(1, m + 1):
+                if r[j] in row:
+                    n_elems_found += 1
+                    ap = ap + n_elems_found / j
+            if m > 0:
+                ap = ap / m
+                aps = aps + ap
+
+        result = aps / len(recommendations)
+        if verbose:
+            log.warning('MAP: {}'.format(result))
+        return result
+
+rec = RP3betaRecommender(data.get_urm())
+rec.fit()
+sps.save_npz('raw_data/saved_sim_matrix/RP3BETA', rec.W_sparse)
+#recs = rec.recommend_batch(data.get_target_playlists())
+#rec.evaluate(recs, test_urm=data.get_urm_test_1())

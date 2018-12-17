@@ -22,6 +22,8 @@ from inout import importexport
 pyximport.install(setup_args={"script_args":[],
                               "include_dirs":np.get_include()},
                   reload_support=True)
+import data.data as data
+import scipy.sparse as sps
 
 class CFW(RecommenderBase):
     """
@@ -183,8 +185,8 @@ class CFW(RecommenderBase):
 
         self.W_sparse = ICM_weighted * ICM_weighted.T
 
-    def fit(self, ICM=None, URM_train=None, normalize_similarity = False, add_zeros_quota = 1, loss_tolerance = 1e-6,
-            iteration_limit = 30, damp_coeff=1, use_incremental=False):
+    def fit(self, ICM=data.get_icm(), URM_train=data.get_urm_train_1(), normalize_similarity = True, add_zeros_quota =0.1, loss_tolerance = 0.0001,
+            iteration_limit = 100, damp_coeff=0.1, use_incremental=True):
         self.URM_train = URM_train
         self.ICM = ICM
         self.n_items = self.URM_train.shape[1]
@@ -334,11 +336,6 @@ class CFW(RecommenderBase):
 
 #0.039
 r = CFW()
-r.validate(log_path='.',
-           normalize_similarity=[True],
-           damp_coeff=[0.1, 1, 10, 100],
-           add_zeros_quota=[0.1, 1, 10, 100],
-           loss_tolerance=[1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
-           iteration_limit=[5, 10, 30, 50, 100, 200, 350, 500],
-           use_incremental=[False, True])
+r.fit(URM_train=data.get_urm())
+sps.save_npz('raw_data/saved_sim_matrix/CFW', r.W_sparse)
 # r.run(export_results=False, export_r_hat=True, export_for_validation=False)

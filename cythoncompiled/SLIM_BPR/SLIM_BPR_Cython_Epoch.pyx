@@ -186,6 +186,8 @@ cdef class SLIM_BPR_Cython_Epoch:
         # Uniform user sampling without replacement
         for numCurrentBatch in range(totalNumberOfBatch):
 
+            #print(numCurrentBatch*100/totalNumberOfBatch)
+
             sample = self.sampleBPR_Cython()
 
             i = sample.pos_item

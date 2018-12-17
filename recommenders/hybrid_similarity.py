@@ -1,5 +1,6 @@
 from recommenders.hybrid_base import Hybrid
 import data.data as data
+import utils.top_k as tk
 
 class HybridSimilarity(Hybrid):
 
@@ -11,6 +12,9 @@ class HybridSimilarity(Hybrid):
             self.INVERSE = True
 
         self.matrices_array = similarity_matrices_array
+        #========
+        #self.matrices_array[0] = (tk.apply_top_k((self.matrices_array[0]).T,200)).T
+        #============
         self.normalized_matrices_array = None
         self.normalization_mode = normalization_mode
 
